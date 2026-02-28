@@ -1,0 +1,16 @@
+android {
+    flavorDimensions += "flavor-type"
+
+    productFlavors {
+        dev {
+            dimension "flavor-type"
+            applicationId "com.base.flutter.bloc"
+            resValue "string", "app_name", "VTN Base Flutter Dev"
+        }
+        prod {
+            dimension "flavor-type"
+            applicationId "com.vtn.example.prod"
+            resValue "string", "app_name", "Example"
+        }
+    }
+}

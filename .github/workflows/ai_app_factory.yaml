@@ -1,0 +1,87 @@
+name: 🚀 AI App Factory
+
+# Cho phép chạy thủ công bằng tay (workflow_dispatch) và nhập thông số
+on:
+  workflow_dispatch:
+    inputs:
+      app_name:
+        description: 'Tên thư mục App (VD: SleepTracker)'
+        required: true
+        default: 'MyNewApp'
+      feature_name:
+        description: 'Tên Feature muốn tạo (VD: Weather, QrScan)'
+        required: true
+      figma_file_key:
+        description: 'Mã File Figma (Đoạn mã nằm trong URL của file Figma)'
+        required: true
+      spec:
+        description: 'Lazy Spec (Viết ngắn gọn 2-3 dòng bằng tiếng Việt)'
+        required: true
+        type: string
+
+jobs:
+  generate-code:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Kéo Source Code (Checkout Repo)
+        uses: actions/checkout@v4
+
+      - name: 🐍 Cài đặt Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: 📦 Cài đặt thư viện AI & API
+        run: |
+          python -m pip install --upgrade pip
+          pip install anthropic requests python-dotenv
+
+      - name: 🐦 Cài đặt Flutter SDK
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+
+      - name: 🧠 AI Bắt đầu Gen Code (Chạy Orchestrator)
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          FIGMA_TOKEN: ${{ secrets.FIGMA_TOKEN }}
+          APP_NAME: ${{ inputs.app_name }}
+          FEATURE_NAME: ${{ inputs.feature_name }}
+          FIGMA_KEY: ${{ inputs.figma_file_key }}
+          SPEC: ${{ inputs.spec }}
+        run: |
+          cd automation
+          python orchestrator.py
+      - name: 🔐 Cấu hình Token cho từng Private Package
+        run: |
+          git config --global url."https://x-token-auth:${{ secrets.TOKEN_ADS }}@bitbucket.org/innofyapp/flutter_ads.git".insteadOf "https://bitbucket.org/innofyapp/flutter_ads.git"
+          
+          git config --global url."https://x-token-auth:${{ secrets.TOKEN_IAP }}@bitbucket.org/innofyapp/flutter_iap.git".insteadOf "https://bitbucket.org/innofyapp/flutter_iap.git"
+          
+          git config --global url."https://x-token-auth:${{ secrets.TOKEN_ADJUST }}@bitbucket.org/innofyapp/flutter-adjust.git".insteadOf "https://bitbucket.org/innofyapp/flutter-adjust.git"
+      - name: 🛠️ Tự động Build Code Flutter
+        run: |
+          cd apps/${{ inputs.app_name }}
+          flutter pub get
+          # Chạy build_runner để đẻ ra file Freezed, Di, và AutoRoute
+          flutter pub run build_runner build --delete-conflicting-outputs
+
+      - name: 📬 Đóng gói & Tạo Pull Request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "feat: [AI Gen] Feature ${{ inputs.feature_name }}"
+          branch: "ai-feature/${{ inputs.feature_name }}-${{ github.run_id }}"
+          title: "🤖 [AI Factory] Tạo mới Feature: ${{ inputs.feature_name }}"
+          body: |
+            ## 🚀 Mã nguồn được tự động sinh bởi AI
+            - **App:** `${{ inputs.app_name }}`
+            - **Feature:** `${{ inputs.feature_name }}`
+            - **Figma Key:** `${{ inputs.figma_file_key }}`
+            
+            **📝 Yêu cầu (Spec):**
+            > ${{ inputs.spec }}
+            
+            ✅ Hệ thống đã chạy `build_runner` thành công. Không có lỗi cú pháp.
+            Vui lòng Review Pull Request này trước khi Merge!

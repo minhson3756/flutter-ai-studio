@@ -1,0 +1,64 @@
+{
+  "app_title": "Flutter Base",
+  "language": "Language",
+  "thisActionCanContainAds": "This action can contain ads",
+  "next": "Next",
+  "thank": "Thank you!",
+  "start": "Start",
+  "go": "Go",
+  "permission": "Permission",
+  "rate": "Rate",
+  "share": "Share",
+  "policy": "Privacy Policy",
+  "rateUs": "Rate Us",
+  "setting": "Setting",
+  "unexpectedError": "An unexpected error occurred!",
+  "alreadyOwnError": "Looks like you already owned this item.\nPlease click \"Restore purchase\" to continue.",
+  "confirm": "Confirm",
+  "yes": "Yes",
+  "no": "No",
+  "backToHomescreen": "Back to Homescreen",
+  "exitApp": "Exit app",
+  "areYouSureYouWantToExitApp": "Are you sure you want to exit the app?",
+  "continueText": "Continue",
+  "grantPermissionLater": "Grant permission later",
+  "loading": "Loading({percent}%)...",
+  "@loading": {
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "explore": "Explore",
+  "dontUninstallYet": "Don’t uninstall yet",
+  "stillWantToUninstall": "Still want to uninstall?",
+  "whyUninstallApp": "Why uninstall {appName}?",
+  "@whyUninstallApp": {
+    "placeholders": {
+      "appName": {
+        "type": "String"
+      }
+    }
+  },
+  "difficultToUse": "Difficult to use",
+  "tooManyAds": "Too many ads",
+  "others": "Others",
+  "whatProblemsYouEncounterDuringUse": "What problems do you encounter during use?",
+  "notCurrentlyAvailableForUse": "Not currently available for use.",
+  "uninstall": "Uninstall",
+  "cancel": "Cancel",
+  "pleaseEnterReasonForUninstallingApp": "Please enter the reason why you are uninstalling {appName}.",
+  "@pleaseEnterReasonForUninstallingApp": {
+    "placeholders": {
+      "appName": {
+        "type": "String"
+      }
+    }
+  },
+  "selectLanguageGuide": "Please select a language to continue",
+  "allowNotifications": "Allow notifications?",
+  "later": "Later",
+  "notifications": "Notifications"
+}
+
