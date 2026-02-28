@@ -92,11 +92,14 @@ class _ContentPageWidgetState extends State<ContentPageWidget>
         height: NativeAdSize.large,
         margin: const EdgeInsets.only(top: 10).h,
       );
-    } else if (widget.index == 1 || widget.index == 2) {
+    } else if (Global.instance.isFullAds) {
       return Container(
         height: 140.h,
         alignment: Alignment.center,
-        child: Lottie.asset(Assets.lottie.slideLeft.path, height: 80.h),
+        child: Lottie.asset(
+          Assets.lottie.slideLeft.path,
+          height: 80.h,
+        ),
       );
     }
     return 60.verticalSpace;
@@ -111,14 +114,19 @@ class _ContentPageWidgetState extends State<ContentPageWidget>
           Text(
             widget.title,
             textAlign: TextAlign.center,
-            style:
-                widget.titleStyle ??
-                TextStyle(fontSize: 24.sp, fontWeight: FontWeight.w700),
+            style: widget.titleStyle ??
+                TextStyle(
+                  fontSize: 24.sp,
+                  fontWeight: FontWeight.w700,
+                ),
           ),
           Text(
             widget.description,
             textAlign: TextAlign.center,
-            style: widget.descriptionStyle ?? TextStyle(fontSize: 17.sp),
+            style: widget.descriptionStyle ??
+                TextStyle(
+                  fontSize: 17.sp,
+                ),
           ),
         ],
       ),

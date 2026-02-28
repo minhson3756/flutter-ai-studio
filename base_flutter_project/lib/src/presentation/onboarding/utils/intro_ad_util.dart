@@ -59,41 +59,35 @@ class IntroAdUtil {
 
   void initNativeAd() {
     nativeController2 = _createController(
-      condition:
-          !RemoteConfigManager.instance.isReduceAd &&
-          introType.hasNativeBottomAd,
+      condition: Global.instance.isFullAds && introType.hasNativeBottomAd,
       config: adUnitsConfig.nativeIntro2,
       factoryId: largeNativeAdFactory,
       adKey: 'native_intro2',
     );
 
     nativeController2Full = _createController(
-      condition:
-          !RemoteConfigManager.instance.isReduceAd && introType.hasNativeFullAd,
+      condition: Global.instance.isFullAds && introType.hasNativeFullAd,
       config: adUnitsConfig.nativeFullIntro2,
       factoryId: AdFactory.fullNativeAd.name,
       adKey: 'native_intro2_full',
     );
 
     nativeController3 = _createController(
-      condition:
-          !RemoteConfigManager.instance.isReduceAd &&
-          introType.hasNativeBottomAd,
+      condition: introType.hasNativeBottomAd || !Global.instance.isFullAds,
       config: adUnitsConfig.nativeIntro3,
       factoryId: largeNativeAdFactory,
       adKey: 'native_intro3',
     );
 
     nativeController3Full = _createController(
-      condition:
-          !RemoteConfigManager.instance.isReduceAd && introType.hasNativeFullAd,
+      condition: Global.instance.isFullAds && introType.hasNativeFullAd,
       config: adUnitsConfig.nativeFullIntro3,
       factoryId: AdFactory.fullNativeAd.name,
       adKey: 'native_intro3_full',
     );
 
     nativeController4 = _createController(
-      condition: !RemoteConfigManager.instance.isReduceAd,
+      condition: Global.instance.isFullAds,
       config: adUnitsConfig.nativeIntro4,
       factoryId: largeNativeAdFactory,
       adKey: 'native_intro4',

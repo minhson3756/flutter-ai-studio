@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 60;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -27,7 +27,6 @@
 		50DCDF8D2BEF2B7A00D230D0 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 50DCDF8C2BEF2B7A00D230D0 /* PrivacyInfo.xcprivacy */; };
 		6168A41C2510A3648BE3BCCD /* devProfile.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = C0318C3CE5BFF51B5C7364A1 /* devProfile.xcconfig */; };
 		6E2752D42E3B7694004F7CCB /* FullNativeAdView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6E5A1D8E2E27B59500F50298 /* FullNativeAdView.xib */; };
-		6E99F26E2F02C3C5004F87FB /* AppTrackingTransparency.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E99F26D2F02C3C5004F87FB /* AppTrackingTransparency.framework */; };
 		6EE743ED2E27F902000E9E9A /* FullNativeAdFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E5A1D902E27B5AE00F50298 /* FullNativeAdFactory.swift */; };
 		74858FAF1ED2DC5600515810 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74858FAE1ED2DC5600515810 /* AppDelegate.swift */; };
 		83196E6F37D84861D1F3E2DC /* prodLaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FB816DF7758B6F5C0E6A6FA4 /* prodLaunchScreen.storyboard */; };
@@ -99,7 +98,6 @@
 		6E5A1D8E2E27B59500F50298 /* FullNativeAdView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FullNativeAdView.xib; sourceTree = "<group>"; };
 		6E5A1D902E27B5AE00F50298 /* FullNativeAdFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FullNativeAdFactory.swift; sourceTree = "<group>"; };
 		6E7D56C62E068B2900488D9D /* ReplayKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ReplayKit.framework; path = System/Library/Frameworks/ReplayKit.framework; sourceTree = SDKROOT; };
-		6E99F26D2F02C3C5004F87FB /* AppTrackingTransparency.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppTrackingTransparency.framework; path = System/Library/Frameworks/AppTrackingTransparency.framework; sourceTree = SDKROOT; };
 		702264A7A9C3AEF185FDBBC5 /* Pods-Runner.debug-prod.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug-prod.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug-prod.xcconfig"; sourceTree = "<group>"; };
 		709CAE35907CFAC999266056 /* Pods-Runner.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug.xcconfig"; sourceTree = "<group>"; };
 		722D4A8407D883AF518A1440 /* devLaunchScreen.storyboard */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = file.storyboard; name = devLaunchScreen.storyboard; path = Runner/devLaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -130,7 +128,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				FF011AB2282E76E70DA4E9D9 /* Pods_Runner.framework in Frameworks */,
-				6E99F26E2F02C3C5004F87FB /* AppTrackingTransparency.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -278,7 +275,6 @@
 		E2DFDDD5487FD0A33DF7C637 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				6E99F26D2F02C3C5004F87FB /* AppTrackingTransparency.framework */,
 				50C82FF12C7494FF0000D1CB /* AdjustSigSdk.xcframework */,
 				8725557CB0DDA42A15C9F04E /* Pods_Runner.framework */,
 				6E7D56C62E068B2900488D9D /* ReplayKit.framework */,
@@ -313,7 +309,6 @@
 				6DFDA516F58AA6692291AF32 /* [CP] Check Pods Manifest.lock */,
 				E4DCE9353CC6B19E71F85715 /* Firebase Setup */,
 				9740EEB61CF901F6004384FC /* Run Script */,
-				6E99F26F2F02C3D6004F87FB /* ShellScript */,
 				97C146EA1CF9000F007C117D /* Sources */,
 				97C146EB1CF9000F007C117D /* Frameworks */,
 				97C146EC1CF9000F007C117D /* Resources */,
@@ -433,9 +428,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -464,24 +463,6 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		6E99F26F2F02C3D6004F87FB /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/FirebaseCrashlytics/upload-symbols\" -gsp \"${PROJECT_DIR}/Runner/GoogleService-Info.plist\" -p ios \"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}\"\n";
-		};
 		9740EEB61CF901F6004384FC /* Run Script */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
@@ -505,9 +486,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-resources-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Copy Pods Resources";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;

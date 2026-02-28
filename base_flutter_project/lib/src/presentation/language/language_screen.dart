@@ -9,21 +9,20 @@ import 'package:fluttertoast/fluttertoast.dart';
 
 import '../../../module/admob/model/ad_config/ad_config.dart';
 import '../../../module/admob/utils/native_all_util.dart';
+import '../../../module/admob/utils/reload_ad_util.dart';
 import '../../../module/admob/utils/utils.dart';
 import '../../../module/admob/widget/ads/common_native_ad.dart';
 import '../../../module/admob/widget/ads/native_all_ad.dart';
-import '../../../module/remote_config/remote_config.dart';
 import '../../../module/tracking_screen/loggable_widget.dart';
 import '../../config/navigation/app_router.dart';
 import '../../config/theme/palette.dart';
-import '../../data/local/shared_preferences_manager.dart';
 import '../../gen/assets.gen.dart';
 import '../../shared/cubit/language_cubit.dart';
 import '../../shared/cubit/value_cubit.dart';
 import '../../shared/enum/language.dart';
 import '../../shared/extension/context_extension.dart';
 import '../../shared/extension/number_extension.dart';
-import '../../shared/helpers/logger_utils.dart';
+import '../../shared/global.dart';
 import '../../shared/widgets/button/custom_button.dart';
 import '../../shared/widgets/custom_appbar.dart';
 import '../../shared/widgets/custom_radio.dart';
@@ -55,33 +54,17 @@ class LanguageScreen extends StatefulLoggableWidget
 
 class _LanguageScreenState extends State<LanguageScreen>
     with SingleTickerProviderStateMixin {
-  NativeAdController? nativeLanguageController;
-  NativeAdController? nativeLanguageSelectController;
-  late final ValueNotifier<NativeAdController?> adControllerNotifier =
-      ValueNotifier<NativeAdController?>(nativeLanguageController);
-  final shouldShowOnboarding =
-      SharedPreferencesManager.instance.shouldShowScreen(
-        OnBoardingRoute.name,
-      ) ||
-      RemoteConfigManager.instance.appConfig.screenFlow.enableSecondIntro;
-
-  final GlobalKey itemKey = GlobalKey();
-  final GlobalKey continueKey = GlobalKey();
-  Alignment? itemAlignment;
-  Alignment? continueAlignment;
-  Size screenSize = Size.zero;
+  NativeAdController? nativeAdControllerLanguage;
+  NativeAdController? nativeAdControllerLanguageSelect;
+  late final ValueNotifier<NativeAdController?> adControllerNotifier;
 
   @override
   void initState() {
     super.initState();
     if (widget.isFirst) {
       _preloadLanguageAd();
+      _initLanguageAd();
       streamLanguageSelectCtrl();
-
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        screenSize = MediaQuery.of(context).size;
-        _calculatePositions();
-      });
     }
   }
 
@@ -98,17 +81,25 @@ class _LanguageScreenState extends State<LanguageScreen>
     }
     context.read<LanguageCubit>().update(selectedLanguage);
     if (widget.isFirst) {
-      SharedPreferencesManager.instance.markScreenAsShown(LanguageRoute.name);
-      context.replaceRoute(OnBoardingRoute());
+      context.replaceRoute(const OnBoardingRoute());
+      return;
+    }
+
+    // trường hợp ở màn language setting
+    if (Global.instance.isFullAds) {
+      IntroAdUtil.instance.preloadAd1();
+      context.router.replaceAll([const OnBoardingRoute()]);
     } else {
-      context.router.popUntilRoot();
+      context.router.popUntilRouteWithName(HomeRoute.name);
     }
   }
 
   void streamLanguageSelectCtrl() {
-    nativeLanguageSelectController?.onAdClicked = (ad) {
-      _goToNextScreen();
-    };
+    if (nativeAdControllerLanguageSelect != null && Global.instance.isFullAds) {
+      nativeAdControllerLanguageSelect!.onAdClicked = (ad) {
+        _goToNextScreen();
+      };
+    }
   }
 
   @override
@@ -119,46 +110,22 @@ class _LanguageScreenState extends State<LanguageScreen>
       },
       listener: (context, state) {
         if (state != null && widget.isFirst) {
-          adControllerNotifier.value = nativeLanguageSelectController;
-          if (shouldShowOnboarding) {
-            IntroAdUtil.instance.preloadAd1();
-          }
+          adControllerNotifier.value = nativeAdControllerLanguageSelect;
+          IntroAdUtil.instance.preloadAd1();
         }
       },
-      child: Stack(
-        children: [
-          Scaffold(
-            appBar: CustomAppbar(
-              showBackButton: !widget.isFirst,
-              titleText: context.l10n.language,
-              actions: [_buildAcceptButton()],
-            ),
-            body: Column(
-              children: [
-                Expanded(
-                  child: _BodyWidget(isFirst: widget.isFirst, itemKey: itemKey),
-                ),
-                _buildAd(),
-              ],
-            ),
-          ),
-          BlocBuilder<ValueCubit<Language?>, Language?>(
-            builder: (context, state) {
-              return AnimatedAlign(
-                duration: const Duration(milliseconds: 800),
-                alignment: state != null
-                    ? continueAlignment ?? Alignment.center
-                    : itemAlignment ?? Alignment.bottomCenter,
-                child: IgnorePointer(
-                  child: SizedBox.square(
-                    dimension: 100.r,
-                    child: Assets.lottie.tap.lottie(),
-                  ),
-                ),
-              );
-            },
-          ),
-        ],
+      child: Scaffold(
+        appBar: CustomAppbar(
+          showBackButton: !widget.isFirst,
+          titleText: context.l10n.language,
+          actions: [_buildAcceptButton()],
+        ),
+        body: Column(
+          children: [
+            Expanded(child: _BodyWidget(isFirst: widget.isFirst)),
+            _buildAd(),
+          ],
+        ),
       ),
     );
   }
@@ -180,9 +147,8 @@ class _LanguageScreenState extends State<LanguageScreen>
           );
   }
 
-  Widget _buildAcceptButton() {
+  Builder _buildAcceptButton() {
     return Builder(
-      key: continueKey,
       builder: (context) {
         final Language? selectedLanguage = context
             .watch<ValueCubit<Language?>>()
@@ -199,9 +165,39 @@ class _LanguageScreenState extends State<LanguageScreen>
     );
   }
 
+  void _initLanguageAd() {
+    if (Global.instance.isFullAds) {
+      // Hiển thị ad native được load trước ở splash khi sang màn language
+      adControllerNotifier = ValueNotifier<NativeAdController?>(
+        ReloadAdUtil.instance.controller,
+      );
+      // Show native full splash
+      Future.delayed(Duration.zero, showNativeFull);
+      ReloadAdUtil.instance.controller?.onAdImpression = (_) {
+        adControllerNotifier.value = nativeAdControllerLanguage;
+      };
+
+      ReloadAdUtil.instance.controller?.onAdFailedToLoad = (_, _) {
+        adControllerNotifier.value = nativeAdControllerLanguage;
+      };
+    } else {
+      adControllerNotifier = ValueNotifier<NativeAdController?>(
+        nativeAdControllerLanguage,
+      );
+    }
+  }
+
+  void showNativeFull() {
+    nativeFullSplashUtil.show(
+      onClose: () {
+        adControllerNotifier.value = nativeAdControllerLanguage;
+      },
+    );
+  }
+
   void _preloadLanguageAd() {
     if (adUnitsConfig.nativeLanguage.isEnable) {
-      nativeLanguageController = NativeAdController(
+      nativeAdControllerLanguage = NativeAdController(
         adId: adUnitsConfig.nativeLanguage.id,
         adId2: adUnitsConfig.nativeLanguage.id2,
         adId2RequestPercentage:
@@ -209,10 +205,10 @@ class _LanguageScreenState extends State<LanguageScreen>
         factoryId: largeNativeAdFactory,
         adKey: 'native_language',
       );
-      nativeLanguageController?.load();
+      nativeAdControllerLanguage?.load();
     }
     if (adUnitsConfig.nativeLanguageSelect.isEnable) {
-      nativeLanguageSelectController = NativeAdController(
+      nativeAdControllerLanguageSelect = NativeAdController(
         adId: adUnitsConfig.nativeLanguageSelect.id,
         adId2: adUnitsConfig.nativeLanguageSelect.id2,
         adId2RequestPercentage:
@@ -220,32 +216,7 @@ class _LanguageScreenState extends State<LanguageScreen>
         factoryId: largeNativeAdFactory,
         adKey: 'native_language_select',
       );
-      nativeLanguageSelectController?.load();
+      nativeAdControllerLanguageSelect?.load();
     }
-  }
-
-  void _calculatePositions() {
-    final renderBoxEnglish =
-        itemKey.currentContext?.findRenderObject() as RenderBox?;
-    final renderBoxButton =
-        continueKey.currentContext?.findRenderObject() as RenderBox?;
-    if (renderBoxEnglish == null || renderBoxButton == null) {
-      logger.w('RenderBox for English or Button is null');
-      return;
-    }
-
-    final Offset englishCenter = renderBoxEnglish.localToGlobal(Offset.zero);
-    final Offset buttonCenter = renderBoxButton.localToGlobal(Offset.zero);
-
-    itemAlignment = Alignment(
-      englishCenter.dx / (screenSize.width / 2) + 0.5,
-      (englishCenter.dy / (screenSize.height / 2)) - 0.95,
-    );
-    continueAlignment = Alignment(
-      (buttonCenter.dx / (screenSize.width / 2)) - .9,
-      (buttonCenter.dy / (screenSize.height / 2)) - 1.1,
-    );
-
-    setState(() {});
   }
 }

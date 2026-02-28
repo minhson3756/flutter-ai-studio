@@ -1,10 +1,11 @@
 part of '../language_screen.dart';
 
 class _BodyWidget extends StatefulWidget {
-  const _BodyWidget({required this.isFirst, required this.itemKey});
+  const _BodyWidget({
+    required this.isFirst,
+  });
 
   final bool isFirst;
-  final GlobalKey itemKey;
 
   @override
   State<_BodyWidget> createState() => _BodyWidgetState();
@@ -42,10 +43,29 @@ class _BodyWidgetState extends State<_BodyWidget> {
                 itemCount: languageList.length,
                 itemBuilder: (BuildContext context1, int index) {
                   final Language item = languageList[index];
+                  if (item == suggestLanguage && state == null) {
+                    return Stack(
+                      children: [
+                        _LanguageItem(
+                          context: context,
+                          language: item,
+                          selectedValue: state,
+                        ),
+                        Positioned(
+                          right: 0,
+                          top: 0,
+                          bottom: 0,
+                          child: IgnorePointer(
+                            child: Padding(
+                              padding: EdgeInsets.only(right: 30.w),
+                              child: Assets.lottie.tap.lottie(),
+                            ),
+                          ),
+                        ),
+                      ],
+                    );
+                  }
                   return _LanguageItem(
-                    key: item == suggestLanguage && state == null
-                        ? widget.itemKey
-                        : null,
                     context: context,
                     language: item,
                     selectedValue: state,

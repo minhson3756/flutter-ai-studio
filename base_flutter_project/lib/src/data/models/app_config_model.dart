@@ -14,10 +14,9 @@ abstract class AppConfigModel with _$AppConfigModel {
     @Default(NotificationConfig()) NotificationConfig notificationConfig,
     @Default(true) bool isForceUpdate,
     @Default(false) bool logNetwork,
-    @Default(true) bool useInterSplash,
     @Default(AppConstants.urlPolicy) String urlPolicy,
   }) = _AppConfigModel;
-
+ 
   factory AppConfigModel.fromJson(Map<String, dynamic> json) =>
       _$AppConfigModelFromJson(json);
 }
@@ -29,8 +28,8 @@ abstract class ScreenFlow with _$ScreenFlow {
     @IntroTypeConverter()
     @Default(IntroType.nativeFullSwipe)
     IntroType introType,
-    @Default(true) bool enableSecondLanguage,
-    @Default(true) bool enableSecondIntro,
+    @Default(true) bool enableFirstPermission,
+    @Default(true) bool enableInAppPermission,
   }) = _ScreenFlow;
 
   factory ScreenFlow.fromJson(Map<String, dynamic> json) =>

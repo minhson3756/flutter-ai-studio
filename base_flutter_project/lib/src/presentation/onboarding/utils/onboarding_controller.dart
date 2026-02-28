@@ -5,10 +5,10 @@ import 'package:flutter_ads/ads_flutter.dart';
 
 import '../../../../module/admob/utils/inter_ad_util.dart';
 import '../../../../module/admob/utils/utils.dart';
-import '../../../../module/remote_config/remote_config.dart';
 import '../../../config/di/di.dart';
 import '../../../config/navigation/app_router.dart';
 import '../../../data/local/shared_preferences_manager.dart';
+import '../../../shared/global.dart';
 import 'intro_ad_util.dart';
 
 class OnboardingController {
@@ -31,11 +31,13 @@ class OnboardingController {
   }
 
   Future<void> _showInterIntro() async {
-    if (!RemoteConfigManager.instance.isReduceAd) {
-      await InterAdUtil.instance.showInterAd(
-        adConfig: adUnitsConfig.interIntro,
-      );
+    if (!Global.instance.isFullAds) {
+      return;
     }
+
+    await InterAdUtil.instance.showInterAd(
+      adConfig: adUnitsConfig.interIntro,
+    );
   }
 
   void swipeToNextPage() {
@@ -46,9 +48,14 @@ class OnboardingController {
   }
 
   Future<void> goToNextScreen() async {
+    final bool shouldShowPermission =
+    SharedPreferencesManager.instance.shouldShowPermissionScreen();
     await _showInterIntro();
-    SharedPreferencesManager.instance.markScreenAsShown(OnBoardingRoute.name);
-    getIt<AppRouter>().replace(const HomeRoute());
+    if (shouldShowPermission) {
+      getIt<AppRouter>().replace(const PermissionRoute());
+    } else {
+      getIt<AppRouter>().replace(const HomeRoute());
+    }
   }
 
   void dispose() {

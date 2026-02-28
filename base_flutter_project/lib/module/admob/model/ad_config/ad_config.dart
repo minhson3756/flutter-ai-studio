@@ -29,10 +29,10 @@ extension AdUnitConfigExtension on AdUnitConfig {
 abstract class AdUnitsConfig with _$AdUnitsConfig {
   @JsonSerializable(explicitToJson: true)
   const factory AdUnitsConfig({
-    @Default(AdUnitConfig()) AdUnitConfig openOnResumeSplash,
+    @Default(AdUnitConfig()) AdUnitConfig openOnResume,
     @Default(AdUnitConfig()) AdUnitConfig interSplash,
-    @Default(AdUnitConfig()) AdUnitConfig openResume,
-    @Default(AdUnitConfig()) AdUnitConfig interAll,
+    @Default(AdUnitConfig()) AdUnitConfig bannerAll,
+    @Default(AdUnitConfig()) AdUnitConfig nativeAll,
     @Default(AdUnitConfig()) AdUnitConfig nativeLanguage,
     @Default(AdUnitConfig()) AdUnitConfig nativeLanguageSelect,
     @Default(AdUnitConfig()) AdUnitConfig nativeIntro1,
@@ -41,13 +41,15 @@ abstract class AdUnitsConfig with _$AdUnitsConfig {
     @Default(AdUnitConfig()) AdUnitConfig nativeIntro3,
     @Default(AdUnitConfig()) AdUnitConfig nativeFullIntro3,
     @Default(AdUnitConfig()) AdUnitConfig nativeIntro4,
-    @Default(AdUnitConfig()) AdUnitConfig nativeHome,
-    @Default(AdUnitConfig()) AdUnitConfig interBack,
-    @Default(AdUnitConfig()) AdUnitConfig interClosePremium,
-    @Default(AdUnitConfig()) AdUnitConfig interHome,
-    @Default(AdUnitConfig()) AdUnitConfig interTab,
-    @Default(AdUnitConfig()) AdUnitConfig nativeAll,
     @Default(AdUnitConfig()) AdUnitConfig interIntro,
+    @Default(AdUnitConfig()) AdUnitConfig nativePermission,
+    @Default(AdUnitConfig()) AdUnitConfig nativePermissionStorage,
+    @Default(AdUnitConfig()) AdUnitConfig nativeFull,
+    @Default(AdUnitConfig()) AdUnitConfig nativeFullSplash,
+    @Default(AdUnitConfig()) AdUnitConfig interSplashUninstall,
+    @Default(AdUnitConfig()) AdUnitConfig interUninstall,
+    @Default(AdUnitConfig()) AdUnitConfig nativeUninstall,
+    @Default(AdUnitConfig()) AdUnitConfig nativeExit,
   }) = _AdUnitsConfig;
 
   factory AdUnitsConfig.fromJson(Map<String, dynamic> json) =>

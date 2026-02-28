@@ -6,16 +6,19 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../src/shared/cubit/value_cubit.dart';
+import '../../../../src/shared/global.dart';
 import '../../../../src/shared/helpers/logger_utils.dart';
 import '../../../../src/shared/helpers/my_completer.dart';
 import '../../../../src/shared/helpers/utils.dart';
 import '../../model/ad_config/ad_config.dart';
+import '../../utils/enum/ad_factory.dart';
 import '../../utils/native_full_util.dart';
+import '../../utils/utils.dart';
 
-// final nativeFullUtil = NativeFullUtil(
-//   adConfig: adUnitsConfig.nativeFull,
-//   factoryId: AdFactory.fullNativeAd.name,
-// );
+final nativeFullUtil = NativeFullUtil(
+  adConfig: adUnitsConfig.nativeFull,
+  factoryId: AdFactory.fullNativeAd.name,
+);
 
 OverlayEntry? _overlayEntry;
 
@@ -23,6 +26,10 @@ Future<void> showFullNativeAd({
   VoidCallback? onClose,
   required NativeFullUtil nativeAdUtil,
 }) async {
+  if (!Global.instance.isFullAds) {
+    onClose?.call();
+    return;
+  }
   if (!nativeAdUtil.adConfig.isEnable) {
     onClose?.call();
     return;

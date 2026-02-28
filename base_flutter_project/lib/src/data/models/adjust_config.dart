@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
-import 'package:flutter_adjust/flutter_adjust.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+
+import '../../../module/adjust/model/fullads_option.dart';
 
 part 'adjust_config.freezed.dart';
 part 'adjust_config.g.dart';

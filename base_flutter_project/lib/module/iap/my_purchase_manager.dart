@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_adjust/flutter_adjust.dart';
 import 'package:flutter_ads/ads_flutter.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_iap/flutter_iap.dart';
@@ -15,6 +14,7 @@ import '../../src/data/local/shared_preferences_manager.dart';
 import '../../src/shared/extension/context_extension.dart';
 import '../../src/shared/global.dart';
 import '../../src/shared/helpers/logger_utils.dart';
+import '../adjust/adjust_util.dart';
 import 'firebase_event_service.dart';
 
 const String productKeyMonthly = 'com.zenity.remotetv.sub.monthly';
@@ -22,31 +22,28 @@ const String productKeyYearly = 'com.zenity.remotetv.sub.annual';
 
 class MyPurchasesManager extends PurchasesManager {
   @override
-  Set<String> productIds = <String>{productKeyMonthly, productKeyYearly};
+  Set<String> productIds = <String>{
+    productKeyMonthly,
+    productKeyYearly,
+  };
 
   @override
   Future<void> loadPurchases() async {
     if (F.appFlavor == Flavor.dev) {
       // tạo các mock product cho môi trường dev
-      emit(
-        state.copyWith(
-          products: productIds
-              .map(
-                (e) => PurchasableProduct(
-                  ProductDetails(
-                    currencyCode: '',
-                    description: '',
-                    id: e,
-                    price: r'1.00$',
-                    rawPrice: 1,
-                    title: 'aaa',
-                  ),
-                ),
-              )
-              .toList(),
-          storeState: StoreState.available,
-        ),
-      );
+      emit(state.copyWith(
+        products: productIds
+            .map((e) => PurchasableProduct(ProductDetails(
+                  currencyCode: '',
+                  description: '',
+                  id: e,
+                  price: r'1.00$',
+                  rawPrice: 1,
+                  title: 'aaa',
+                )))
+            .toList(),
+        storeState: StoreState.available,
+      ));
       return;
     }
     return super.loadPurchases();
@@ -60,9 +57,8 @@ class MyPurchasesManager extends PurchasesManager {
       MyAds.instance.appLifecycleReactor?.setShouldShow(false);
       return;
     }
-    final PurchaseParam purchaseParam = PurchaseParam(
-      productDetails: product.productDetails,
-    );
+    final PurchaseParam purchaseParam =
+        PurchaseParam(productDetails: product.productDetails);
     switch (product.id) {
       case productKeyMonthly:
       case productKeyYearly:
@@ -70,9 +66,7 @@ class MyPurchasesManager extends PurchasesManager {
         return;
       default:
         throw ArgumentError.value(
-          product.productDetails,
-          '${product.id} is not a known product',
-        );
+            product.productDetails, '${product.id} is not a known product');
     }
   }
 
@@ -137,7 +131,10 @@ class MyPurchasesManager extends PurchasesManager {
         return AlertDialog(
           content: Text(
             errorMessage,
-            style: TextStyle(color: Colors.white, fontSize: 14.sp),
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 14.sp,
+            ),
           ),
           actions: <Widget>[
             FilledButton(
@@ -146,7 +143,10 @@ class MyPurchasesManager extends PurchasesManager {
               },
               child: Text(
                 ctx.l10n.confirm,
-                style: TextStyle(color: Colors.white, fontSize: 14.sp),
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 14.sp,
+                ),
               ),
             ),
           ],
@@ -180,7 +180,8 @@ class MyPurchasesManager extends PurchasesManager {
   Future<void> handlePurchaseRestored(PurchaseDetails purchaseDetails) async {
     hideLoading();
     final purchaseDate = purchaseDetails.transactionDate != null
-        ? DateTime.parse(purchaseDetails.transactionDate!)
+        ? DateTime.fromMillisecondsSinceEpoch(
+            int.parse(purchaseDetails.transactionDate!))
         : null;
 
     final productDurations = {
@@ -216,15 +217,17 @@ class MyPurchasesManager extends PurchasesManager {
     // Log revenue của các product theo event token của product đó
     // (được khai báo ở productRevenueTokens khi khởi tạo AdjustUtil)
     AdjustUtil.instance.trackSubscriptionRevenue(
-      productDetails: product.productDetails,
-      purchaseDetails: purchaseDetails,
+      price: product.productDetails.rawPrice,
+      currencyCode: product.productDetails.currencyCode,
+      productId: product.id,
     );
 
     // Log revenue của các product lên cùng 1 event token
     // (được khai báo ở totalRevenueToken khi khởi tạo AdjustUtil)
     AdjustUtil.instance.trackTotalIapRevenue(
-      productDetails: product.productDetails,
-      purchaseDetails: purchaseDetails,
+      price: product.productDetails.rawPrice,
+      currencyCode: product.productDetails.currencyCode,
+      productId: product.id,
     );
 
     hideLoading();
@@ -254,6 +257,8 @@ extension PurchasableProductsExtension on List<PurchasableProduct> {
     if (isEmpty) {
       return null;
     }
-    return firstWhereOrNull((element) => element.productDetails.rawPrice != 0);
+    return firstWhereOrNull(
+      (element) => element.productDetails.rawPrice != 0,
+    );
   }
 }

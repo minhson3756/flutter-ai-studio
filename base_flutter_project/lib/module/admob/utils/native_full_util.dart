@@ -13,7 +13,7 @@ class NativeFullUtil extends CachedNativeAdUtil {
     required super.adConfig,
     required super.factoryId,
     super.reloadOnImpression,
-    super.checkReduceAd = true,
+    super.fullAdsOnly = true,
     super.adKey,
   });
 
@@ -32,6 +32,9 @@ class NativeFullUtil extends CachedNativeAdUtil {
   }
 
   Future<void> show({VoidCallback? onClose}) {
-    return showFullNativeAd(onClose: onClose, nativeAdUtil: this);
+    return showFullNativeAd(
+      onClose: onClose,
+      nativeAdUtil: this,
+    );
   }
 }

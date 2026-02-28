@@ -13,6 +13,7 @@ import '../shared/cubit/language_cubit.dart';
 import '../shared/cubit/rate_status_cubit.dart';
 import '../shared/enum/language.dart';
 import '../shared/helpers/permission_util.dart';
+import '../shared/helpers/shortcut_utils.dart';
 
 final RouteObserver<ModalRoute> routeObserver = RouteObserver<ModalRoute>();
 
@@ -28,9 +29,15 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (context) => LanguageCubit()),
-        BlocProvider(create: (context) => AdVisibilityCubit()),
-        BlocProvider(create: (context) => RateStatusCubit()),
+        BlocProvider(
+          create: (context) => LanguageCubit(),
+        ),
+        BlocProvider(
+          create: (context) => AdVisibilityCubit(),
+        ),
+        BlocProvider(
+          create: (context) => RateStatusCubit(),
+        ),
         BlocProvider(
           create: (context) => PermissionUtil.instance.photoPermissionCubit,
         ),
@@ -58,11 +65,21 @@ class _MyAppState extends State<MyApp> {
 }
 
 class BodyApp extends StatelessWidget {
-  const BodyApp({super.key});
+  const BodyApp({
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<LanguageCubit, Language?>(
+    return BlocConsumer<LanguageCubit, Language?>(
+      listener: (context, state) {
+        if (state != null) {
+          Future.delayed(
+            const Duration(milliseconds: 500),
+            ShortcutUtils.instance.setShortcutItems,
+          );
+        }
+      },
       builder: (context, state) {
         return MaterialApp.router(
           localizationsDelegates: AppLocalizations.localizationsDelegates,

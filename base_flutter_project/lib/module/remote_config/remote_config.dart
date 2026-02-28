@@ -2,16 +2,16 @@ import 'dart:convert';
 
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_iap/flutter_iap.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 
 import '../../flavors.dart';
 import '../../src/data/models/adjust_config.dart';
 import '../../src/data/models/app_config_model.dart';
 import '../../src/shared/helpers/logger_utils.dart';
+import '../../src/shared/helpers/method_channel/notification_channel.dart';
 import '../admob/model/ad_config/ad_config.dart';
 import '../admob/model/native_all_config/native_all_config.dart';
 import '../admob/utils/native_all_util.dart';
+import '../admob/utils/reload_ad_util.dart';
 import 'default_values/dev_values.dart';
 import 'default_values/prod_values.dart';
 
@@ -37,12 +37,10 @@ class RemoteConfigManager {
 
   AdjustConfig get adjustConfig => _adjustConfig;
 
-  bool isReduceAd = false;
-
   bool get enableAllAds {
-    if (purchasesManager.isPremium) {
-      return false;
-    }
+    // if (purchasesManager.isPremium) {
+    //   return false;
+    // }
     return adsRemoteConfig.showAllAds;
   }
 
@@ -63,17 +61,29 @@ class RemoteConfigManager {
       F.appFlavor == Flavor.dev ? devDefaultValues : prodDefaultValues,
     );
     await _fetchConfig();
-    await Future.wait([_loadAdConfig(), _loadAppConfig(), _checkReduceAd()]);
+    await Future.wait([_loadAdConfig(), _loadAppConfig()]);
     _loadAdjustConfig();
+    NotificationChannel.setNotificationContent(appConfig.notificationConfig);
   }
 
   Future<void> _loadAdConfig() async {
     try {
       final String rawJson = _remoteConfig.getString('ad_config');
-      _adsRemoteConfig = await compute((message) {
-        final value = json.decode(message);
-        return AdsRemoteConfig.fromJson(value);
+      final result = await compute((message) {
+        final value = json.decode(message) as Map<String, dynamic>;
+        final reloadAdConfigRaw = value['adUnitsConfig'][value['reloadKey']];
+        AdUnitConfig? reloadAdConfig;
+        if (reloadAdConfigRaw != null) {
+          reloadAdConfig = AdUnitConfig.fromJson(
+            reloadAdConfigRaw as Map<String, dynamic>,
+          );
+        }
+        final adRemoteConfig = AdsRemoteConfig.fromJson(value);
+
+        return (adRemoteConfig, reloadAdConfig);
       }, rawJson);
+      _adsRemoteConfig = result.$1;
+      ReloadAdUtil.instance.adConfig = result.$2;
 
       // Load config cho native all
       final nativeAllConfigJson =
@@ -84,7 +94,7 @@ class RemoteConfigManager {
         );
       }
     } on Exception catch (e) {
-      logger.e(e);
+      debugPrint(e.toString());
     }
   }
 
@@ -118,12 +128,5 @@ class RemoteConfigManager {
         _fetchConfig(true);
       }
     }
-  }
-
-  Future<void> _checkReduceAd() async {
-    final PackageInfo packageInfo = await PackageInfo.fromPlatform();
-    final currentVersion = packageInfo.version;
-    final reduceAdVersion = _remoteConfig.getString('reduce_ad_version');
-    isReduceAd = currentVersion == reduceAdVersion;
   }
 }

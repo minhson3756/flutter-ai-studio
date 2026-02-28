@@ -7,6 +7,7 @@ class Global {
   int androidSdkVersion = 0;
   bool isExitApp = false;
   bool initEasyLoading = false;
+  bool isFullAds = false;
   bool allowReloadBanner = true;
 
   bool requestedNotificationPermission = false;

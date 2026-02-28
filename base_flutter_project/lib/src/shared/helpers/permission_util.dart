@@ -5,7 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../global.dart';
-import '../cubit/permission_cubit.dart';
+import '../../presentation/permission/cubit/cubit.dart';
 import '../../service/notification_service.dart';
 import '../cubit/ad_visibility_cubit.dart';
 import '../cubit/value_cubit.dart';
@@ -80,13 +80,14 @@ class PermissionUtil {
 
 extension PermissionExtension on Permission {
   ValueCubit? get cubit => switch (this) {
-    Permission.photos ||
-    Permission.storage => PermissionUtil.instance.photoPermissionCubit,
-    Permission.camera => PermissionUtil.instance.cameraPermissionCubit,
-    Permission.notification =>
-      PermissionUtil.instance.notificationPermissionCubit,
-    _ => null,
-  };
+        Permission.photos ||
+        Permission.storage =>
+          PermissionUtil.instance.photoPermissionCubit,
+        Permission.camera => PermissionUtil.instance.cameraPermissionCubit,
+        Permission.notification =>
+          PermissionUtil.instance.notificationPermissionCubit,
+        _ => null,
+      };
 
   Future<bool> openPermissionSetting() async {
     if (Platform.isIOS) {

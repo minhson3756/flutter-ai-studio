@@ -1,6 +1,6 @@
 import 'package:flutter_ads/ads_flutter.dart';
 
-import '../../remote_config/remote_config.dart';
+import '../../../src/shared/global.dart';
 import '../model/ad_config/ad_config.dart';
 import '../model/native_all_config/native_all_config.dart';
 import 'enum/ad_factory.dart';
@@ -54,8 +54,8 @@ class NativeAllUtil {
   }
 
   /// Lấy ra 1 controller trong danh sách [_controller] chưa impression
-  NativeAdController? getController({bool checkReduceAd = false}) {
-    if (checkReduceAd && RemoteConfigManager.instance.isReduceAd) {
+  NativeAdController? getController({bool fullAdsOnly = false}) {
+    if (fullAdsOnly && !Global.instance.isFullAds) {
       return null;
     }
     if (!adUnitsConfig.nativeAll.isEnable) {

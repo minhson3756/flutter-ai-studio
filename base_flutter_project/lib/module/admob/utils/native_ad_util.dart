@@ -1,6 +1,6 @@
 import 'package:flutter_ads/ads_flutter.dart';
 
-import '../../remote_config/remote_config.dart';
+import '../../../src/shared/global.dart';
 import '../model/ad_config/ad_config.dart';
 
 class CachedNativeAdUtil {
@@ -9,7 +9,7 @@ class CachedNativeAdUtil {
     required this.factoryId,
     this.reloadOnImpression = false,
     this.visible = true,
-    this.checkReduceAd = false,
+    this.fullAdsOnly = false,
     this.adKey,
   });
 
@@ -17,7 +17,7 @@ class CachedNativeAdUtil {
 
   final String factoryId;
   final bool reloadOnImpression;
-  final bool checkReduceAd;
+  final bool fullAdsOnly;
   final bool visible;
   final String? adKey;
 
@@ -28,7 +28,7 @@ class CachedNativeAdUtil {
   final List<NativeAdController> _usedControllers = [];
 
   bool get isEnableAd {
-    if (checkReduceAd && RemoteConfigManager.instance.isReduceAd) {
+    if (fullAdsOnly && Global.instance.isFullAds) {
       return false;
     }
     return adConfig.isEnable && visible;

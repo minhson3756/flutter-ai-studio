@@ -11,6 +11,8 @@ import '../../../module/tracking_screen/screen_logger.dart';
 import '../../gen/assets.gen.dart';
 import '../../shared/enum/intro_type.dart';
 import '../../shared/extension/context_extension.dart';
+import '../../shared/extension/number_extension.dart';
+import '../../shared/global.dart';
 import 'utils/intro_ad_util.dart';
 import 'utils/onboarding_controller.dart';
 import 'widgets/full_screen_native_ad.dart';
@@ -21,9 +23,7 @@ part 'widgets/page_action.dart';
 
 @RoutePage()
 class OnBoardingScreen extends StatefulWidget implements AutoRouteWrapper {
-  const OnBoardingScreen({super.key, this.fromSplash = false});
-
-  final bool fromSplash;
+  const OnBoardingScreen({super.key});
 
   @override
   State<OnBoardingScreen> createState() => _OnBoardingScreenState();
@@ -39,8 +39,10 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
   IntroType get introType =>
       RemoteConfigManager.instance.appConfig.screenFlow.introType;
 
-  late final OnboardingController onboardingController = context
-      .read<OnboardingController>();
+  late final OnboardingController onboardingController =
+      context.read<OnboardingController>();
+
+  bool isClickAds = false;
 
   @override
   void initState() {
@@ -49,12 +51,13 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
       listenClickAdEvent();
     }
     IntroAdUtil.instance.initNativeAd();
-    if (widget.fromSplash) {
-      IntroAdUtil.instance.preloadAd1();
-    }
+    AnalyticLogger.instance.logScreen('Intro1Screen');
   }
 
   void listenClickAdEvent() {
+    if (!Global.instance.isFullAds) {
+      return;
+    }
     IntroAdUtil.instance.listenClickAdEvent(
       onAdClicked: (isLastAd) {
         if (isLastAd) {
@@ -94,6 +97,9 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
         physics: introType.enableSwipe
             ? const BouncingScrollPhysics()
             : const NeverScrollableScrollPhysics(),
+        onPageChanged: (value) {
+          AnalyticLogger.instance.logScreen('Intro${value + 1}Screen');
+        },
         children: <Widget>[
           ContentPageWidget(
             image: Assets.images.onboarding.onboarding1,
@@ -104,7 +110,6 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
             adController: IntroAdUtil.instance.nativeController1,
             onInit: () {
               IntroAdUtil.instance.nativeController2?.load();
-              AnalyticLogger.instance.logScreen('Intro1Screen');
             },
           ),
           ContentPageWidget(
@@ -120,7 +125,6 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
               } else {
                 IntroAdUtil.instance.nativeController3?.preloadAd();
               }
-              AnalyticLogger.instance.logScreen('Intro2Screen');
             },
           ),
           if (IntroAdUtil.instance.nativeController2Full != null)
@@ -146,7 +150,6 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
               } else {
                 IntroAdUtil.instance.nativeController4?.preloadAd();
               }
-              AnalyticLogger.instance.logScreen('Intro3Screen');
             },
           ),
           if (IntroAdUtil.instance.nativeController3Full != null)
@@ -166,9 +169,6 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
             pageController: onboardingController.pageController,
             index: 3,
             adController: IntroAdUtil.instance.nativeController4,
-            onInit: () {
-              AnalyticLogger.instance.logScreen('Intro4Screen');
-            },
           ),
         ],
       ),

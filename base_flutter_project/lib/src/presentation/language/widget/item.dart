@@ -2,7 +2,6 @@ part of '../language_screen.dart';
 
 class _LanguageItem extends StatelessWidget {
   const _LanguageItem({
-    super.key,
     required this.context,
     required this.language,
     this.selectedValue,
@@ -19,13 +18,19 @@ class _LanguageItem extends StatelessWidget {
       onTap: () => selectedLanguageCubit.update(language),
       child: Container(
         decoration: BoxDecoration(
-          border: Border.all(color: Palette.primary),
+          border: Border.all(
+            color: Palette.primary,
+          ),
           borderRadius: BorderRadius.circular(15),
         ),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         child: Row(
           children: [
-            Image.asset(language.flagPath, width: 24, height: 24),
+            Image.asset(
+              language.flagPath,
+              width: 24,
+              height: 24,
+            ),
             16.hSpace,
             Expanded(
               child: Text(
@@ -42,7 +47,7 @@ class _LanguageItem extends StatelessWidget {
                 groupValue: selectedValue,
                 onChanged: (value) {},
               ),
-            ),
+            )
           ],
         ),
       ),

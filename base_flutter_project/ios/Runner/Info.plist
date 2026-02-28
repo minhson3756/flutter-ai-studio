@@ -2,8 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
   <dict>
-	<key>NSUserTrackingUsageDescription</key>
-	<string>This identifier will be used to deliver personalized ads to you.</string>
     <key>NSLocalNetworkUsageDescription</key>
     <string>Allow this app to discover and connect to devices on your local network for debugging.</string>
 
@@ -644,11 +642,6 @@
         <key>SKAdNetworkIdentifier</key>
         <string>zmvfpc5aq8.skadnetwork</string>
       </dict>
-
-<dict>
-    <key>SKAdNetworkIdentifier</key>
-    <string>xga6mpmplv.skadnetwork</string>
-</dict>
     </array>
     <key>UIApplicationSupportsIndirectInputEvents</key>
     <true/>
@@ -659,11 +652,6 @@
     <key>UIRequiresFullScreen</key>
     <true/>
     <key>UISupportedInterfaceOrientations</key>
-    <array>
-      <string>UIInterfaceOrientationPortrait</string>
-      <string>UIInterfaceOrientationPortraitUpsideDown</string>
-    </array>
-    <key>UISupportedInterfaceOrientations~ipad</key>
     <array>
       <string>UIInterfaceOrientationPortrait</string>
       <string>UIInterfaceOrientationPortraitUpsideDown</string>

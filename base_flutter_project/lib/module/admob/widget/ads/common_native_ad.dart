@@ -42,9 +42,9 @@ class CommonNativeAd extends StatefulWidget {
     this.placeholderHeight,
     this.backgroundColor,
     this.customLoading,
-  }) : adConfig = null,
-       factoryId = null,
-       customOptions = null;
+  })  : adConfig = null,
+        factoryId = null,
+        customOptions = null;
 
   final AdUnitConfig? adConfig;
   final String? factoryId;
@@ -82,10 +82,14 @@ class _CommonNativeAdState extends State<CommonNativeAd> {
   @override
   Widget build(BuildContext context) {
     if (!isAdEnabled) {
-      return SizedBox(height: widget.placeholderHeight);
+      return SizedBox(
+        height: widget.placeholderHeight,
+      );
     }
     return ConstrainedBox(
-      constraints: BoxConstraints(minHeight: widget.placeholderHeight ?? 0),
+      constraints: BoxConstraints(
+        minHeight: widget.placeholderHeight ?? 0,
+      ),
       child: IAPBuilder(
         builder: (context, state, isPremium) {
           if (isPremium) {
@@ -111,15 +115,19 @@ class _CommonNativeAdState extends State<CommonNativeAd> {
     String? factoryId;
     if (widget.controller == null) {
       factoryId = widget.factoryId ?? AdFactory.homeNativeAd.name;
+    } else {}
+    if (Global.instance.isFullAds) {
+      return _buildNativeAd(factoryId);
     }
     return Container(
       padding: widget.padding,
       margin: widget.margin,
       decoration: BoxDecoration(
         color: widget.backgroundColor ?? Palette.adBackground,
-        borderRadius:
-            widget.borderRadius ??
-            const BorderRadius.vertical(top: Radius.circular(10)),
+        borderRadius: widget.borderRadius ??
+            const BorderRadius.vertical(
+              top: Radius.circular(10),
+            ),
         border: widget.border ?? Border.all(color: Palette.adBorder),
       ),
       clipBehavior: Clip.antiAlias,
@@ -129,8 +137,12 @@ class _CommonNativeAdState extends State<CommonNativeAd> {
 
   Widget _buildNativeAd(String? factoryId) {
     final loadingWidget = widget.height <= NativeAdSize.medium
-        ? CustomMediumAdLoading(height: widget.height)
-        : CustomLargeAdLoading(height: widget.height);
+        ? CustomMediumAdLoading(
+            height: widget.height,
+          )
+        : CustomLargeAdLoading(
+            height: widget.height,
+          );
     return widget.controller == null
         ? MyNativeAd(
             factoryId: factoryId,

@@ -12,6 +12,7 @@ import com.vtn.global.base.flutter.util.method_handler.PermissionHandler
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugins.googlemobileads.GoogleMobileAdsPlugin
+import com.adjust.helper.AdjustChannel
 
 class MainActivity : FlutterActivity() {
     private var notificationCallHandler: NotificationCallHandler? = null
@@ -53,6 +54,7 @@ class MainActivity : FlutterActivity() {
             context = this,
             messenger = flutterEngine.dartExecutor.binaryMessenger
         )
+        AdjustChannel(this, flutterEngine.dartExecutor.binaryMessenger)
 
         PermissionHandler(
             context = this,

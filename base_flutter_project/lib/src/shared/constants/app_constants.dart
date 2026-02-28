@@ -5,6 +5,7 @@ class AppConstants {
 
   // TODO(all): Sửa lại các giá trị này
   static const String appIOSId = '123456';
+
   static const String packageName = 'com.example.app';
   static const urlPolicy = 'url';
   static const urlTerms = 'url';

@@ -4,8 +4,9 @@ import 'package:flutter_ads/ads_flutter.dart';
 
 import '../../../src/config/di/di.dart';
 import '../../../src/config/navigation/app_router.dart';
-import '../../remote_config/remote_config.dart';
+import '../../../src/shared/global.dart';
 import '../model/ad_config/ad_config.dart';
+import '../widget/ads/full_native_ad.dart';
 
 class InterAdUtil {
   InterAdUtil._();
@@ -17,9 +18,9 @@ class InterAdUtil {
     bool forceShow = false,
     bool showNativeFull = true,
     bool isSplash = false,
-    bool checkReduceAd = false,
+    bool fullAdsOnly = false,
   }) async {
-    if (checkReduceAd && RemoteConfigManager.instance.isReduceAd) {
+    if (fullAdsOnly && !Global.instance.isFullAds) {
       return;
     }
     if (!adConfig.isEnable) {
@@ -33,6 +34,9 @@ class InterAdUtil {
       adId2RequestPercentage: adConfig.id2RequestPercentage,
       forceShow: forceShow,
       onShowed: () {
+        if (showNativeFull) {
+          nativeFullUtil.preloadAd();
+        }
         completer.complete();
       },
       onFailed: () {
@@ -40,6 +44,11 @@ class InterAdUtil {
       },
       onNoInternet: () {
         completer.complete();
+      },
+      adDismissed: () {
+        if (showNativeFull) {
+          nativeFullUtil.show();
+        }
       },
     );
     return completer.future;

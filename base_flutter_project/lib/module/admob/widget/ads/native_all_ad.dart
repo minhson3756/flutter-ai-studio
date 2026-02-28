@@ -6,6 +6,7 @@ import 'package:flutter_iap/flutter_iap.dart';
 
 import '../../../../src/config/theme/palette.dart';
 import '../../../../src/shared/cubit/ad_visibility_cubit.dart';
+import '../../../../src/shared/global.dart';
 import '../../utils/native_all_util.dart';
 import '../../utils/utils.dart';
 import '../loading/ad_loading.dart';
@@ -54,7 +55,7 @@ class _NativeAllAdState extends State<NativeAllAd> with AutoRouteAware {
     super.initState();
     if (isAdEnabled) {
       controller = NativeAllUtil.instance.getController(
-        checkReduceAd: widget.fullAdsOnly,
+        fullAdsOnly: widget.fullAdsOnly,
       );
       isAdEnabled = controller != null;
     }
@@ -66,9 +67,8 @@ class _NativeAllAdState extends State<NativeAllAd> with AutoRouteAware {
     if (widget.ignoreRouteObserver) {
       return;
     }
-    _observer = RouterScope.of(
-      context,
-    ).firstObserverOfType<AutoRouteObserver>();
+    _observer =
+        RouterScope.of(context).firstObserverOfType<AutoRouteObserver>();
     if (_observer != null) {
       // we subscribe to the observer by passing our
       // AutoRouteAware state and the scoped routeData
@@ -85,16 +85,22 @@ class _NativeAllAdState extends State<NativeAllAd> with AutoRouteAware {
   @override
   Widget build(BuildContext context) {
     if (!isAdEnabled) {
-      return SizedBox(height: widget.placeholderHeight);
+      return SizedBox(
+        height: widget.placeholderHeight,
+      );
     }
     if (widget.ignoreCubit) {
       return ConstrainedBox(
-        constraints: BoxConstraints(minHeight: widget.placeholderHeight ?? 0),
+        constraints: BoxConstraints(
+          minHeight: widget.placeholderHeight ?? 0,
+        ),
         child: buildAd(widget.height),
       );
     }
     return ConstrainedBox(
-      constraints: BoxConstraints(minHeight: widget.placeholderHeight ?? 0),
+      constraints: BoxConstraints(
+        minHeight: widget.placeholderHeight ?? 0,
+      ),
       child: IAPBuilder(
         builder: (context, state, isPremium) {
           if (isPremium) {
@@ -114,13 +120,17 @@ class _NativeAllAdState extends State<NativeAllAd> with AutoRouteAware {
   }
 
   Widget buildAd(double height) {
+    if (Global.instance.isFullAds) {
+      return buildNativeAd(height);
+    }
     return Container(
       padding: widget.padding,
       margin: widget.margin,
       decoration: BoxDecoration(
-        borderRadius:
-            widget.borderRadius ??
-            const BorderRadius.vertical(top: Radius.circular(10)),
+        borderRadius: widget.borderRadius ??
+            const BorderRadius.vertical(
+              top: Radius.circular(10),
+            ),
         border: widget.border,
         color: Palette.adBackground,
       ),

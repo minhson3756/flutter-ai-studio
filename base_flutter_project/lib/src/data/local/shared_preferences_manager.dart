@@ -1,6 +1,9 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
-enum PreferenceKeys { adNetwork, isFirstPermissionShown }
+enum PreferenceKeys {
+  adNetwork,
+  isFirstPermissionShown,
+}
 
 enum PremiumType { isPremium, isWeeklyPremium, isMonthlyPremium }
 
@@ -14,13 +17,16 @@ class SharedPreferencesManager {
     _prefs = await SharedPreferences.getInstance();
   }
 
-  Future<void> markScreenAsShown(String screenName) async {
-    await _prefs?.setBool(screenName, false);
+  /// Đánh đấu là màn Permission đã được hiển thị
+  Future<void> markFirstPermissionAsShown() async {
+    await _prefs?.setBool(PreferenceKeys.isFirstPermissionShown.name, false);
   }
 
-  bool shouldShowScreen(String screenName, {bool defaultValue = true}) {
-    final bool? showScreen = _prefs?.getBool(screenName);
-    return showScreen ?? defaultValue;
+  /// Kiểm tra xem có hiển thị màn permission không
+  bool shouldShowPermissionScreen() {
+    final bool? showScreen =
+        _prefs?.getBool(PreferenceKeys.isFirstPermissionShown.name);
+    return showScreen ?? true;
   }
 
   Future<void> setPremiumStatus(PremiumType type, bool status) async {

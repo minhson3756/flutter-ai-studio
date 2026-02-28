@@ -1,4 +1,4 @@
-import 'value_cubit.dart';
+import '../../../shared/cubit/value_cubit.dart';
 
 class StoragePermissionCubit extends ValueCubit<bool> {
   StoragePermissionCubit() : super(false);
