@@ -1,6 +1,5 @@
 import 'dart:ui';
 
-import '../../gen/assets.gen.dart';
 
 enum Language {
   english(
@@ -35,23 +34,7 @@ enum Language {
 
   @override
   String toString() => languageName;
-}
 
-extension LanguageExtension on Language {
-  String get flagPath {
-    switch (this) {
-      case Language.english:
-        return Assets.images.languages.en.path;
-      case Language.spanish:
-        return Assets.images.languages.es.path;
-      case Language.french:
-        return Assets.images.languages.fr.path;
-      case Language.hindi:
-        return Assets.images.languages.hi.path;
-      case Language.portuguese:
-        return Assets.images.languages.pt.path;
-    }
-  }
 
   Locale get locale {
     switch (this) {
@@ -68,3 +51,4 @@ extension LanguageExtension on Language {
     }
   }
 }
+

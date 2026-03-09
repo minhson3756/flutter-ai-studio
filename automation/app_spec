@@ -1,0 +1,77 @@
+# YÊU CẦU CHUNG
+- Viết code UI theo đúng chuẩn 100% thiết kế Figma.
+- Sử dụng Palette, và các thư viện core đã được định nghĩa.
+- Dùng AutoRoute để điều hướng.
+- Tự suy luận luồng app
+
+# YÊU CẦU TỪNG MÀN HÌNH
+
+## 1. Màn hình Splash
+-  Đợi 2 giây rồi tự động chuyển sang Language. Không cho phép người dùng back lại.
+
+## 2. Màn hình Language
+- [Button]/Accept Khi mới vào nút [Button]/Accept sẽ làm mờ đi 50% và không cho phép bấm
+- Khi chọn ngôn ngữ mới được phép bấm sang màn Intro.
+- Không cho back lại
+
+## 3. Màn hình Intro
+- Màn intro sẽ có 1 PageView gồm 4 trang,
+- Khi bấm [Button]/Next thì sẽ chuyển sang trang tiếp theo,
+- Bấm [Button]/Start thì chuyển đến màn Home
+- Không cho back lại
+
+## 4. Màn hình Home
+- Tab ScanQR: BẮT BUỘC kiểm tra và xin quyền Camera trước khi quét. Quét thành công chuyển dữ liệu (final String scannedData) sang màn ScanCompleteScreen.
+- Màn hình này CHỈ chứa Bottom Navigation Bar với 3 tab: Create QR, Scan, History.
+- ĐỂ TỐI ƯU KIẾN TRÚC, TUYỆT ĐỐI KHÔNG CODE GIAO DIỆN CỦA 3 TAB NÀY TRONG FILE NÀY.
+- BẮT BUỘC phải import và sử dụng 3 Widget đã được định nghĩa sẵn nằm trong thư mục `widgets/`:
+    + Tab Create QR: gọi class `HomeCreateWidget()` (import từ thư mục widgets/home_create_widget.dart)
+    + Tab Scan: gọi class `HomeScanWidget()` (import từ thư mục widgets/home_scan_widget.dart)
+    + Tab History: gọi class `HomeHistoryWidget()` (import từ thư mục widgets/home_history_widget.dart)
+- Tab Create Qr chia ra 2 tab: QR code và Barcode
+    + Bấm item ở tab QR Code mở màn CreateQRScreen để tạo qr tương ứng với item đó
+    + Bấm item ở tab Barcode mở màn CreateBarcodeScreen để tạo barcode tương ứng với item đó
+- Tab ScanQR có thể quét mã QR, Barcode, hiển thị kết quả ở màn ScanCompleteScreen
+- Tab History (Lịch sử):
+    + Có 2 Sub-tab để lọc dữ liệu: "Scanned" (Mã đã quét) và "Generated" (Mã đã tạo). BẮT BUỘC dùng State để switch giữa 2 danh sách này.
+    + Dữ liệu phải được lấy từ Local Storage (sử dụng hive_ce). Nếu danh sách trống, hiển thị Empty State.
+    + Tại mỗi phần tử (Item) trong danh sách có nút 3 chấm. Khi bấm vào sẽ mở Dropdown Menu cho ĐÚNG phần tử đó (chứa các nút: Copy, Delete...).
+    + Logic Delete: Khi bấm Delete trong menu, phải xóa item đó khỏi Local Storage và cập nhật lại danh sách trên UI.
+    + Bấm vào ô search sang màn SearchScreen để tìm kiếm
+- Bấm [Button]/Setting để mở màn Setting
+
+## 5. Màn hình CreateQR
+- Nhận tham số `final String qrType` từ Router. Hiển thị các field nhập liệu (TextField) logic theo `qrType` (VD: Wifi cần Tên mạng & Mật khẩu, Text chỉ cần 1 field...).
+- Nhập xong bấm [Button]/Done để tạo mã, lưu vào Local Storage (HistoryItem) và chuyển sang màn QRResultScreen (truyền theo `final String generatedData`).
+- 🚨 BẮT BUỘC phải nhận tham số: `final String scannedData;` thông qua Constructor.
+
+
+## 6. Màn hình QRResult
+- Hiển thị kết mã đã được tạo từ các thông tin ở màn CreateQR
+- Bấm nút [Button]/Sampling sang màn Sampling
+
+## 7. Màn SamplingScreen
+- Tab Background chọn màu để đổi màu background của QR
+- Tab Choose Color chọn màu để đổi màu của QR
+- Tab Logo chọn logo để thêm vào giữa của QR
+
+## 8. Màn CreateBarcodeScreen
+- Nhập thông tin ở các field xong bấm nút [Button]/Done để sang màn BarcodeResultScreen và hiển thị kết quả
+
+## 9. Màn BarcodeResultScreen
+- Hiển thị kết mã đã được tạo từ các thông tin ở màn CreateBarcode
+- Bấm nút [Button]/Sampling sang màn Sampling, Màn Sampling của Barcode không có tab Logo
+
+## 10. Màn ScanCompleteScreen
+- Nhận tham số `final String scannedData` từ màn trước.
+- Hiển thị kết quả scan.
+- Tự động viết logic cho các Action Buttons: Copy (sao chép text), Share (chia sẻ text), và Open Link (dùng url_launcher nếu data là link web).
+
+## 11. Màn Setting
+- Nhấn [Button]/Language mở màn Language
+- Nhấn [Button]/Information để mở màn InformationScreen
+    + Chuyển đổi theme dark/light cho app ở Topic
+    + Chuyển đổi camera mặc định của thiết bị sử dụng để quét mã QR (Trước/Sau)
+- Nhấn [Button]/RateUs mở rate app trên store
+- Nhấn [Button]/ShareApp để chia sẻ link
+- Nhấn [Button]/PrivacyPolicy để mở link policy

@@ -34,19 +34,6 @@ class $AssetsIconsGen {
 class $AssetsImagesGen {
   const $AssetsImagesGen();
 
-  /// Directory path: assets/images/languages
-  $AssetsImagesLanguagesGen get languages => const $AssetsImagesLanguagesGen();
-
-  /// Directory path: assets/images/logo
-  $AssetsImagesLogoGen get logo => const $AssetsImagesLogoGen();
-
-  /// Directory path: assets/images/onboarding
-  $AssetsImagesOnboardingGen get onboarding =>
-      const $AssetsImagesOnboardingGen();
-
-  /// File path: assets/images/phone.png
-  AssetGenImage get phone => const AssetGenImage('assets/images/phone.png');
-
   /// File path: assets/images/pink_heart.png
   AssetGenImage get pinkHeart =>
       const AssetGenImage('assets/images/pink_heart.png');
@@ -56,7 +43,7 @@ class $AssetsImagesGen {
       const AssetGenImage('assets/images/placeholder_image.png');
 
   /// List of all assets
-  List<AssetGenImage> get values => [phone, pinkHeart, placeholderImage];
+  List<AssetGenImage> get values => [pinkHeart, placeholderImage];
 }
 
 class $AssetsLottieGen {
@@ -114,61 +101,6 @@ class $AssetsIconsRatesGen {
     emptyStar,
     fullStar,
   ];
-}
-
-class $AssetsImagesLanguagesGen {
-  const $AssetsImagesLanguagesGen();
-
-  /// File path: assets/images/languages/en.png
-  AssetGenImage get en => const AssetGenImage('assets/images/languages/en.png');
-
-  /// File path: assets/images/languages/es.png
-  AssetGenImage get es => const AssetGenImage('assets/images/languages/es.png');
-
-  /// File path: assets/images/languages/fr.png
-  AssetGenImage get fr => const AssetGenImage('assets/images/languages/fr.png');
-
-  /// File path: assets/images/languages/hi.png
-  AssetGenImage get hi => const AssetGenImage('assets/images/languages/hi.png');
-
-  /// File path: assets/images/languages/pt.png
-  AssetGenImage get pt => const AssetGenImage('assets/images/languages/pt.png');
-
-  /// List of all assets
-  List<AssetGenImage> get values => [en, es, fr, hi, pt];
-}
-
-class $AssetsImagesLogoGen {
-  const $AssetsImagesLogoGen();
-
-  /// File path: assets/images/logo/logo.png
-  AssetGenImage get logo => const AssetGenImage('assets/images/logo/logo.png');
-
-  /// File path: assets/images/logo/rounded_logo.png
-  AssetGenImage get roundedLogo =>
-      const AssetGenImage('assets/images/logo/rounded_logo.png');
-
-  /// List of all assets
-  List<AssetGenImage> get values => [logo, roundedLogo];
-}
-
-class $AssetsImagesOnboardingGen {
-  const $AssetsImagesOnboardingGen();
-
-  /// File path: assets/images/onboarding/onboarding1.png
-  AssetGenImage get onboarding1 =>
-      const AssetGenImage('assets/images/onboarding/onboarding1.png');
-
-  /// File path: assets/images/onboarding/onboarding2.png
-  AssetGenImage get onboarding2 =>
-      const AssetGenImage('assets/images/onboarding/onboarding2.png');
-
-  /// File path: assets/images/onboarding/onboarding3.png
-  AssetGenImage get onboarding3 =>
-      const AssetGenImage('assets/images/onboarding/onboarding3.png');
-
-  /// List of all assets
-  List<AssetGenImage> get values => [onboarding1, onboarding2, onboarding3];
 }
 
 class Assets {

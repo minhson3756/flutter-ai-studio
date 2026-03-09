@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$AppConfigModel {
 
- ScreenFlow get screenFlow; NotificationConfig get notificationConfig; bool get isForceUpdate; bool get logNetwork; bool get useInterSplash; String get urlPolicy;
+ ScreenFlow get screenFlow; NotificationConfig get notificationConfig; bool get isForceUpdate; bool get logNetwork; String get urlPolicy;
 /// Create a copy of AppConfigModel
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $AppConfigModelCopyWith<AppConfigModel> get copyWith => _$AppConfigModelCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is AppConfigModel&&(identical(other.screenFlow, screenFlow) || other.screenFlow == screenFlow)&&(identical(other.notificationConfig, notificationConfig) || other.notificationConfig == notificationConfig)&&(identical(other.isForceUpdate, isForceUpdate) || other.isForceUpdate == isForceUpdate)&&(identical(other.logNetwork, logNetwork) || other.logNetwork == logNetwork)&&(identical(other.useInterSplash, useInterSplash) || other.useInterSplash == useInterSplash)&&(identical(other.urlPolicy, urlPolicy) || other.urlPolicy == urlPolicy));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is AppConfigModel&&(identical(other.screenFlow, screenFlow) || other.screenFlow == screenFlow)&&(identical(other.notificationConfig, notificationConfig) || other.notificationConfig == notificationConfig)&&(identical(other.isForceUpdate, isForceUpdate) || other.isForceUpdate == isForceUpdate)&&(identical(other.logNetwork, logNetwork) || other.logNetwork == logNetwork)&&(identical(other.urlPolicy, urlPolicy) || other.urlPolicy == urlPolicy));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,screenFlow,notificationConfig,isForceUpdate,logNetwork,useInterSplash,urlPolicy);
+int get hashCode => Object.hash(runtimeType,screenFlow,notificationConfig,isForceUpdate,logNetwork,urlPolicy);
 
 @override
 String toString() {
-  return 'AppConfigModel(screenFlow: $screenFlow, notificationConfig: $notificationConfig, isForceUpdate: $isForceUpdate, logNetwork: $logNetwork, useInterSplash: $useInterSplash, urlPolicy: $urlPolicy)';
+  return 'AppConfigModel(screenFlow: $screenFlow, notificationConfig: $notificationConfig, isForceUpdate: $isForceUpdate, logNetwork: $logNetwork, urlPolicy: $urlPolicy)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $AppConfigModelCopyWith<$Res>  {
   factory $AppConfigModelCopyWith(AppConfigModel value, $Res Function(AppConfigModel) _then) = _$AppConfigModelCopyWithImpl;
 @useResult
 $Res call({
- ScreenFlow screenFlow, NotificationConfig notificationConfig, bool isForceUpdate, bool logNetwork, bool useInterSplash, String urlPolicy
+ ScreenFlow screenFlow, NotificationConfig notificationConfig, bool isForceUpdate, bool logNetwork, String urlPolicy
 });
 
 
@@ -65,13 +65,12 @@ class _$AppConfigModelCopyWithImpl<$Res>
 
 /// Create a copy of AppConfigModel
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? screenFlow = null,Object? notificationConfig = null,Object? isForceUpdate = null,Object? logNetwork = null,Object? useInterSplash = null,Object? urlPolicy = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? screenFlow = null,Object? notificationConfig = null,Object? isForceUpdate = null,Object? logNetwork = null,Object? urlPolicy = null,}) {
   return _then(_self.copyWith(
 screenFlow: null == screenFlow ? _self.screenFlow : screenFlow // ignore: cast_nullable_to_non_nullable
 as ScreenFlow,notificationConfig: null == notificationConfig ? _self.notificationConfig : notificationConfig // ignore: cast_nullable_to_non_nullable
 as NotificationConfig,isForceUpdate: null == isForceUpdate ? _self.isForceUpdate : isForceUpdate // ignore: cast_nullable_to_non_nullable
 as bool,logNetwork: null == logNetwork ? _self.logNetwork : logNetwork // ignore: cast_nullable_to_non_nullable
-as bool,useInterSplash: null == useInterSplash ? _self.useInterSplash : useInterSplash // ignore: cast_nullable_to_non_nullable
 as bool,urlPolicy: null == urlPolicy ? _self.urlPolicy : urlPolicy // ignore: cast_nullable_to_non_nullable
 as String,
   ));
@@ -176,10 +175,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( ScreenFlow screenFlow,  NotificationConfig notificationConfig,  bool isForceUpdate,  bool logNetwork,  bool useInterSplash,  String urlPolicy)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( ScreenFlow screenFlow,  NotificationConfig notificationConfig,  bool isForceUpdate,  bool logNetwork,  String urlPolicy)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _AppConfigModel() when $default != null:
-return $default(_that.screenFlow,_that.notificationConfig,_that.isForceUpdate,_that.logNetwork,_that.useInterSplash,_that.urlPolicy);case _:
+return $default(_that.screenFlow,_that.notificationConfig,_that.isForceUpdate,_that.logNetwork,_that.urlPolicy);case _:
   return orElse();
 
 }
@@ -197,10 +196,10 @@ return $default(_that.screenFlow,_that.notificationConfig,_that.isForceUpdate,_t
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( ScreenFlow screenFlow,  NotificationConfig notificationConfig,  bool isForceUpdate,  bool logNetwork,  bool useInterSplash,  String urlPolicy)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( ScreenFlow screenFlow,  NotificationConfig notificationConfig,  bool isForceUpdate,  bool logNetwork,  String urlPolicy)  $default,) {final _that = this;
 switch (_that) {
 case _AppConfigModel():
-return $default(_that.screenFlow,_that.notificationConfig,_that.isForceUpdate,_that.logNetwork,_that.useInterSplash,_that.urlPolicy);case _:
+return $default(_that.screenFlow,_that.notificationConfig,_that.isForceUpdate,_that.logNetwork,_that.urlPolicy);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -217,10 +216,10 @@ return $default(_that.screenFlow,_that.notificationConfig,_that.isForceUpdate,_t
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( ScreenFlow screenFlow,  NotificationConfig notificationConfig,  bool isForceUpdate,  bool logNetwork,  bool useInterSplash,  String urlPolicy)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( ScreenFlow screenFlow,  NotificationConfig notificationConfig,  bool isForceUpdate,  bool logNetwork,  String urlPolicy)?  $default,) {final _that = this;
 switch (_that) {
 case _AppConfigModel() when $default != null:
-return $default(_that.screenFlow,_that.notificationConfig,_that.isForceUpdate,_that.logNetwork,_that.useInterSplash,_that.urlPolicy);case _:
+return $default(_that.screenFlow,_that.notificationConfig,_that.isForceUpdate,_that.logNetwork,_that.urlPolicy);case _:
   return null;
 
 }
@@ -232,14 +231,13 @@ return $default(_that.screenFlow,_that.notificationConfig,_that.isForceUpdate,_t
 
 @JsonSerializable(fieldRename: FieldRename.snake, explicitToJson: true)
 class _AppConfigModel implements AppConfigModel {
-  const _AppConfigModel({this.screenFlow = const ScreenFlow(), this.notificationConfig = const NotificationConfig(), this.isForceUpdate = true, this.logNetwork = false, this.useInterSplash = true, this.urlPolicy = AppConstants.urlPolicy});
+  const _AppConfigModel({this.screenFlow = const ScreenFlow(), this.notificationConfig = const NotificationConfig(), this.isForceUpdate = true, this.logNetwork = false, this.urlPolicy = AppConstants.urlPolicy});
   factory _AppConfigModel.fromJson(Map<String, dynamic> json) => _$AppConfigModelFromJson(json);
 
 @override@JsonKey() final  ScreenFlow screenFlow;
 @override@JsonKey() final  NotificationConfig notificationConfig;
 @override@JsonKey() final  bool isForceUpdate;
 @override@JsonKey() final  bool logNetwork;
-@override@JsonKey() final  bool useInterSplash;
 @override@JsonKey() final  String urlPolicy;
 
 /// Create a copy of AppConfigModel
@@ -255,16 +253,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AppConfigModel&&(identical(other.screenFlow, screenFlow) || other.screenFlow == screenFlow)&&(identical(other.notificationConfig, notificationConfig) || other.notificationConfig == notificationConfig)&&(identical(other.isForceUpdate, isForceUpdate) || other.isForceUpdate == isForceUpdate)&&(identical(other.logNetwork, logNetwork) || other.logNetwork == logNetwork)&&(identical(other.useInterSplash, useInterSplash) || other.useInterSplash == useInterSplash)&&(identical(other.urlPolicy, urlPolicy) || other.urlPolicy == urlPolicy));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AppConfigModel&&(identical(other.screenFlow, screenFlow) || other.screenFlow == screenFlow)&&(identical(other.notificationConfig, notificationConfig) || other.notificationConfig == notificationConfig)&&(identical(other.isForceUpdate, isForceUpdate) || other.isForceUpdate == isForceUpdate)&&(identical(other.logNetwork, logNetwork) || other.logNetwork == logNetwork)&&(identical(other.urlPolicy, urlPolicy) || other.urlPolicy == urlPolicy));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,screenFlow,notificationConfig,isForceUpdate,logNetwork,useInterSplash,urlPolicy);
+int get hashCode => Object.hash(runtimeType,screenFlow,notificationConfig,isForceUpdate,logNetwork,urlPolicy);
 
 @override
 String toString() {
-  return 'AppConfigModel(screenFlow: $screenFlow, notificationConfig: $notificationConfig, isForceUpdate: $isForceUpdate, logNetwork: $logNetwork, useInterSplash: $useInterSplash, urlPolicy: $urlPolicy)';
+  return 'AppConfigModel(screenFlow: $screenFlow, notificationConfig: $notificationConfig, isForceUpdate: $isForceUpdate, logNetwork: $logNetwork, urlPolicy: $urlPolicy)';
 }
 
 
@@ -275,7 +273,7 @@ abstract mixin class _$AppConfigModelCopyWith<$Res> implements $AppConfigModelCo
   factory _$AppConfigModelCopyWith(_AppConfigModel value, $Res Function(_AppConfigModel) _then) = __$AppConfigModelCopyWithImpl;
 @override @useResult
 $Res call({
- ScreenFlow screenFlow, NotificationConfig notificationConfig, bool isForceUpdate, bool logNetwork, bool useInterSplash, String urlPolicy
+ ScreenFlow screenFlow, NotificationConfig notificationConfig, bool isForceUpdate, bool logNetwork, String urlPolicy
 });
 
 
@@ -292,13 +290,12 @@ class __$AppConfigModelCopyWithImpl<$Res>
 
 /// Create a copy of AppConfigModel
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? screenFlow = null,Object? notificationConfig = null,Object? isForceUpdate = null,Object? logNetwork = null,Object? useInterSplash = null,Object? urlPolicy = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? screenFlow = null,Object? notificationConfig = null,Object? isForceUpdate = null,Object? logNetwork = null,Object? urlPolicy = null,}) {
   return _then(_AppConfigModel(
 screenFlow: null == screenFlow ? _self.screenFlow : screenFlow // ignore: cast_nullable_to_non_nullable
 as ScreenFlow,notificationConfig: null == notificationConfig ? _self.notificationConfig : notificationConfig // ignore: cast_nullable_to_non_nullable
 as NotificationConfig,isForceUpdate: null == isForceUpdate ? _self.isForceUpdate : isForceUpdate // ignore: cast_nullable_to_non_nullable
 as bool,logNetwork: null == logNetwork ? _self.logNetwork : logNetwork // ignore: cast_nullable_to_non_nullable
-as bool,useInterSplash: null == useInterSplash ? _self.useInterSplash : useInterSplash // ignore: cast_nullable_to_non_nullable
 as bool,urlPolicy: null == urlPolicy ? _self.urlPolicy : urlPolicy // ignore: cast_nullable_to_non_nullable
 as String,
   ));
@@ -329,7 +326,7 @@ $NotificationConfigCopyWith<$Res> get notificationConfig {
 /// @nodoc
 mixin _$ScreenFlow {
 
-@IntroTypeConverter() IntroType get introType; bool get enableSecondLanguage; bool get enableSecondIntro;
+@IntroTypeConverter() IntroType get introType; bool get enableFirstPermission; bool get enableInAppPermission;
 /// Create a copy of ScreenFlow
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -342,16 +339,16 @@ $ScreenFlowCopyWith<ScreenFlow> get copyWith => _$ScreenFlowCopyWithImpl<ScreenF
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ScreenFlow&&(identical(other.introType, introType) || other.introType == introType)&&(identical(other.enableSecondLanguage, enableSecondLanguage) || other.enableSecondLanguage == enableSecondLanguage)&&(identical(other.enableSecondIntro, enableSecondIntro) || other.enableSecondIntro == enableSecondIntro));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ScreenFlow&&(identical(other.introType, introType) || other.introType == introType)&&(identical(other.enableFirstPermission, enableFirstPermission) || other.enableFirstPermission == enableFirstPermission)&&(identical(other.enableInAppPermission, enableInAppPermission) || other.enableInAppPermission == enableInAppPermission));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,introType,enableSecondLanguage,enableSecondIntro);
+int get hashCode => Object.hash(runtimeType,introType,enableFirstPermission,enableInAppPermission);
 
 @override
 String toString() {
-  return 'ScreenFlow(introType: $introType, enableSecondLanguage: $enableSecondLanguage, enableSecondIntro: $enableSecondIntro)';
+  return 'ScreenFlow(introType: $introType, enableFirstPermission: $enableFirstPermission, enableInAppPermission: $enableInAppPermission)';
 }
 
 
@@ -362,7 +359,7 @@ abstract mixin class $ScreenFlowCopyWith<$Res>  {
   factory $ScreenFlowCopyWith(ScreenFlow value, $Res Function(ScreenFlow) _then) = _$ScreenFlowCopyWithImpl;
 @useResult
 $Res call({
-@IntroTypeConverter() IntroType introType, bool enableSecondLanguage, bool enableSecondIntro
+@IntroTypeConverter() IntroType introType, bool enableFirstPermission, bool enableInAppPermission
 });
 
 
@@ -379,11 +376,11 @@ class _$ScreenFlowCopyWithImpl<$Res>
 
 /// Create a copy of ScreenFlow
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? introType = null,Object? enableSecondLanguage = null,Object? enableSecondIntro = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? introType = null,Object? enableFirstPermission = null,Object? enableInAppPermission = null,}) {
   return _then(_self.copyWith(
 introType: null == introType ? _self.introType : introType // ignore: cast_nullable_to_non_nullable
-as IntroType,enableSecondLanguage: null == enableSecondLanguage ? _self.enableSecondLanguage : enableSecondLanguage // ignore: cast_nullable_to_non_nullable
-as bool,enableSecondIntro: null == enableSecondIntro ? _self.enableSecondIntro : enableSecondIntro // ignore: cast_nullable_to_non_nullable
+as IntroType,enableFirstPermission: null == enableFirstPermission ? _self.enableFirstPermission : enableFirstPermission // ignore: cast_nullable_to_non_nullable
+as bool,enableInAppPermission: null == enableInAppPermission ? _self.enableInAppPermission : enableInAppPermission // ignore: cast_nullable_to_non_nullable
 as bool,
   ));
 }
@@ -469,10 +466,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@IntroTypeConverter()  IntroType introType,  bool enableSecondLanguage,  bool enableSecondIntro)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@IntroTypeConverter()  IntroType introType,  bool enableFirstPermission,  bool enableInAppPermission)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ScreenFlow() when $default != null:
-return $default(_that.introType,_that.enableSecondLanguage,_that.enableSecondIntro);case _:
+return $default(_that.introType,_that.enableFirstPermission,_that.enableInAppPermission);case _:
   return orElse();
 
 }
@@ -490,10 +487,10 @@ return $default(_that.introType,_that.enableSecondLanguage,_that.enableSecondInt
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@IntroTypeConverter()  IntroType introType,  bool enableSecondLanguage,  bool enableSecondIntro)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@IntroTypeConverter()  IntroType introType,  bool enableFirstPermission,  bool enableInAppPermission)  $default,) {final _that = this;
 switch (_that) {
 case _ScreenFlow():
-return $default(_that.introType,_that.enableSecondLanguage,_that.enableSecondIntro);case _:
+return $default(_that.introType,_that.enableFirstPermission,_that.enableInAppPermission);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -510,10 +507,10 @@ return $default(_that.introType,_that.enableSecondLanguage,_that.enableSecondInt
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@IntroTypeConverter()  IntroType introType,  bool enableSecondLanguage,  bool enableSecondIntro)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@IntroTypeConverter()  IntroType introType,  bool enableFirstPermission,  bool enableInAppPermission)?  $default,) {final _that = this;
 switch (_that) {
 case _ScreenFlow() when $default != null:
-return $default(_that.introType,_that.enableSecondLanguage,_that.enableSecondIntro);case _:
+return $default(_that.introType,_that.enableFirstPermission,_that.enableInAppPermission);case _:
   return null;
 
 }
@@ -525,12 +522,12 @@ return $default(_that.introType,_that.enableSecondLanguage,_that.enableSecondInt
 
 @JsonSerializable(fieldRename: FieldRename.snake)
 class _ScreenFlow implements ScreenFlow {
-  const _ScreenFlow({@IntroTypeConverter() this.introType = IntroType.nativeFullSwipe, this.enableSecondLanguage = true, this.enableSecondIntro = true});
+  const _ScreenFlow({@IntroTypeConverter() this.introType = IntroType.nativeFullSwipe, this.enableFirstPermission = true, this.enableInAppPermission = true});
   factory _ScreenFlow.fromJson(Map<String, dynamic> json) => _$ScreenFlowFromJson(json);
 
 @override@JsonKey()@IntroTypeConverter() final  IntroType introType;
-@override@JsonKey() final  bool enableSecondLanguage;
-@override@JsonKey() final  bool enableSecondIntro;
+@override@JsonKey() final  bool enableFirstPermission;
+@override@JsonKey() final  bool enableInAppPermission;
 
 /// Create a copy of ScreenFlow
 /// with the given fields replaced by the non-null parameter values.
@@ -545,16 +542,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ScreenFlow&&(identical(other.introType, introType) || other.introType == introType)&&(identical(other.enableSecondLanguage, enableSecondLanguage) || other.enableSecondLanguage == enableSecondLanguage)&&(identical(other.enableSecondIntro, enableSecondIntro) || other.enableSecondIntro == enableSecondIntro));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ScreenFlow&&(identical(other.introType, introType) || other.introType == introType)&&(identical(other.enableFirstPermission, enableFirstPermission) || other.enableFirstPermission == enableFirstPermission)&&(identical(other.enableInAppPermission, enableInAppPermission) || other.enableInAppPermission == enableInAppPermission));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,introType,enableSecondLanguage,enableSecondIntro);
+int get hashCode => Object.hash(runtimeType,introType,enableFirstPermission,enableInAppPermission);
 
 @override
 String toString() {
-  return 'ScreenFlow(introType: $introType, enableSecondLanguage: $enableSecondLanguage, enableSecondIntro: $enableSecondIntro)';
+  return 'ScreenFlow(introType: $introType, enableFirstPermission: $enableFirstPermission, enableInAppPermission: $enableInAppPermission)';
 }
 
 
@@ -565,7 +562,7 @@ abstract mixin class _$ScreenFlowCopyWith<$Res> implements $ScreenFlowCopyWith<$
   factory _$ScreenFlowCopyWith(_ScreenFlow value, $Res Function(_ScreenFlow) _then) = __$ScreenFlowCopyWithImpl;
 @override @useResult
 $Res call({
-@IntroTypeConverter() IntroType introType, bool enableSecondLanguage, bool enableSecondIntro
+@IntroTypeConverter() IntroType introType, bool enableFirstPermission, bool enableInAppPermission
 });
 
 
@@ -582,11 +579,11 @@ class __$ScreenFlowCopyWithImpl<$Res>
 
 /// Create a copy of ScreenFlow
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? introType = null,Object? enableSecondLanguage = null,Object? enableSecondIntro = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? introType = null,Object? enableFirstPermission = null,Object? enableInAppPermission = null,}) {
   return _then(_ScreenFlow(
 introType: null == introType ? _self.introType : introType // ignore: cast_nullable_to_non_nullable
-as IntroType,enableSecondLanguage: null == enableSecondLanguage ? _self.enableSecondLanguage : enableSecondLanguage // ignore: cast_nullable_to_non_nullable
-as bool,enableSecondIntro: null == enableSecondIntro ? _self.enableSecondIntro : enableSecondIntro // ignore: cast_nullable_to_non_nullable
+as IntroType,enableFirstPermission: null == enableFirstPermission ? _self.enableFirstPermission : enableFirstPermission // ignore: cast_nullable_to_non_nullable
+as bool,enableInAppPermission: null == enableInAppPermission ? _self.enableInAppPermission : enableInAppPermission // ignore: cast_nullable_to_non_nullable
 as bool,
   ));
 }

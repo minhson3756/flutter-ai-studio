@@ -17,22 +17,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.3.64"
-  adjust_sdk:
-    dependency: transitive
-    description:
-      name: adjust_sdk
-      sha256: "557dfee4da57ce38f7ea5f362ca36bc8dda7943bb33e216c1fd430b080428da0"
-      url: "https://pub.dev"
-    source: hosted
-    version: "5.4.5"
-  advertising_id:
-    dependency: transitive
-    description:
-      name: advertising_id
-      sha256: ab06ee85203ab500be85b7f45de2a75a629d8d9c453dba779276fbc4e97ad8d3
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.7.1"
   analyzer:
     dependency: transitive
     description:
@@ -462,22 +446,13 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  flutter_adjust:
-    dependency: "direct main"
-    description:
-      path: "."
-      ref: "version/1.1.0"
-      resolved-ref: e02b773bdbe1a89e64055119512ebe73cc6be15e
-      url: "https://tinhvv_vtn:ATBBvpGJEjJVKKzFyhSLTVxAwPueD7D28D74@bitbucket.org/innofyapp/flutter-adjust.git"
-    source: git
-    version: "1.0.1+3"
   flutter_ads:
     dependency: "direct main"
     description:
       path: "."
       ref: "version/1.4.1"
       resolved-ref: "1e246d16fb8c5b8230112eddeb31f76a39e85a9d"
-      url: "https://tinhvv_vtn:ATBBvpGJEjJVKKzFyhSLTVxAwPueD7D28D74@bitbucket.org/innofyapp/flutter_ads.git"
+      url: "https://bitbucket.org/innofyapp/flutter_ads.git"
     source: git
     version: "1.4.1"
   flutter_bloc:
@@ -525,8 +500,8 @@ packages:
     description:
       path: "."
       ref: "version/1.2.2"
-      resolved-ref: "6676b485d6ff92cc6302c2ec18c6757a11545baf"
-      url: "https://tinhvv_vtn:ATBBvpGJEjJVKKzFyhSLTVxAwPueD7D28D74@bitbucket.org/innofyapp/flutter_iap.git"
+      resolved-ref: "9a7e27ce14dc120f063e2140fa1595e821f8fec1"
+      url: "https://bitbucket.org/innofyapp/flutter_iap.git"
     source: git
     version: "1.2.1+3"
   flutter_lints:
@@ -632,6 +607,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.5.0"
+  google_fonts:
+    dependency: "direct main"
+    description:
+      name: google_fonts
+      sha256: db9df7a5898d894eeda4c78143f35c30a243558be439518972366880b80bf88e
+      url: "https://pub.dev"
+    source: hosted
+    version: "8.0.2"
   google_mobile_ads:
     dependency: transitive
     description:

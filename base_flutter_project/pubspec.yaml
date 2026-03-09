@@ -50,6 +50,7 @@ dependencies:
   # ggg
   get_it: ^9.1.1
   gma_mediation_meta: ^1.4.1
+  google_fonts: ^8.0.2
 
   # HHH
   hydrated_bloc: ^10.1.1
@@ -113,9 +114,6 @@ flutter:
     - assets/icons/
     - assets/icons/rates/
     - assets/images/
-    - assets/images/logo/
-    - assets/images/onboarding/
-    - assets/images/languages/
     - assets/lottie/
 
 #  fonts:

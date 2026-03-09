@@ -30,20 +30,18 @@ Map<String, dynamic> _$AdUnitConfigToJson(_AdUnitConfig instance) =>
 _AdUnitsConfig _$AdUnitsConfigFromJson(
   Map<String, dynamic> json,
 ) => _AdUnitsConfig(
-  openOnResumeSplash: json['openOnResumeSplash'] == null
+  openOnResume: json['openOnResume'] == null
       ? const AdUnitConfig()
-      : AdUnitConfig.fromJson(
-          json['openOnResumeSplash'] as Map<String, dynamic>,
-        ),
+      : AdUnitConfig.fromJson(json['openOnResume'] as Map<String, dynamic>),
   interSplash: json['interSplash'] == null
       ? const AdUnitConfig()
       : AdUnitConfig.fromJson(json['interSplash'] as Map<String, dynamic>),
-  openResume: json['openResume'] == null
+  bannerAll: json['bannerAll'] == null
       ? const AdUnitConfig()
-      : AdUnitConfig.fromJson(json['openResume'] as Map<String, dynamic>),
-  interAll: json['interAll'] == null
+      : AdUnitConfig.fromJson(json['bannerAll'] as Map<String, dynamic>),
+  nativeAll: json['nativeAll'] == null
       ? const AdUnitConfig()
-      : AdUnitConfig.fromJson(json['interAll'] as Map<String, dynamic>),
+      : AdUnitConfig.fromJson(json['nativeAll'] as Map<String, dynamic>),
   nativeLanguage: json['nativeLanguage'] == null
       ? const AdUnitConfig()
       : AdUnitConfig.fromJson(json['nativeLanguage'] as Map<String, dynamic>),
@@ -70,37 +68,45 @@ _AdUnitsConfig _$AdUnitsConfigFromJson(
   nativeIntro4: json['nativeIntro4'] == null
       ? const AdUnitConfig()
       : AdUnitConfig.fromJson(json['nativeIntro4'] as Map<String, dynamic>),
-  nativeHome: json['nativeHome'] == null
-      ? const AdUnitConfig()
-      : AdUnitConfig.fromJson(json['nativeHome'] as Map<String, dynamic>),
-  interBack: json['interBack'] == null
-      ? const AdUnitConfig()
-      : AdUnitConfig.fromJson(json['interBack'] as Map<String, dynamic>),
-  interClosePremium: json['interClosePremium'] == null
-      ? const AdUnitConfig()
-      : AdUnitConfig.fromJson(
-          json['interClosePremium'] as Map<String, dynamic>,
-        ),
-  interHome: json['interHome'] == null
-      ? const AdUnitConfig()
-      : AdUnitConfig.fromJson(json['interHome'] as Map<String, dynamic>),
-  interTab: json['interTab'] == null
-      ? const AdUnitConfig()
-      : AdUnitConfig.fromJson(json['interTab'] as Map<String, dynamic>),
-  nativeAll: json['nativeAll'] == null
-      ? const AdUnitConfig()
-      : AdUnitConfig.fromJson(json['nativeAll'] as Map<String, dynamic>),
   interIntro: json['interIntro'] == null
       ? const AdUnitConfig()
       : AdUnitConfig.fromJson(json['interIntro'] as Map<String, dynamic>),
+  nativePermission: json['nativePermission'] == null
+      ? const AdUnitConfig()
+      : AdUnitConfig.fromJson(json['nativePermission'] as Map<String, dynamic>),
+  nativePermissionStorage: json['nativePermissionStorage'] == null
+      ? const AdUnitConfig()
+      : AdUnitConfig.fromJson(
+          json['nativePermissionStorage'] as Map<String, dynamic>,
+        ),
+  nativeFull: json['nativeFull'] == null
+      ? const AdUnitConfig()
+      : AdUnitConfig.fromJson(json['nativeFull'] as Map<String, dynamic>),
+  nativeFullSplash: json['nativeFullSplash'] == null
+      ? const AdUnitConfig()
+      : AdUnitConfig.fromJson(json['nativeFullSplash'] as Map<String, dynamic>),
+  interSplashUninstall: json['interSplashUninstall'] == null
+      ? const AdUnitConfig()
+      : AdUnitConfig.fromJson(
+          json['interSplashUninstall'] as Map<String, dynamic>,
+        ),
+  interUninstall: json['interUninstall'] == null
+      ? const AdUnitConfig()
+      : AdUnitConfig.fromJson(json['interUninstall'] as Map<String, dynamic>),
+  nativeUninstall: json['nativeUninstall'] == null
+      ? const AdUnitConfig()
+      : AdUnitConfig.fromJson(json['nativeUninstall'] as Map<String, dynamic>),
+  nativeExit: json['nativeExit'] == null
+      ? const AdUnitConfig()
+      : AdUnitConfig.fromJson(json['nativeExit'] as Map<String, dynamic>),
 );
 
 Map<String, dynamic> _$AdUnitsConfigToJson(_AdUnitsConfig instance) =>
     <String, dynamic>{
-      'openOnResumeSplash': instance.openOnResumeSplash.toJson(),
+      'openOnResume': instance.openOnResume.toJson(),
       'interSplash': instance.interSplash.toJson(),
-      'openResume': instance.openResume.toJson(),
-      'interAll': instance.interAll.toJson(),
+      'bannerAll': instance.bannerAll.toJson(),
+      'nativeAll': instance.nativeAll.toJson(),
       'nativeLanguage': instance.nativeLanguage.toJson(),
       'nativeLanguageSelect': instance.nativeLanguageSelect.toJson(),
       'nativeIntro1': instance.nativeIntro1.toJson(),
@@ -109,13 +115,15 @@ Map<String, dynamic> _$AdUnitsConfigToJson(_AdUnitsConfig instance) =>
       'nativeIntro3': instance.nativeIntro3.toJson(),
       'nativeFullIntro3': instance.nativeFullIntro3.toJson(),
       'nativeIntro4': instance.nativeIntro4.toJson(),
-      'nativeHome': instance.nativeHome.toJson(),
-      'interBack': instance.interBack.toJson(),
-      'interClosePremium': instance.interClosePremium.toJson(),
-      'interHome': instance.interHome.toJson(),
-      'interTab': instance.interTab.toJson(),
-      'nativeAll': instance.nativeAll.toJson(),
       'interIntro': instance.interIntro.toJson(),
+      'nativePermission': instance.nativePermission.toJson(),
+      'nativePermissionStorage': instance.nativePermissionStorage.toJson(),
+      'nativeFull': instance.nativeFull.toJson(),
+      'nativeFullSplash': instance.nativeFullSplash.toJson(),
+      'interSplashUninstall': instance.interSplashUninstall.toJson(),
+      'interUninstall': instance.interUninstall.toJson(),
+      'nativeUninstall': instance.nativeUninstall.toJson(),
+      'nativeExit': instance.nativeExit.toJson(),
     };
 
 _AdsRemoteConfig _$AdsRemoteConfigFromJson(

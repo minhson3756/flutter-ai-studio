@@ -5,11 +5,14 @@ import '../enum/language.dart';
 import 'value_cubit.dart';
 
 @lazySingleton
-class LanguageCubit extends ValueCubit<Language> with HydratedMixin {
+class LanguageCubit extends Cubit<Language> with HydratedMixin {
   LanguageCubit() : super(Language.english) {
     hydrate();
   }
 
+  void changeLanguage(Language language) {
+    emit(language);
+  }
   @override
   Language fromJson(Map<String, dynamic> json) {
     for (final element in Language.values) {

@@ -12,8 +12,6 @@ import '../shared/cubit/ad_visibility_cubit.dart';
 import '../shared/cubit/language_cubit.dart';
 import '../shared/cubit/rate_status_cubit.dart';
 import '../shared/enum/language.dart';
-import '../shared/helpers/permission_util.dart';
-import '../shared/helpers/shortcut_utils.dart';
 
 final RouteObserver<ModalRoute> routeObserver = RouteObserver<ModalRoute>();
 
@@ -38,16 +36,6 @@ class _MyAppState extends State<MyApp> {
         BlocProvider(
           create: (context) => RateStatusCubit(),
         ),
-        BlocProvider(
-          create: (context) => PermissionUtil.instance.photoPermissionCubit,
-        ),
-        BlocProvider(
-          create: (context) => PermissionUtil.instance.cameraPermissionCubit,
-        ),
-        BlocProvider(
-          create: (context) =>
-              PermissionUtil.instance.notificationPermissionCubit,
-        ),
       ],
       child: ScreenUtilInit(
         // TODO(all): Change designSize to your design size
@@ -71,15 +59,7 @@ class BodyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<LanguageCubit, Language?>(
-      listener: (context, state) {
-        if (state != null) {
-          Future.delayed(
-            const Duration(milliseconds: 500),
-            ShortcutUtils.instance.setShortcutItems,
-          );
-        }
-      },
+    return BlocBuilder<LanguageCubit, Language?>(
       builder: (context, state) {
         return MaterialApp.router(
           localizationsDelegates: AppLocalizations.localizationsDelegates,

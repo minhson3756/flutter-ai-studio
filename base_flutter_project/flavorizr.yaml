@@ -5,7 +5,7 @@ flavors:
 
     android:
       applicationId: "com.base.flutter.bloc"
-      icon: "assets/images/logo/rounded_logo.png"
+      icon: "assets/images/logo/logo.png"
       firebase:
         config: "android/app/src/dev/google-services.json"
     ios:
@@ -19,7 +19,7 @@ flavors:
       name: "Example"
     android:
       applicationId: "com.vtn.example.prod"
-      icon: "assets/images/logo/rounded_logo.png"
+      icon: "assets/images/logo/logo.png"
       firebase:
         config: "android/app/src/prod/google-services.json"
     ios:

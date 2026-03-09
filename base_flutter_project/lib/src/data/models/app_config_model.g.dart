@@ -18,7 +18,6 @@ _AppConfigModel _$AppConfigModelFromJson(Map<String, dynamic> json) =>
             ),
       isForceUpdate: json['is_force_update'] as bool? ?? true,
       logNetwork: json['log_network'] as bool? ?? false,
-      useInterSplash: json['use_inter_splash'] as bool? ?? true,
       urlPolicy: json['url_policy'] as String? ?? AppConstants.urlPolicy,
     );
 
@@ -28,7 +27,6 @@ Map<String, dynamic> _$AppConfigModelToJson(_AppConfigModel instance) =>
       'notification_config': instance.notificationConfig.toJson(),
       'is_force_update': instance.isForceUpdate,
       'log_network': instance.logNetwork,
-      'use_inter_splash': instance.useInterSplash,
       'url_policy': instance.urlPolicy,
     };
 
@@ -38,15 +36,15 @@ _ScreenFlow _$ScreenFlowFromJson(Map<String, dynamic> json) => _ScreenFlow(
       : const IntroTypeConverter().fromJson(
           (json['intro_type'] as num).toInt(),
         ),
-  enableSecondLanguage: json['enable_second_language'] as bool? ?? true,
-  enableSecondIntro: json['enable_second_intro'] as bool? ?? true,
+  enableFirstPermission: json['enable_first_permission'] as bool? ?? true,
+  enableInAppPermission: json['enable_in_app_permission'] as bool? ?? true,
 );
 
 Map<String, dynamic> _$ScreenFlowToJson(_ScreenFlow instance) =>
     <String, dynamic>{
       'intro_type': const IntroTypeConverter().toJson(instance.introType),
-      'enable_second_language': instance.enableSecondLanguage,
-      'enable_second_intro': instance.enableSecondIntro,
+      'enable_first_permission': instance.enableFirstPermission,
+      'enable_in_app_permission': instance.enableInAppPermission,
     };
 
 _NotificationConfig _$NotificationConfigFromJson(

@@ -298,7 +298,7 @@ as Map<String, bool>?,
 /// @nodoc
 mixin _$AdUnitsConfig {
 
- AdUnitConfig get openOnResumeSplash; AdUnitConfig get interSplash; AdUnitConfig get openResume; AdUnitConfig get interAll; AdUnitConfig get nativeLanguage; AdUnitConfig get nativeLanguageSelect; AdUnitConfig get nativeIntro1; AdUnitConfig get nativeIntro2; AdUnitConfig get nativeFullIntro2; AdUnitConfig get nativeIntro3; AdUnitConfig get nativeFullIntro3; AdUnitConfig get nativeIntro4; AdUnitConfig get nativeHome; AdUnitConfig get interBack; AdUnitConfig get interClosePremium; AdUnitConfig get interHome; AdUnitConfig get interTab; AdUnitConfig get nativeAll; AdUnitConfig get interIntro;
+ AdUnitConfig get openOnResume; AdUnitConfig get interSplash; AdUnitConfig get bannerAll; AdUnitConfig get nativeAll; AdUnitConfig get nativeLanguage; AdUnitConfig get nativeLanguageSelect; AdUnitConfig get nativeIntro1; AdUnitConfig get nativeIntro2; AdUnitConfig get nativeFullIntro2; AdUnitConfig get nativeIntro3; AdUnitConfig get nativeFullIntro3; AdUnitConfig get nativeIntro4; AdUnitConfig get interIntro; AdUnitConfig get nativePermission; AdUnitConfig get nativePermissionStorage; AdUnitConfig get nativeFull; AdUnitConfig get nativeFullSplash; AdUnitConfig get interSplashUninstall; AdUnitConfig get interUninstall; AdUnitConfig get nativeUninstall; AdUnitConfig get nativeExit;
 /// Create a copy of AdUnitsConfig
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -311,16 +311,16 @@ $AdUnitsConfigCopyWith<AdUnitsConfig> get copyWith => _$AdUnitsConfigCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is AdUnitsConfig&&(identical(other.openOnResumeSplash, openOnResumeSplash) || other.openOnResumeSplash == openOnResumeSplash)&&(identical(other.interSplash, interSplash) || other.interSplash == interSplash)&&(identical(other.openResume, openResume) || other.openResume == openResume)&&(identical(other.interAll, interAll) || other.interAll == interAll)&&(identical(other.nativeLanguage, nativeLanguage) || other.nativeLanguage == nativeLanguage)&&(identical(other.nativeLanguageSelect, nativeLanguageSelect) || other.nativeLanguageSelect == nativeLanguageSelect)&&(identical(other.nativeIntro1, nativeIntro1) || other.nativeIntro1 == nativeIntro1)&&(identical(other.nativeIntro2, nativeIntro2) || other.nativeIntro2 == nativeIntro2)&&(identical(other.nativeFullIntro2, nativeFullIntro2) || other.nativeFullIntro2 == nativeFullIntro2)&&(identical(other.nativeIntro3, nativeIntro3) || other.nativeIntro3 == nativeIntro3)&&(identical(other.nativeFullIntro3, nativeFullIntro3) || other.nativeFullIntro3 == nativeFullIntro3)&&(identical(other.nativeIntro4, nativeIntro4) || other.nativeIntro4 == nativeIntro4)&&(identical(other.nativeHome, nativeHome) || other.nativeHome == nativeHome)&&(identical(other.interBack, interBack) || other.interBack == interBack)&&(identical(other.interClosePremium, interClosePremium) || other.interClosePremium == interClosePremium)&&(identical(other.interHome, interHome) || other.interHome == interHome)&&(identical(other.interTab, interTab) || other.interTab == interTab)&&(identical(other.nativeAll, nativeAll) || other.nativeAll == nativeAll)&&(identical(other.interIntro, interIntro) || other.interIntro == interIntro));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is AdUnitsConfig&&(identical(other.openOnResume, openOnResume) || other.openOnResume == openOnResume)&&(identical(other.interSplash, interSplash) || other.interSplash == interSplash)&&(identical(other.bannerAll, bannerAll) || other.bannerAll == bannerAll)&&(identical(other.nativeAll, nativeAll) || other.nativeAll == nativeAll)&&(identical(other.nativeLanguage, nativeLanguage) || other.nativeLanguage == nativeLanguage)&&(identical(other.nativeLanguageSelect, nativeLanguageSelect) || other.nativeLanguageSelect == nativeLanguageSelect)&&(identical(other.nativeIntro1, nativeIntro1) || other.nativeIntro1 == nativeIntro1)&&(identical(other.nativeIntro2, nativeIntro2) || other.nativeIntro2 == nativeIntro2)&&(identical(other.nativeFullIntro2, nativeFullIntro2) || other.nativeFullIntro2 == nativeFullIntro2)&&(identical(other.nativeIntro3, nativeIntro3) || other.nativeIntro3 == nativeIntro3)&&(identical(other.nativeFullIntro3, nativeFullIntro3) || other.nativeFullIntro3 == nativeFullIntro3)&&(identical(other.nativeIntro4, nativeIntro4) || other.nativeIntro4 == nativeIntro4)&&(identical(other.interIntro, interIntro) || other.interIntro == interIntro)&&(identical(other.nativePermission, nativePermission) || other.nativePermission == nativePermission)&&(identical(other.nativePermissionStorage, nativePermissionStorage) || other.nativePermissionStorage == nativePermissionStorage)&&(identical(other.nativeFull, nativeFull) || other.nativeFull == nativeFull)&&(identical(other.nativeFullSplash, nativeFullSplash) || other.nativeFullSplash == nativeFullSplash)&&(identical(other.interSplashUninstall, interSplashUninstall) || other.interSplashUninstall == interSplashUninstall)&&(identical(other.interUninstall, interUninstall) || other.interUninstall == interUninstall)&&(identical(other.nativeUninstall, nativeUninstall) || other.nativeUninstall == nativeUninstall)&&(identical(other.nativeExit, nativeExit) || other.nativeExit == nativeExit));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hashAll([runtimeType,openOnResumeSplash,interSplash,openResume,interAll,nativeLanguage,nativeLanguageSelect,nativeIntro1,nativeIntro2,nativeFullIntro2,nativeIntro3,nativeFullIntro3,nativeIntro4,nativeHome,interBack,interClosePremium,interHome,interTab,nativeAll,interIntro]);
+int get hashCode => Object.hashAll([runtimeType,openOnResume,interSplash,bannerAll,nativeAll,nativeLanguage,nativeLanguageSelect,nativeIntro1,nativeIntro2,nativeFullIntro2,nativeIntro3,nativeFullIntro3,nativeIntro4,interIntro,nativePermission,nativePermissionStorage,nativeFull,nativeFullSplash,interSplashUninstall,interUninstall,nativeUninstall,nativeExit]);
 
 @override
 String toString() {
-  return 'AdUnitsConfig(openOnResumeSplash: $openOnResumeSplash, interSplash: $interSplash, openResume: $openResume, interAll: $interAll, nativeLanguage: $nativeLanguage, nativeLanguageSelect: $nativeLanguageSelect, nativeIntro1: $nativeIntro1, nativeIntro2: $nativeIntro2, nativeFullIntro2: $nativeFullIntro2, nativeIntro3: $nativeIntro3, nativeFullIntro3: $nativeFullIntro3, nativeIntro4: $nativeIntro4, nativeHome: $nativeHome, interBack: $interBack, interClosePremium: $interClosePremium, interHome: $interHome, interTab: $interTab, nativeAll: $nativeAll, interIntro: $interIntro)';
+  return 'AdUnitsConfig(openOnResume: $openOnResume, interSplash: $interSplash, bannerAll: $bannerAll, nativeAll: $nativeAll, nativeLanguage: $nativeLanguage, nativeLanguageSelect: $nativeLanguageSelect, nativeIntro1: $nativeIntro1, nativeIntro2: $nativeIntro2, nativeFullIntro2: $nativeFullIntro2, nativeIntro3: $nativeIntro3, nativeFullIntro3: $nativeFullIntro3, nativeIntro4: $nativeIntro4, interIntro: $interIntro, nativePermission: $nativePermission, nativePermissionStorage: $nativePermissionStorage, nativeFull: $nativeFull, nativeFullSplash: $nativeFullSplash, interSplashUninstall: $interSplashUninstall, interUninstall: $interUninstall, nativeUninstall: $nativeUninstall, nativeExit: $nativeExit)';
 }
 
 
@@ -331,11 +331,11 @@ abstract mixin class $AdUnitsConfigCopyWith<$Res>  {
   factory $AdUnitsConfigCopyWith(AdUnitsConfig value, $Res Function(AdUnitsConfig) _then) = _$AdUnitsConfigCopyWithImpl;
 @useResult
 $Res call({
- AdUnitConfig openOnResumeSplash, AdUnitConfig interSplash, AdUnitConfig openResume, AdUnitConfig interAll, AdUnitConfig nativeLanguage, AdUnitConfig nativeLanguageSelect, AdUnitConfig nativeIntro1, AdUnitConfig nativeIntro2, AdUnitConfig nativeFullIntro2, AdUnitConfig nativeIntro3, AdUnitConfig nativeFullIntro3, AdUnitConfig nativeIntro4, AdUnitConfig nativeHome, AdUnitConfig interBack, AdUnitConfig interClosePremium, AdUnitConfig interHome, AdUnitConfig interTab, AdUnitConfig nativeAll, AdUnitConfig interIntro
+ AdUnitConfig openOnResume, AdUnitConfig interSplash, AdUnitConfig bannerAll, AdUnitConfig nativeAll, AdUnitConfig nativeLanguage, AdUnitConfig nativeLanguageSelect, AdUnitConfig nativeIntro1, AdUnitConfig nativeIntro2, AdUnitConfig nativeFullIntro2, AdUnitConfig nativeIntro3, AdUnitConfig nativeFullIntro3, AdUnitConfig nativeIntro4, AdUnitConfig interIntro, AdUnitConfig nativePermission, AdUnitConfig nativePermissionStorage, AdUnitConfig nativeFull, AdUnitConfig nativeFullSplash, AdUnitConfig interSplashUninstall, AdUnitConfig interUninstall, AdUnitConfig nativeUninstall, AdUnitConfig nativeExit
 });
 
 
-$AdUnitConfigCopyWith<$Res> get openOnResumeSplash;$AdUnitConfigCopyWith<$Res> get interSplash;$AdUnitConfigCopyWith<$Res> get openResume;$AdUnitConfigCopyWith<$Res> get interAll;$AdUnitConfigCopyWith<$Res> get nativeLanguage;$AdUnitConfigCopyWith<$Res> get nativeLanguageSelect;$AdUnitConfigCopyWith<$Res> get nativeIntro1;$AdUnitConfigCopyWith<$Res> get nativeIntro2;$AdUnitConfigCopyWith<$Res> get nativeFullIntro2;$AdUnitConfigCopyWith<$Res> get nativeIntro3;$AdUnitConfigCopyWith<$Res> get nativeFullIntro3;$AdUnitConfigCopyWith<$Res> get nativeIntro4;$AdUnitConfigCopyWith<$Res> get nativeHome;$AdUnitConfigCopyWith<$Res> get interBack;$AdUnitConfigCopyWith<$Res> get interClosePremium;$AdUnitConfigCopyWith<$Res> get interHome;$AdUnitConfigCopyWith<$Res> get interTab;$AdUnitConfigCopyWith<$Res> get nativeAll;$AdUnitConfigCopyWith<$Res> get interIntro;
+$AdUnitConfigCopyWith<$Res> get openOnResume;$AdUnitConfigCopyWith<$Res> get interSplash;$AdUnitConfigCopyWith<$Res> get bannerAll;$AdUnitConfigCopyWith<$Res> get nativeAll;$AdUnitConfigCopyWith<$Res> get nativeLanguage;$AdUnitConfigCopyWith<$Res> get nativeLanguageSelect;$AdUnitConfigCopyWith<$Res> get nativeIntro1;$AdUnitConfigCopyWith<$Res> get nativeIntro2;$AdUnitConfigCopyWith<$Res> get nativeFullIntro2;$AdUnitConfigCopyWith<$Res> get nativeIntro3;$AdUnitConfigCopyWith<$Res> get nativeFullIntro3;$AdUnitConfigCopyWith<$Res> get nativeIntro4;$AdUnitConfigCopyWith<$Res> get interIntro;$AdUnitConfigCopyWith<$Res> get nativePermission;$AdUnitConfigCopyWith<$Res> get nativePermissionStorage;$AdUnitConfigCopyWith<$Res> get nativeFull;$AdUnitConfigCopyWith<$Res> get nativeFullSplash;$AdUnitConfigCopyWith<$Res> get interSplashUninstall;$AdUnitConfigCopyWith<$Res> get interUninstall;$AdUnitConfigCopyWith<$Res> get nativeUninstall;$AdUnitConfigCopyWith<$Res> get nativeExit;
 
 }
 /// @nodoc
@@ -348,12 +348,12 @@ class _$AdUnitsConfigCopyWithImpl<$Res>
 
 /// Create a copy of AdUnitsConfig
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? openOnResumeSplash = null,Object? interSplash = null,Object? openResume = null,Object? interAll = null,Object? nativeLanguage = null,Object? nativeLanguageSelect = null,Object? nativeIntro1 = null,Object? nativeIntro2 = null,Object? nativeFullIntro2 = null,Object? nativeIntro3 = null,Object? nativeFullIntro3 = null,Object? nativeIntro4 = null,Object? nativeHome = null,Object? interBack = null,Object? interClosePremium = null,Object? interHome = null,Object? interTab = null,Object? nativeAll = null,Object? interIntro = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? openOnResume = null,Object? interSplash = null,Object? bannerAll = null,Object? nativeAll = null,Object? nativeLanguage = null,Object? nativeLanguageSelect = null,Object? nativeIntro1 = null,Object? nativeIntro2 = null,Object? nativeFullIntro2 = null,Object? nativeIntro3 = null,Object? nativeFullIntro3 = null,Object? nativeIntro4 = null,Object? interIntro = null,Object? nativePermission = null,Object? nativePermissionStorage = null,Object? nativeFull = null,Object? nativeFullSplash = null,Object? interSplashUninstall = null,Object? interUninstall = null,Object? nativeUninstall = null,Object? nativeExit = null,}) {
   return _then(_self.copyWith(
-openOnResumeSplash: null == openOnResumeSplash ? _self.openOnResumeSplash : openOnResumeSplash // ignore: cast_nullable_to_non_nullable
+openOnResume: null == openOnResume ? _self.openOnResume : openOnResume // ignore: cast_nullable_to_non_nullable
 as AdUnitConfig,interSplash: null == interSplash ? _self.interSplash : interSplash // ignore: cast_nullable_to_non_nullable
-as AdUnitConfig,openResume: null == openResume ? _self.openResume : openResume // ignore: cast_nullable_to_non_nullable
-as AdUnitConfig,interAll: null == interAll ? _self.interAll : interAll // ignore: cast_nullable_to_non_nullable
+as AdUnitConfig,bannerAll: null == bannerAll ? _self.bannerAll : bannerAll // ignore: cast_nullable_to_non_nullable
+as AdUnitConfig,nativeAll: null == nativeAll ? _self.nativeAll : nativeAll // ignore: cast_nullable_to_non_nullable
 as AdUnitConfig,nativeLanguage: null == nativeLanguage ? _self.nativeLanguage : nativeLanguage // ignore: cast_nullable_to_non_nullable
 as AdUnitConfig,nativeLanguageSelect: null == nativeLanguageSelect ? _self.nativeLanguageSelect : nativeLanguageSelect // ignore: cast_nullable_to_non_nullable
 as AdUnitConfig,nativeIntro1: null == nativeIntro1 ? _self.nativeIntro1 : nativeIntro1 // ignore: cast_nullable_to_non_nullable
@@ -362,13 +362,15 @@ as AdUnitConfig,nativeFullIntro2: null == nativeFullIntro2 ? _self.nativeFullInt
 as AdUnitConfig,nativeIntro3: null == nativeIntro3 ? _self.nativeIntro3 : nativeIntro3 // ignore: cast_nullable_to_non_nullable
 as AdUnitConfig,nativeFullIntro3: null == nativeFullIntro3 ? _self.nativeFullIntro3 : nativeFullIntro3 // ignore: cast_nullable_to_non_nullable
 as AdUnitConfig,nativeIntro4: null == nativeIntro4 ? _self.nativeIntro4 : nativeIntro4 // ignore: cast_nullable_to_non_nullable
-as AdUnitConfig,nativeHome: null == nativeHome ? _self.nativeHome : nativeHome // ignore: cast_nullable_to_non_nullable
-as AdUnitConfig,interBack: null == interBack ? _self.interBack : interBack // ignore: cast_nullable_to_non_nullable
-as AdUnitConfig,interClosePremium: null == interClosePremium ? _self.interClosePremium : interClosePremium // ignore: cast_nullable_to_non_nullable
-as AdUnitConfig,interHome: null == interHome ? _self.interHome : interHome // ignore: cast_nullable_to_non_nullable
-as AdUnitConfig,interTab: null == interTab ? _self.interTab : interTab // ignore: cast_nullable_to_non_nullable
-as AdUnitConfig,nativeAll: null == nativeAll ? _self.nativeAll : nativeAll // ignore: cast_nullable_to_non_nullable
 as AdUnitConfig,interIntro: null == interIntro ? _self.interIntro : interIntro // ignore: cast_nullable_to_non_nullable
+as AdUnitConfig,nativePermission: null == nativePermission ? _self.nativePermission : nativePermission // ignore: cast_nullable_to_non_nullable
+as AdUnitConfig,nativePermissionStorage: null == nativePermissionStorage ? _self.nativePermissionStorage : nativePermissionStorage // ignore: cast_nullable_to_non_nullable
+as AdUnitConfig,nativeFull: null == nativeFull ? _self.nativeFull : nativeFull // ignore: cast_nullable_to_non_nullable
+as AdUnitConfig,nativeFullSplash: null == nativeFullSplash ? _self.nativeFullSplash : nativeFullSplash // ignore: cast_nullable_to_non_nullable
+as AdUnitConfig,interSplashUninstall: null == interSplashUninstall ? _self.interSplashUninstall : interSplashUninstall // ignore: cast_nullable_to_non_nullable
+as AdUnitConfig,interUninstall: null == interUninstall ? _self.interUninstall : interUninstall // ignore: cast_nullable_to_non_nullable
+as AdUnitConfig,nativeUninstall: null == nativeUninstall ? _self.nativeUninstall : nativeUninstall // ignore: cast_nullable_to_non_nullable
+as AdUnitConfig,nativeExit: null == nativeExit ? _self.nativeExit : nativeExit // ignore: cast_nullable_to_non_nullable
 as AdUnitConfig,
   ));
 }
@@ -376,10 +378,10 @@ as AdUnitConfig,
 /// with the given fields replaced by the non-null parameter values.
 @override
 @pragma('vm:prefer-inline')
-$AdUnitConfigCopyWith<$Res> get openOnResumeSplash {
+$AdUnitConfigCopyWith<$Res> get openOnResume {
   
-  return $AdUnitConfigCopyWith<$Res>(_self.openOnResumeSplash, (value) {
-    return _then(_self.copyWith(openOnResumeSplash: value));
+  return $AdUnitConfigCopyWith<$Res>(_self.openOnResume, (value) {
+    return _then(_self.copyWith(openOnResume: value));
   });
 }/// Create a copy of AdUnitsConfig
 /// with the given fields replaced by the non-null parameter values.
@@ -394,19 +396,19 @@ $AdUnitConfigCopyWith<$Res> get interSplash {
 /// with the given fields replaced by the non-null parameter values.
 @override
 @pragma('vm:prefer-inline')
-$AdUnitConfigCopyWith<$Res> get openResume {
+$AdUnitConfigCopyWith<$Res> get bannerAll {
   
-  return $AdUnitConfigCopyWith<$Res>(_self.openResume, (value) {
-    return _then(_self.copyWith(openResume: value));
+  return $AdUnitConfigCopyWith<$Res>(_self.bannerAll, (value) {
+    return _then(_self.copyWith(bannerAll: value));
   });
 }/// Create a copy of AdUnitsConfig
 /// with the given fields replaced by the non-null parameter values.
 @override
 @pragma('vm:prefer-inline')
-$AdUnitConfigCopyWith<$Res> get interAll {
+$AdUnitConfigCopyWith<$Res> get nativeAll {
   
-  return $AdUnitConfigCopyWith<$Res>(_self.interAll, (value) {
-    return _then(_self.copyWith(interAll: value));
+  return $AdUnitConfigCopyWith<$Res>(_self.nativeAll, (value) {
+    return _then(_self.copyWith(nativeAll: value));
   });
 }/// Create a copy of AdUnitsConfig
 /// with the given fields replaced by the non-null parameter values.
@@ -484,64 +486,82 @@ $AdUnitConfigCopyWith<$Res> get nativeIntro4 {
 /// with the given fields replaced by the non-null parameter values.
 @override
 @pragma('vm:prefer-inline')
-$AdUnitConfigCopyWith<$Res> get nativeHome {
-  
-  return $AdUnitConfigCopyWith<$Res>(_self.nativeHome, (value) {
-    return _then(_self.copyWith(nativeHome: value));
-  });
-}/// Create a copy of AdUnitsConfig
-/// with the given fields replaced by the non-null parameter values.
-@override
-@pragma('vm:prefer-inline')
-$AdUnitConfigCopyWith<$Res> get interBack {
-  
-  return $AdUnitConfigCopyWith<$Res>(_self.interBack, (value) {
-    return _then(_self.copyWith(interBack: value));
-  });
-}/// Create a copy of AdUnitsConfig
-/// with the given fields replaced by the non-null parameter values.
-@override
-@pragma('vm:prefer-inline')
-$AdUnitConfigCopyWith<$Res> get interClosePremium {
-  
-  return $AdUnitConfigCopyWith<$Res>(_self.interClosePremium, (value) {
-    return _then(_self.copyWith(interClosePremium: value));
-  });
-}/// Create a copy of AdUnitsConfig
-/// with the given fields replaced by the non-null parameter values.
-@override
-@pragma('vm:prefer-inline')
-$AdUnitConfigCopyWith<$Res> get interHome {
-  
-  return $AdUnitConfigCopyWith<$Res>(_self.interHome, (value) {
-    return _then(_self.copyWith(interHome: value));
-  });
-}/// Create a copy of AdUnitsConfig
-/// with the given fields replaced by the non-null parameter values.
-@override
-@pragma('vm:prefer-inline')
-$AdUnitConfigCopyWith<$Res> get interTab {
-  
-  return $AdUnitConfigCopyWith<$Res>(_self.interTab, (value) {
-    return _then(_self.copyWith(interTab: value));
-  });
-}/// Create a copy of AdUnitsConfig
-/// with the given fields replaced by the non-null parameter values.
-@override
-@pragma('vm:prefer-inline')
-$AdUnitConfigCopyWith<$Res> get nativeAll {
-  
-  return $AdUnitConfigCopyWith<$Res>(_self.nativeAll, (value) {
-    return _then(_self.copyWith(nativeAll: value));
-  });
-}/// Create a copy of AdUnitsConfig
-/// with the given fields replaced by the non-null parameter values.
-@override
-@pragma('vm:prefer-inline')
 $AdUnitConfigCopyWith<$Res> get interIntro {
   
   return $AdUnitConfigCopyWith<$Res>(_self.interIntro, (value) {
     return _then(_self.copyWith(interIntro: value));
+  });
+}/// Create a copy of AdUnitsConfig
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$AdUnitConfigCopyWith<$Res> get nativePermission {
+  
+  return $AdUnitConfigCopyWith<$Res>(_self.nativePermission, (value) {
+    return _then(_self.copyWith(nativePermission: value));
+  });
+}/// Create a copy of AdUnitsConfig
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$AdUnitConfigCopyWith<$Res> get nativePermissionStorage {
+  
+  return $AdUnitConfigCopyWith<$Res>(_self.nativePermissionStorage, (value) {
+    return _then(_self.copyWith(nativePermissionStorage: value));
+  });
+}/// Create a copy of AdUnitsConfig
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$AdUnitConfigCopyWith<$Res> get nativeFull {
+  
+  return $AdUnitConfigCopyWith<$Res>(_self.nativeFull, (value) {
+    return _then(_self.copyWith(nativeFull: value));
+  });
+}/// Create a copy of AdUnitsConfig
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$AdUnitConfigCopyWith<$Res> get nativeFullSplash {
+  
+  return $AdUnitConfigCopyWith<$Res>(_self.nativeFullSplash, (value) {
+    return _then(_self.copyWith(nativeFullSplash: value));
+  });
+}/// Create a copy of AdUnitsConfig
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$AdUnitConfigCopyWith<$Res> get interSplashUninstall {
+  
+  return $AdUnitConfigCopyWith<$Res>(_self.interSplashUninstall, (value) {
+    return _then(_self.copyWith(interSplashUninstall: value));
+  });
+}/// Create a copy of AdUnitsConfig
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$AdUnitConfigCopyWith<$Res> get interUninstall {
+  
+  return $AdUnitConfigCopyWith<$Res>(_self.interUninstall, (value) {
+    return _then(_self.copyWith(interUninstall: value));
+  });
+}/// Create a copy of AdUnitsConfig
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$AdUnitConfigCopyWith<$Res> get nativeUninstall {
+  
+  return $AdUnitConfigCopyWith<$Res>(_self.nativeUninstall, (value) {
+    return _then(_self.copyWith(nativeUninstall: value));
+  });
+}/// Create a copy of AdUnitsConfig
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$AdUnitConfigCopyWith<$Res> get nativeExit {
+  
+  return $AdUnitConfigCopyWith<$Res>(_self.nativeExit, (value) {
+    return _then(_self.copyWith(nativeExit: value));
   });
 }
 }
@@ -625,10 +645,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( AdUnitConfig openOnResumeSplash,  AdUnitConfig interSplash,  AdUnitConfig openResume,  AdUnitConfig interAll,  AdUnitConfig nativeLanguage,  AdUnitConfig nativeLanguageSelect,  AdUnitConfig nativeIntro1,  AdUnitConfig nativeIntro2,  AdUnitConfig nativeFullIntro2,  AdUnitConfig nativeIntro3,  AdUnitConfig nativeFullIntro3,  AdUnitConfig nativeIntro4,  AdUnitConfig nativeHome,  AdUnitConfig interBack,  AdUnitConfig interClosePremium,  AdUnitConfig interHome,  AdUnitConfig interTab,  AdUnitConfig nativeAll,  AdUnitConfig interIntro)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( AdUnitConfig openOnResume,  AdUnitConfig interSplash,  AdUnitConfig bannerAll,  AdUnitConfig nativeAll,  AdUnitConfig nativeLanguage,  AdUnitConfig nativeLanguageSelect,  AdUnitConfig nativeIntro1,  AdUnitConfig nativeIntro2,  AdUnitConfig nativeFullIntro2,  AdUnitConfig nativeIntro3,  AdUnitConfig nativeFullIntro3,  AdUnitConfig nativeIntro4,  AdUnitConfig interIntro,  AdUnitConfig nativePermission,  AdUnitConfig nativePermissionStorage,  AdUnitConfig nativeFull,  AdUnitConfig nativeFullSplash,  AdUnitConfig interSplashUninstall,  AdUnitConfig interUninstall,  AdUnitConfig nativeUninstall,  AdUnitConfig nativeExit)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _AdUnitsConfig() when $default != null:
-return $default(_that.openOnResumeSplash,_that.interSplash,_that.openResume,_that.interAll,_that.nativeLanguage,_that.nativeLanguageSelect,_that.nativeIntro1,_that.nativeIntro2,_that.nativeFullIntro2,_that.nativeIntro3,_that.nativeFullIntro3,_that.nativeIntro4,_that.nativeHome,_that.interBack,_that.interClosePremium,_that.interHome,_that.interTab,_that.nativeAll,_that.interIntro);case _:
+return $default(_that.openOnResume,_that.interSplash,_that.bannerAll,_that.nativeAll,_that.nativeLanguage,_that.nativeLanguageSelect,_that.nativeIntro1,_that.nativeIntro2,_that.nativeFullIntro2,_that.nativeIntro3,_that.nativeFullIntro3,_that.nativeIntro4,_that.interIntro,_that.nativePermission,_that.nativePermissionStorage,_that.nativeFull,_that.nativeFullSplash,_that.interSplashUninstall,_that.interUninstall,_that.nativeUninstall,_that.nativeExit);case _:
   return orElse();
 
 }
@@ -646,10 +666,10 @@ return $default(_that.openOnResumeSplash,_that.interSplash,_that.openResume,_tha
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( AdUnitConfig openOnResumeSplash,  AdUnitConfig interSplash,  AdUnitConfig openResume,  AdUnitConfig interAll,  AdUnitConfig nativeLanguage,  AdUnitConfig nativeLanguageSelect,  AdUnitConfig nativeIntro1,  AdUnitConfig nativeIntro2,  AdUnitConfig nativeFullIntro2,  AdUnitConfig nativeIntro3,  AdUnitConfig nativeFullIntro3,  AdUnitConfig nativeIntro4,  AdUnitConfig nativeHome,  AdUnitConfig interBack,  AdUnitConfig interClosePremium,  AdUnitConfig interHome,  AdUnitConfig interTab,  AdUnitConfig nativeAll,  AdUnitConfig interIntro)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( AdUnitConfig openOnResume,  AdUnitConfig interSplash,  AdUnitConfig bannerAll,  AdUnitConfig nativeAll,  AdUnitConfig nativeLanguage,  AdUnitConfig nativeLanguageSelect,  AdUnitConfig nativeIntro1,  AdUnitConfig nativeIntro2,  AdUnitConfig nativeFullIntro2,  AdUnitConfig nativeIntro3,  AdUnitConfig nativeFullIntro3,  AdUnitConfig nativeIntro4,  AdUnitConfig interIntro,  AdUnitConfig nativePermission,  AdUnitConfig nativePermissionStorage,  AdUnitConfig nativeFull,  AdUnitConfig nativeFullSplash,  AdUnitConfig interSplashUninstall,  AdUnitConfig interUninstall,  AdUnitConfig nativeUninstall,  AdUnitConfig nativeExit)  $default,) {final _that = this;
 switch (_that) {
 case _AdUnitsConfig():
-return $default(_that.openOnResumeSplash,_that.interSplash,_that.openResume,_that.interAll,_that.nativeLanguage,_that.nativeLanguageSelect,_that.nativeIntro1,_that.nativeIntro2,_that.nativeFullIntro2,_that.nativeIntro3,_that.nativeFullIntro3,_that.nativeIntro4,_that.nativeHome,_that.interBack,_that.interClosePremium,_that.interHome,_that.interTab,_that.nativeAll,_that.interIntro);case _:
+return $default(_that.openOnResume,_that.interSplash,_that.bannerAll,_that.nativeAll,_that.nativeLanguage,_that.nativeLanguageSelect,_that.nativeIntro1,_that.nativeIntro2,_that.nativeFullIntro2,_that.nativeIntro3,_that.nativeFullIntro3,_that.nativeIntro4,_that.interIntro,_that.nativePermission,_that.nativePermissionStorage,_that.nativeFull,_that.nativeFullSplash,_that.interSplashUninstall,_that.interUninstall,_that.nativeUninstall,_that.nativeExit);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -666,10 +686,10 @@ return $default(_that.openOnResumeSplash,_that.interSplash,_that.openResume,_tha
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( AdUnitConfig openOnResumeSplash,  AdUnitConfig interSplash,  AdUnitConfig openResume,  AdUnitConfig interAll,  AdUnitConfig nativeLanguage,  AdUnitConfig nativeLanguageSelect,  AdUnitConfig nativeIntro1,  AdUnitConfig nativeIntro2,  AdUnitConfig nativeFullIntro2,  AdUnitConfig nativeIntro3,  AdUnitConfig nativeFullIntro3,  AdUnitConfig nativeIntro4,  AdUnitConfig nativeHome,  AdUnitConfig interBack,  AdUnitConfig interClosePremium,  AdUnitConfig interHome,  AdUnitConfig interTab,  AdUnitConfig nativeAll,  AdUnitConfig interIntro)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( AdUnitConfig openOnResume,  AdUnitConfig interSplash,  AdUnitConfig bannerAll,  AdUnitConfig nativeAll,  AdUnitConfig nativeLanguage,  AdUnitConfig nativeLanguageSelect,  AdUnitConfig nativeIntro1,  AdUnitConfig nativeIntro2,  AdUnitConfig nativeFullIntro2,  AdUnitConfig nativeIntro3,  AdUnitConfig nativeFullIntro3,  AdUnitConfig nativeIntro4,  AdUnitConfig interIntro,  AdUnitConfig nativePermission,  AdUnitConfig nativePermissionStorage,  AdUnitConfig nativeFull,  AdUnitConfig nativeFullSplash,  AdUnitConfig interSplashUninstall,  AdUnitConfig interUninstall,  AdUnitConfig nativeUninstall,  AdUnitConfig nativeExit)?  $default,) {final _that = this;
 switch (_that) {
 case _AdUnitsConfig() when $default != null:
-return $default(_that.openOnResumeSplash,_that.interSplash,_that.openResume,_that.interAll,_that.nativeLanguage,_that.nativeLanguageSelect,_that.nativeIntro1,_that.nativeIntro2,_that.nativeFullIntro2,_that.nativeIntro3,_that.nativeFullIntro3,_that.nativeIntro4,_that.nativeHome,_that.interBack,_that.interClosePremium,_that.interHome,_that.interTab,_that.nativeAll,_that.interIntro);case _:
+return $default(_that.openOnResume,_that.interSplash,_that.bannerAll,_that.nativeAll,_that.nativeLanguage,_that.nativeLanguageSelect,_that.nativeIntro1,_that.nativeIntro2,_that.nativeFullIntro2,_that.nativeIntro3,_that.nativeFullIntro3,_that.nativeIntro4,_that.interIntro,_that.nativePermission,_that.nativePermissionStorage,_that.nativeFull,_that.nativeFullSplash,_that.interSplashUninstall,_that.interUninstall,_that.nativeUninstall,_that.nativeExit);case _:
   return null;
 
 }
@@ -681,13 +701,13 @@ return $default(_that.openOnResumeSplash,_that.interSplash,_that.openResume,_tha
 
 @JsonSerializable(explicitToJson: true)
 class _AdUnitsConfig implements AdUnitsConfig {
-  const _AdUnitsConfig({this.openOnResumeSplash = const AdUnitConfig(), this.interSplash = const AdUnitConfig(), this.openResume = const AdUnitConfig(), this.interAll = const AdUnitConfig(), this.nativeLanguage = const AdUnitConfig(), this.nativeLanguageSelect = const AdUnitConfig(), this.nativeIntro1 = const AdUnitConfig(), this.nativeIntro2 = const AdUnitConfig(), this.nativeFullIntro2 = const AdUnitConfig(), this.nativeIntro3 = const AdUnitConfig(), this.nativeFullIntro3 = const AdUnitConfig(), this.nativeIntro4 = const AdUnitConfig(), this.nativeHome = const AdUnitConfig(), this.interBack = const AdUnitConfig(), this.interClosePremium = const AdUnitConfig(), this.interHome = const AdUnitConfig(), this.interTab = const AdUnitConfig(), this.nativeAll = const AdUnitConfig(), this.interIntro = const AdUnitConfig()});
+  const _AdUnitsConfig({this.openOnResume = const AdUnitConfig(), this.interSplash = const AdUnitConfig(), this.bannerAll = const AdUnitConfig(), this.nativeAll = const AdUnitConfig(), this.nativeLanguage = const AdUnitConfig(), this.nativeLanguageSelect = const AdUnitConfig(), this.nativeIntro1 = const AdUnitConfig(), this.nativeIntro2 = const AdUnitConfig(), this.nativeFullIntro2 = const AdUnitConfig(), this.nativeIntro3 = const AdUnitConfig(), this.nativeFullIntro3 = const AdUnitConfig(), this.nativeIntro4 = const AdUnitConfig(), this.interIntro = const AdUnitConfig(), this.nativePermission = const AdUnitConfig(), this.nativePermissionStorage = const AdUnitConfig(), this.nativeFull = const AdUnitConfig(), this.nativeFullSplash = const AdUnitConfig(), this.interSplashUninstall = const AdUnitConfig(), this.interUninstall = const AdUnitConfig(), this.nativeUninstall = const AdUnitConfig(), this.nativeExit = const AdUnitConfig()});
   factory _AdUnitsConfig.fromJson(Map<String, dynamic> json) => _$AdUnitsConfigFromJson(json);
 
-@override@JsonKey() final  AdUnitConfig openOnResumeSplash;
+@override@JsonKey() final  AdUnitConfig openOnResume;
 @override@JsonKey() final  AdUnitConfig interSplash;
-@override@JsonKey() final  AdUnitConfig openResume;
-@override@JsonKey() final  AdUnitConfig interAll;
+@override@JsonKey() final  AdUnitConfig bannerAll;
+@override@JsonKey() final  AdUnitConfig nativeAll;
 @override@JsonKey() final  AdUnitConfig nativeLanguage;
 @override@JsonKey() final  AdUnitConfig nativeLanguageSelect;
 @override@JsonKey() final  AdUnitConfig nativeIntro1;
@@ -696,13 +716,15 @@ class _AdUnitsConfig implements AdUnitsConfig {
 @override@JsonKey() final  AdUnitConfig nativeIntro3;
 @override@JsonKey() final  AdUnitConfig nativeFullIntro3;
 @override@JsonKey() final  AdUnitConfig nativeIntro4;
-@override@JsonKey() final  AdUnitConfig nativeHome;
-@override@JsonKey() final  AdUnitConfig interBack;
-@override@JsonKey() final  AdUnitConfig interClosePremium;
-@override@JsonKey() final  AdUnitConfig interHome;
-@override@JsonKey() final  AdUnitConfig interTab;
-@override@JsonKey() final  AdUnitConfig nativeAll;
 @override@JsonKey() final  AdUnitConfig interIntro;
+@override@JsonKey() final  AdUnitConfig nativePermission;
+@override@JsonKey() final  AdUnitConfig nativePermissionStorage;
+@override@JsonKey() final  AdUnitConfig nativeFull;
+@override@JsonKey() final  AdUnitConfig nativeFullSplash;
+@override@JsonKey() final  AdUnitConfig interSplashUninstall;
+@override@JsonKey() final  AdUnitConfig interUninstall;
+@override@JsonKey() final  AdUnitConfig nativeUninstall;
+@override@JsonKey() final  AdUnitConfig nativeExit;
 
 /// Create a copy of AdUnitsConfig
 /// with the given fields replaced by the non-null parameter values.
@@ -717,16 +739,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AdUnitsConfig&&(identical(other.openOnResumeSplash, openOnResumeSplash) || other.openOnResumeSplash == openOnResumeSplash)&&(identical(other.interSplash, interSplash) || other.interSplash == interSplash)&&(identical(other.openResume, openResume) || other.openResume == openResume)&&(identical(other.interAll, interAll) || other.interAll == interAll)&&(identical(other.nativeLanguage, nativeLanguage) || other.nativeLanguage == nativeLanguage)&&(identical(other.nativeLanguageSelect, nativeLanguageSelect) || other.nativeLanguageSelect == nativeLanguageSelect)&&(identical(other.nativeIntro1, nativeIntro1) || other.nativeIntro1 == nativeIntro1)&&(identical(other.nativeIntro2, nativeIntro2) || other.nativeIntro2 == nativeIntro2)&&(identical(other.nativeFullIntro2, nativeFullIntro2) || other.nativeFullIntro2 == nativeFullIntro2)&&(identical(other.nativeIntro3, nativeIntro3) || other.nativeIntro3 == nativeIntro3)&&(identical(other.nativeFullIntro3, nativeFullIntro3) || other.nativeFullIntro3 == nativeFullIntro3)&&(identical(other.nativeIntro4, nativeIntro4) || other.nativeIntro4 == nativeIntro4)&&(identical(other.nativeHome, nativeHome) || other.nativeHome == nativeHome)&&(identical(other.interBack, interBack) || other.interBack == interBack)&&(identical(other.interClosePremium, interClosePremium) || other.interClosePremium == interClosePremium)&&(identical(other.interHome, interHome) || other.interHome == interHome)&&(identical(other.interTab, interTab) || other.interTab == interTab)&&(identical(other.nativeAll, nativeAll) || other.nativeAll == nativeAll)&&(identical(other.interIntro, interIntro) || other.interIntro == interIntro));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AdUnitsConfig&&(identical(other.openOnResume, openOnResume) || other.openOnResume == openOnResume)&&(identical(other.interSplash, interSplash) || other.interSplash == interSplash)&&(identical(other.bannerAll, bannerAll) || other.bannerAll == bannerAll)&&(identical(other.nativeAll, nativeAll) || other.nativeAll == nativeAll)&&(identical(other.nativeLanguage, nativeLanguage) || other.nativeLanguage == nativeLanguage)&&(identical(other.nativeLanguageSelect, nativeLanguageSelect) || other.nativeLanguageSelect == nativeLanguageSelect)&&(identical(other.nativeIntro1, nativeIntro1) || other.nativeIntro1 == nativeIntro1)&&(identical(other.nativeIntro2, nativeIntro2) || other.nativeIntro2 == nativeIntro2)&&(identical(other.nativeFullIntro2, nativeFullIntro2) || other.nativeFullIntro2 == nativeFullIntro2)&&(identical(other.nativeIntro3, nativeIntro3) || other.nativeIntro3 == nativeIntro3)&&(identical(other.nativeFullIntro3, nativeFullIntro3) || other.nativeFullIntro3 == nativeFullIntro3)&&(identical(other.nativeIntro4, nativeIntro4) || other.nativeIntro4 == nativeIntro4)&&(identical(other.interIntro, interIntro) || other.interIntro == interIntro)&&(identical(other.nativePermission, nativePermission) || other.nativePermission == nativePermission)&&(identical(other.nativePermissionStorage, nativePermissionStorage) || other.nativePermissionStorage == nativePermissionStorage)&&(identical(other.nativeFull, nativeFull) || other.nativeFull == nativeFull)&&(identical(other.nativeFullSplash, nativeFullSplash) || other.nativeFullSplash == nativeFullSplash)&&(identical(other.interSplashUninstall, interSplashUninstall) || other.interSplashUninstall == interSplashUninstall)&&(identical(other.interUninstall, interUninstall) || other.interUninstall == interUninstall)&&(identical(other.nativeUninstall, nativeUninstall) || other.nativeUninstall == nativeUninstall)&&(identical(other.nativeExit, nativeExit) || other.nativeExit == nativeExit));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hashAll([runtimeType,openOnResumeSplash,interSplash,openResume,interAll,nativeLanguage,nativeLanguageSelect,nativeIntro1,nativeIntro2,nativeFullIntro2,nativeIntro3,nativeFullIntro3,nativeIntro4,nativeHome,interBack,interClosePremium,interHome,interTab,nativeAll,interIntro]);
+int get hashCode => Object.hashAll([runtimeType,openOnResume,interSplash,bannerAll,nativeAll,nativeLanguage,nativeLanguageSelect,nativeIntro1,nativeIntro2,nativeFullIntro2,nativeIntro3,nativeFullIntro3,nativeIntro4,interIntro,nativePermission,nativePermissionStorage,nativeFull,nativeFullSplash,interSplashUninstall,interUninstall,nativeUninstall,nativeExit]);
 
 @override
 String toString() {
-  return 'AdUnitsConfig(openOnResumeSplash: $openOnResumeSplash, interSplash: $interSplash, openResume: $openResume, interAll: $interAll, nativeLanguage: $nativeLanguage, nativeLanguageSelect: $nativeLanguageSelect, nativeIntro1: $nativeIntro1, nativeIntro2: $nativeIntro2, nativeFullIntro2: $nativeFullIntro2, nativeIntro3: $nativeIntro3, nativeFullIntro3: $nativeFullIntro3, nativeIntro4: $nativeIntro4, nativeHome: $nativeHome, interBack: $interBack, interClosePremium: $interClosePremium, interHome: $interHome, interTab: $interTab, nativeAll: $nativeAll, interIntro: $interIntro)';
+  return 'AdUnitsConfig(openOnResume: $openOnResume, interSplash: $interSplash, bannerAll: $bannerAll, nativeAll: $nativeAll, nativeLanguage: $nativeLanguage, nativeLanguageSelect: $nativeLanguageSelect, nativeIntro1: $nativeIntro1, nativeIntro2: $nativeIntro2, nativeFullIntro2: $nativeFullIntro2, nativeIntro3: $nativeIntro3, nativeFullIntro3: $nativeFullIntro3, nativeIntro4: $nativeIntro4, interIntro: $interIntro, nativePermission: $nativePermission, nativePermissionStorage: $nativePermissionStorage, nativeFull: $nativeFull, nativeFullSplash: $nativeFullSplash, interSplashUninstall: $interSplashUninstall, interUninstall: $interUninstall, nativeUninstall: $nativeUninstall, nativeExit: $nativeExit)';
 }
 
 
@@ -737,11 +759,11 @@ abstract mixin class _$AdUnitsConfigCopyWith<$Res> implements $AdUnitsConfigCopy
   factory _$AdUnitsConfigCopyWith(_AdUnitsConfig value, $Res Function(_AdUnitsConfig) _then) = __$AdUnitsConfigCopyWithImpl;
 @override @useResult
 $Res call({
- AdUnitConfig openOnResumeSplash, AdUnitConfig interSplash, AdUnitConfig openResume, AdUnitConfig interAll, AdUnitConfig nativeLanguage, AdUnitConfig nativeLanguageSelect, AdUnitConfig nativeIntro1, AdUnitConfig nativeIntro2, AdUnitConfig nativeFullIntro2, AdUnitConfig nativeIntro3, AdUnitConfig nativeFullIntro3, AdUnitConfig nativeIntro4, AdUnitConfig nativeHome, AdUnitConfig interBack, AdUnitConfig interClosePremium, AdUnitConfig interHome, AdUnitConfig interTab, AdUnitConfig nativeAll, AdUnitConfig interIntro
+ AdUnitConfig openOnResume, AdUnitConfig interSplash, AdUnitConfig bannerAll, AdUnitConfig nativeAll, AdUnitConfig nativeLanguage, AdUnitConfig nativeLanguageSelect, AdUnitConfig nativeIntro1, AdUnitConfig nativeIntro2, AdUnitConfig nativeFullIntro2, AdUnitConfig nativeIntro3, AdUnitConfig nativeFullIntro3, AdUnitConfig nativeIntro4, AdUnitConfig interIntro, AdUnitConfig nativePermission, AdUnitConfig nativePermissionStorage, AdUnitConfig nativeFull, AdUnitConfig nativeFullSplash, AdUnitConfig interSplashUninstall, AdUnitConfig interUninstall, AdUnitConfig nativeUninstall, AdUnitConfig nativeExit
 });
 
 
-@override $AdUnitConfigCopyWith<$Res> get openOnResumeSplash;@override $AdUnitConfigCopyWith<$Res> get interSplash;@override $AdUnitConfigCopyWith<$Res> get openResume;@override $AdUnitConfigCopyWith<$Res> get interAll;@override $AdUnitConfigCopyWith<$Res> get nativeLanguage;@override $AdUnitConfigCopyWith<$Res> get nativeLanguageSelect;@override $AdUnitConfigCopyWith<$Res> get nativeIntro1;@override $AdUnitConfigCopyWith<$Res> get nativeIntro2;@override $AdUnitConfigCopyWith<$Res> get nativeFullIntro2;@override $AdUnitConfigCopyWith<$Res> get nativeIntro3;@override $AdUnitConfigCopyWith<$Res> get nativeFullIntro3;@override $AdUnitConfigCopyWith<$Res> get nativeIntro4;@override $AdUnitConfigCopyWith<$Res> get nativeHome;@override $AdUnitConfigCopyWith<$Res> get interBack;@override $AdUnitConfigCopyWith<$Res> get interClosePremium;@override $AdUnitConfigCopyWith<$Res> get interHome;@override $AdUnitConfigCopyWith<$Res> get interTab;@override $AdUnitConfigCopyWith<$Res> get nativeAll;@override $AdUnitConfigCopyWith<$Res> get interIntro;
+@override $AdUnitConfigCopyWith<$Res> get openOnResume;@override $AdUnitConfigCopyWith<$Res> get interSplash;@override $AdUnitConfigCopyWith<$Res> get bannerAll;@override $AdUnitConfigCopyWith<$Res> get nativeAll;@override $AdUnitConfigCopyWith<$Res> get nativeLanguage;@override $AdUnitConfigCopyWith<$Res> get nativeLanguageSelect;@override $AdUnitConfigCopyWith<$Res> get nativeIntro1;@override $AdUnitConfigCopyWith<$Res> get nativeIntro2;@override $AdUnitConfigCopyWith<$Res> get nativeFullIntro2;@override $AdUnitConfigCopyWith<$Res> get nativeIntro3;@override $AdUnitConfigCopyWith<$Res> get nativeFullIntro3;@override $AdUnitConfigCopyWith<$Res> get nativeIntro4;@override $AdUnitConfigCopyWith<$Res> get interIntro;@override $AdUnitConfigCopyWith<$Res> get nativePermission;@override $AdUnitConfigCopyWith<$Res> get nativePermissionStorage;@override $AdUnitConfigCopyWith<$Res> get nativeFull;@override $AdUnitConfigCopyWith<$Res> get nativeFullSplash;@override $AdUnitConfigCopyWith<$Res> get interSplashUninstall;@override $AdUnitConfigCopyWith<$Res> get interUninstall;@override $AdUnitConfigCopyWith<$Res> get nativeUninstall;@override $AdUnitConfigCopyWith<$Res> get nativeExit;
 
 }
 /// @nodoc
@@ -754,12 +776,12 @@ class __$AdUnitsConfigCopyWithImpl<$Res>
 
 /// Create a copy of AdUnitsConfig
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? openOnResumeSplash = null,Object? interSplash = null,Object? openResume = null,Object? interAll = null,Object? nativeLanguage = null,Object? nativeLanguageSelect = null,Object? nativeIntro1 = null,Object? nativeIntro2 = null,Object? nativeFullIntro2 = null,Object? nativeIntro3 = null,Object? nativeFullIntro3 = null,Object? nativeIntro4 = null,Object? nativeHome = null,Object? interBack = null,Object? interClosePremium = null,Object? interHome = null,Object? interTab = null,Object? nativeAll = null,Object? interIntro = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? openOnResume = null,Object? interSplash = null,Object? bannerAll = null,Object? nativeAll = null,Object? nativeLanguage = null,Object? nativeLanguageSelect = null,Object? nativeIntro1 = null,Object? nativeIntro2 = null,Object? nativeFullIntro2 = null,Object? nativeIntro3 = null,Object? nativeFullIntro3 = null,Object? nativeIntro4 = null,Object? interIntro = null,Object? nativePermission = null,Object? nativePermissionStorage = null,Object? nativeFull = null,Object? nativeFullSplash = null,Object? interSplashUninstall = null,Object? interUninstall = null,Object? nativeUninstall = null,Object? nativeExit = null,}) {
   return _then(_AdUnitsConfig(
-openOnResumeSplash: null == openOnResumeSplash ? _self.openOnResumeSplash : openOnResumeSplash // ignore: cast_nullable_to_non_nullable
+openOnResume: null == openOnResume ? _self.openOnResume : openOnResume // ignore: cast_nullable_to_non_nullable
 as AdUnitConfig,interSplash: null == interSplash ? _self.interSplash : interSplash // ignore: cast_nullable_to_non_nullable
-as AdUnitConfig,openResume: null == openResume ? _self.openResume : openResume // ignore: cast_nullable_to_non_nullable
-as AdUnitConfig,interAll: null == interAll ? _self.interAll : interAll // ignore: cast_nullable_to_non_nullable
+as AdUnitConfig,bannerAll: null == bannerAll ? _self.bannerAll : bannerAll // ignore: cast_nullable_to_non_nullable
+as AdUnitConfig,nativeAll: null == nativeAll ? _self.nativeAll : nativeAll // ignore: cast_nullable_to_non_nullable
 as AdUnitConfig,nativeLanguage: null == nativeLanguage ? _self.nativeLanguage : nativeLanguage // ignore: cast_nullable_to_non_nullable
 as AdUnitConfig,nativeLanguageSelect: null == nativeLanguageSelect ? _self.nativeLanguageSelect : nativeLanguageSelect // ignore: cast_nullable_to_non_nullable
 as AdUnitConfig,nativeIntro1: null == nativeIntro1 ? _self.nativeIntro1 : nativeIntro1 // ignore: cast_nullable_to_non_nullable
@@ -768,13 +790,15 @@ as AdUnitConfig,nativeFullIntro2: null == nativeFullIntro2 ? _self.nativeFullInt
 as AdUnitConfig,nativeIntro3: null == nativeIntro3 ? _self.nativeIntro3 : nativeIntro3 // ignore: cast_nullable_to_non_nullable
 as AdUnitConfig,nativeFullIntro3: null == nativeFullIntro3 ? _self.nativeFullIntro3 : nativeFullIntro3 // ignore: cast_nullable_to_non_nullable
 as AdUnitConfig,nativeIntro4: null == nativeIntro4 ? _self.nativeIntro4 : nativeIntro4 // ignore: cast_nullable_to_non_nullable
-as AdUnitConfig,nativeHome: null == nativeHome ? _self.nativeHome : nativeHome // ignore: cast_nullable_to_non_nullable
-as AdUnitConfig,interBack: null == interBack ? _self.interBack : interBack // ignore: cast_nullable_to_non_nullable
-as AdUnitConfig,interClosePremium: null == interClosePremium ? _self.interClosePremium : interClosePremium // ignore: cast_nullable_to_non_nullable
-as AdUnitConfig,interHome: null == interHome ? _self.interHome : interHome // ignore: cast_nullable_to_non_nullable
-as AdUnitConfig,interTab: null == interTab ? _self.interTab : interTab // ignore: cast_nullable_to_non_nullable
-as AdUnitConfig,nativeAll: null == nativeAll ? _self.nativeAll : nativeAll // ignore: cast_nullable_to_non_nullable
 as AdUnitConfig,interIntro: null == interIntro ? _self.interIntro : interIntro // ignore: cast_nullable_to_non_nullable
+as AdUnitConfig,nativePermission: null == nativePermission ? _self.nativePermission : nativePermission // ignore: cast_nullable_to_non_nullable
+as AdUnitConfig,nativePermissionStorage: null == nativePermissionStorage ? _self.nativePermissionStorage : nativePermissionStorage // ignore: cast_nullable_to_non_nullable
+as AdUnitConfig,nativeFull: null == nativeFull ? _self.nativeFull : nativeFull // ignore: cast_nullable_to_non_nullable
+as AdUnitConfig,nativeFullSplash: null == nativeFullSplash ? _self.nativeFullSplash : nativeFullSplash // ignore: cast_nullable_to_non_nullable
+as AdUnitConfig,interSplashUninstall: null == interSplashUninstall ? _self.interSplashUninstall : interSplashUninstall // ignore: cast_nullable_to_non_nullable
+as AdUnitConfig,interUninstall: null == interUninstall ? _self.interUninstall : interUninstall // ignore: cast_nullable_to_non_nullable
+as AdUnitConfig,nativeUninstall: null == nativeUninstall ? _self.nativeUninstall : nativeUninstall // ignore: cast_nullable_to_non_nullable
+as AdUnitConfig,nativeExit: null == nativeExit ? _self.nativeExit : nativeExit // ignore: cast_nullable_to_non_nullable
 as AdUnitConfig,
   ));
 }
@@ -783,10 +807,10 @@ as AdUnitConfig,
 /// with the given fields replaced by the non-null parameter values.
 @override
 @pragma('vm:prefer-inline')
-$AdUnitConfigCopyWith<$Res> get openOnResumeSplash {
+$AdUnitConfigCopyWith<$Res> get openOnResume {
   
-  return $AdUnitConfigCopyWith<$Res>(_self.openOnResumeSplash, (value) {
-    return _then(_self.copyWith(openOnResumeSplash: value));
+  return $AdUnitConfigCopyWith<$Res>(_self.openOnResume, (value) {
+    return _then(_self.copyWith(openOnResume: value));
   });
 }/// Create a copy of AdUnitsConfig
 /// with the given fields replaced by the non-null parameter values.
@@ -801,19 +825,19 @@ $AdUnitConfigCopyWith<$Res> get interSplash {
 /// with the given fields replaced by the non-null parameter values.
 @override
 @pragma('vm:prefer-inline')
-$AdUnitConfigCopyWith<$Res> get openResume {
+$AdUnitConfigCopyWith<$Res> get bannerAll {
   
-  return $AdUnitConfigCopyWith<$Res>(_self.openResume, (value) {
-    return _then(_self.copyWith(openResume: value));
+  return $AdUnitConfigCopyWith<$Res>(_self.bannerAll, (value) {
+    return _then(_self.copyWith(bannerAll: value));
   });
 }/// Create a copy of AdUnitsConfig
 /// with the given fields replaced by the non-null parameter values.
 @override
 @pragma('vm:prefer-inline')
-$AdUnitConfigCopyWith<$Res> get interAll {
+$AdUnitConfigCopyWith<$Res> get nativeAll {
   
-  return $AdUnitConfigCopyWith<$Res>(_self.interAll, (value) {
-    return _then(_self.copyWith(interAll: value));
+  return $AdUnitConfigCopyWith<$Res>(_self.nativeAll, (value) {
+    return _then(_self.copyWith(nativeAll: value));
   });
 }/// Create a copy of AdUnitsConfig
 /// with the given fields replaced by the non-null parameter values.
@@ -891,64 +915,82 @@ $AdUnitConfigCopyWith<$Res> get nativeIntro4 {
 /// with the given fields replaced by the non-null parameter values.
 @override
 @pragma('vm:prefer-inline')
-$AdUnitConfigCopyWith<$Res> get nativeHome {
-  
-  return $AdUnitConfigCopyWith<$Res>(_self.nativeHome, (value) {
-    return _then(_self.copyWith(nativeHome: value));
-  });
-}/// Create a copy of AdUnitsConfig
-/// with the given fields replaced by the non-null parameter values.
-@override
-@pragma('vm:prefer-inline')
-$AdUnitConfigCopyWith<$Res> get interBack {
-  
-  return $AdUnitConfigCopyWith<$Res>(_self.interBack, (value) {
-    return _then(_self.copyWith(interBack: value));
-  });
-}/// Create a copy of AdUnitsConfig
-/// with the given fields replaced by the non-null parameter values.
-@override
-@pragma('vm:prefer-inline')
-$AdUnitConfigCopyWith<$Res> get interClosePremium {
-  
-  return $AdUnitConfigCopyWith<$Res>(_self.interClosePremium, (value) {
-    return _then(_self.copyWith(interClosePremium: value));
-  });
-}/// Create a copy of AdUnitsConfig
-/// with the given fields replaced by the non-null parameter values.
-@override
-@pragma('vm:prefer-inline')
-$AdUnitConfigCopyWith<$Res> get interHome {
-  
-  return $AdUnitConfigCopyWith<$Res>(_self.interHome, (value) {
-    return _then(_self.copyWith(interHome: value));
-  });
-}/// Create a copy of AdUnitsConfig
-/// with the given fields replaced by the non-null parameter values.
-@override
-@pragma('vm:prefer-inline')
-$AdUnitConfigCopyWith<$Res> get interTab {
-  
-  return $AdUnitConfigCopyWith<$Res>(_self.interTab, (value) {
-    return _then(_self.copyWith(interTab: value));
-  });
-}/// Create a copy of AdUnitsConfig
-/// with the given fields replaced by the non-null parameter values.
-@override
-@pragma('vm:prefer-inline')
-$AdUnitConfigCopyWith<$Res> get nativeAll {
-  
-  return $AdUnitConfigCopyWith<$Res>(_self.nativeAll, (value) {
-    return _then(_self.copyWith(nativeAll: value));
-  });
-}/// Create a copy of AdUnitsConfig
-/// with the given fields replaced by the non-null parameter values.
-@override
-@pragma('vm:prefer-inline')
 $AdUnitConfigCopyWith<$Res> get interIntro {
   
   return $AdUnitConfigCopyWith<$Res>(_self.interIntro, (value) {
     return _then(_self.copyWith(interIntro: value));
+  });
+}/// Create a copy of AdUnitsConfig
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$AdUnitConfigCopyWith<$Res> get nativePermission {
+  
+  return $AdUnitConfigCopyWith<$Res>(_self.nativePermission, (value) {
+    return _then(_self.copyWith(nativePermission: value));
+  });
+}/// Create a copy of AdUnitsConfig
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$AdUnitConfigCopyWith<$Res> get nativePermissionStorage {
+  
+  return $AdUnitConfigCopyWith<$Res>(_self.nativePermissionStorage, (value) {
+    return _then(_self.copyWith(nativePermissionStorage: value));
+  });
+}/// Create a copy of AdUnitsConfig
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$AdUnitConfigCopyWith<$Res> get nativeFull {
+  
+  return $AdUnitConfigCopyWith<$Res>(_self.nativeFull, (value) {
+    return _then(_self.copyWith(nativeFull: value));
+  });
+}/// Create a copy of AdUnitsConfig
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$AdUnitConfigCopyWith<$Res> get nativeFullSplash {
+  
+  return $AdUnitConfigCopyWith<$Res>(_self.nativeFullSplash, (value) {
+    return _then(_self.copyWith(nativeFullSplash: value));
+  });
+}/// Create a copy of AdUnitsConfig
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$AdUnitConfigCopyWith<$Res> get interSplashUninstall {
+  
+  return $AdUnitConfigCopyWith<$Res>(_self.interSplashUninstall, (value) {
+    return _then(_self.copyWith(interSplashUninstall: value));
+  });
+}/// Create a copy of AdUnitsConfig
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$AdUnitConfigCopyWith<$Res> get interUninstall {
+  
+  return $AdUnitConfigCopyWith<$Res>(_self.interUninstall, (value) {
+    return _then(_self.copyWith(interUninstall: value));
+  });
+}/// Create a copy of AdUnitsConfig
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$AdUnitConfigCopyWith<$Res> get nativeUninstall {
+  
+  return $AdUnitConfigCopyWith<$Res>(_self.nativeUninstall, (value) {
+    return _then(_self.copyWith(nativeUninstall: value));
+  });
+}/// Create a copy of AdUnitsConfig
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$AdUnitConfigCopyWith<$Res> get nativeExit {
+  
+  return $AdUnitConfigCopyWith<$Res>(_self.nativeExit, (value) {
+    return _then(_self.copyWith(nativeExit: value));
   });
 }
 }
