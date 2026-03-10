@@ -24,10 +24,6 @@
 - Tab ScanQR: BẮT BUỘC kiểm tra và xin quyền Camera trước khi quét. Quét thành công chuyển dữ liệu (final String scannedData) sang màn ScanCompleteScreen.
 - Màn hình này CHỈ chứa Bottom Navigation Bar với 3 tab: Create QR, Scan, History.
 - ĐỂ TỐI ƯU KIẾN TRÚC, TUYỆT ĐỐI KHÔNG CODE GIAO DIỆN CỦA 3 TAB NÀY TRONG FILE NÀY.
-- BẮT BUỘC phải import và sử dụng 3 Widget đã được định nghĩa sẵn nằm trong thư mục `widgets/`:
-    + Tab Create QR: gọi class `HomeCreateWidget()` (import từ thư mục widgets/home_create_widget.dart)
-    + Tab Scan: gọi class `HomeScanWidget()` (import từ thư mục widgets/home_scan_widget.dart)
-    + Tab History: gọi class `HomeHistoryWidget()` (import từ thư mục widgets/home_history_widget.dart)
 - Tab Create Qr chia ra 2 tab: QR code và Barcode
     + Bấm item ở tab QR Code mở màn CreateQRScreen để tạo qr tương ứng với item đó
     + Bấm item ở tab Barcode mở màn CreateBarcodeScreen để tạo barcode tương ứng với item đó
@@ -41,10 +37,8 @@
 - Bấm [Button]/Setting để mở màn Setting
 
 ## 5. Màn hình CreateQR
-- Nhận tham số `final String qrType` từ Router. Hiển thị các field nhập liệu (TextField) logic theo `qrType` (VD: Wifi cần Tên mạng & Mật khẩu, Text chỉ cần 1 field...).
-- Nhập xong bấm [Button]/Done để tạo mã, lưu vào Local Storage (HistoryItem) và chuyển sang màn QRResultScreen (truyền theo `final String generatedData`).
-- 🚨 BẮT BUỘC phải nhận tham số: `final String scannedData;` thông qua Constructor.
-
+- Hiển thị các field tuỳ vào kiểu tạo mã qr: contact, email, message ...
+- Bấm [Button]/Done sẽ sang màn QRResult hiển thị kết
 
 ## 6. Màn hình QRResult
 - Hiển thị kết mã đã được tạo từ các thông tin ở màn CreateQR

@@ -54,7 +54,6 @@ import 'cubit/tên_feature_của_bạn_state.dart';
 8. QUẢN LÝ MÀU SẮC (PALETTE & THEME)
 - TUYỆT ĐỐI KHÔNG tự bịa ra (hallucinate) các thuộc tính trong class `Palette`.
 - Class `Palette` của hệ thống HIỆN CHỈ CÓ các màu sau: `primary`, `adBackground`, `adBorder`.
-- Nếu cần màu nền (background) cho Scaffold, KHÔNG DÙNG Palette. Hãy dùng `Theme.of(context).scaffoldBackgroundColor` hoặc `Colors.white`.
 
 9. IMPORT CUSTOM WIDGETS
    Nếu trong code UI có sử dụng các Widget dùng chung, BẮT BUỘC phải thêm dòng import tuyệt đối sau vào dưới khối import trên:
