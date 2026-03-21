@@ -1,4 +1,7 @@
 import re
+import time
+
+import anthropic
 
 from automation.ai.ai_client import model_name, client
 
@@ -53,11 +56,29 @@ def generate_global_models(spec_content, screens_info):
     - KHÔNG giải thích
     """
 
-    response = client.messages.create(
-        model=model_name,
-        max_tokens=5000,
-        messages=[{"role": "user", "content": prompt}]
-    )
+    max_retries = 4
+    for attempt in range(max_retries):
+        try:
+            response = client.messages.create(
+                model=model_name,
+                max_tokens=5000,
+                temperature=0.2,
+                messages=[{"role": "user", "content": prompt}]
+            )
+            break
+        except anthropic.RateLimitError:
+            wait_time = 20 * (attempt + 1)
+            print(f"\n      ⏳ Đụng trần Token. Đang đợi {wait_time}s... (Lần {attempt + 1}/{max_retries})")
+            time.sleep(wait_time)
+        except anthropic.APIError as e:
+            if "overloaded" in str(e).lower() or getattr(e, 'status_code', 500) in [529, 502, 503, 504]:
+                wait_time = 15
+                print(f"\n      ⚠️ Máy chủ AI quá tải. Đang đợi {wait_time}s... (Lần {attempt + 1}/{max_retries})")
+                time.sleep(wait_time)
+            else:
+                raise
+    else:
+        raise Exception("🚨 Đã hết kiên nhẫn! Hãy thử lại sau vài phút.")
 
     raw_text = response.content[0].text.strip()
 

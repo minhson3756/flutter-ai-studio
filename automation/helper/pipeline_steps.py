@@ -322,14 +322,6 @@ def build_screen_context(
         route_list: str,
         palette_rules: str = "",
 ) -> str:
-    EXISTING_APP_CONTRACTS = """
-[CONTRACT APP CÓ SẴN]:
-- App ĐÃ CÓ sẵn LanguageCubit / cơ chế đổi ngôn ngữ toàn app.
-- TUYỆT ĐỐI KHÔNG tạo LanguageCubit mới, LanguageState mới, hay logic quản lý locale mới.
-- Chỉ cập nhật enum Language hiện có nếu cần thêm ngôn ngữ.
-- Không tạo model/cubit ngôn ngữ mới.
-"""
-
     UI_FIDELITY_RULES = """
 [QUY TẮC ĐỘ CHÍNH XÁC UI]:
 - BẮT BUỘC bám sát border, border radius, shadow, spacing, opacity, stroke nếu dữ liệu Figma có cung cấp.
@@ -360,7 +352,6 @@ YÊU CẦU NGHIỆP VỤ (BẮT BUỘC TUÂN THỦ):
 {dynamic_ai_context.get("constructors_context", "")}
 {dynamic_ai_context.get("route_contracts", "")}
 
-{EXISTING_APP_CONTRACTS}
 {UI_FIDELITY_RULES}
 {CONTRACT_HARD_RULES}
 {COMPLEX_SCREEN_RULES}

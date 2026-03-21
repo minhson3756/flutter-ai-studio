@@ -12,6 +12,7 @@ from automation.ai.ai_screen_generator import generate_feature_code
 from automation.figma_extractor.figma_assets import find_image_nodes, download_figma_images, \
     find_icon_nodes, download_figma_icons, find_fonts
 from automation.figma_extractor.figma_extractor import get_figma_screens
+from automation.figma_extractor.figma_parser import strip_for_prompt
 from automation.figma_extractor.figma_metadata import extract_languages_from_figma
 from automation.helper.injector import to_snake_case, inject_to_flutter
 from automation.helper.pipeline_steps import prepare_global_translations, prepare_global_models, \
@@ -266,7 +267,7 @@ def main():
 
         code = generate_feature_code(
             base_name,
-            json.dumps(screen_node, ensure_ascii=False),
+            json.dumps(strip_for_prompt(screen_node), ensure_ascii=False, separators=(',', ':')),
             ctx,
             rules_content,
         )

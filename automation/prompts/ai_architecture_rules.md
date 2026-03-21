@@ -92,11 +92,16 @@ import 'cubit/tên_feature_của_bạn_state.dart';
 - Tên route luôn sử dụng cú pháp: `[TênFeature]Route()`.
 - Tên class màn hình sử dụng cú pháp: `[TênFeature]Screen()`.
 
-17. QUY TẮC SỬ DỤNG HÌNH ẢNH (FLUTTER_GEN)
-- TUYỆT ĐỐI KHÔNG dùng `Image.asset('path/...')`.
-- BẮT BUỘC dùng class `Assets` được sinh ra bởi flutter_gen.
-- Cú pháp: `Assets.images.tênẢnh.image()`.
-- Đảm bảo đã import: `import 'package:flutter_base/src/gen/assets.gen.dart';`.
+17. QUY TẮC SỬ DỤNG HÌNH ẢNH
+- Nếu prompt cung cấp danh sách asset path được phép (section [HÌNH ẢNH ĐƯỢC PHÉP DÙNG] / [ICONS ĐƯỢC PHÉP DÙNG]):
+  + BẮT BUỘC dùng trực tiếp path string đã được liệt kê:
+    `SvgPicture.asset('assets/icons/xxx.svg')`
+    `Image.asset('assets/images/xxx.png')`
+  + TUYỆT ĐỐI KHÔNG tự đoán tên getter của flutter_gen vì dễ sinh tên sai.
+- Nếu prompt KHÔNG cung cấp danh sách asset path (trường hợp khác):
+  + BẮT BUỘC dùng class `Assets` được sinh ra bởi flutter_gen.
+  + Cú pháp: `Assets.images.tênẢnh.image()`.
+  + Đảm bảo đã import: `import 'package:flutter_base/src/gen/assets.gen.dart';`.
 
 18. QUY TẮC GRADIENT TEXT
 - Khi gặp Text có gradient trong Figma, TUYỆT ĐỐI không dùng `TextStyle(color: ...)`.
