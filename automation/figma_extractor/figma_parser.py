@@ -71,58 +71,107 @@ def simplify_node(node):
 
     simplified = {
         "id": node.get("id"),
-        "name": meta["base_name"],         # tên logic của screen
-        "raw_name": meta["raw_name"],      # tên đầy đủ trong Figma
-        "state_tags": meta["state_tags"],  # metadata parse từ __key=value
+        "name": meta["base_name"],
+        "raw_name": meta["raw_name"],
+        "state_tags": meta["state_tags"],
         "type": node.get("type", "UNKNOWN"),
-        "visible": node.get("visible", True)
+        "visible": node.get("visible", True),
     }
 
-    # 1. Lấy Tọa độ và Kích thước (Layout)
-    bbox = node.get("absoluteBoundingBox") or node.get("absoluteRenderBounds")
-    if bbox:
-        simplified["layout"] = {
-            "x": round(bbox.get("x", 0), 1),
-            "y": round(bbox.get("y", 0), 1),
-            "width": round(bbox.get("width", 0), 1),
-            "height": round(bbox.get("height", 0), 1)
-        }
-
-    # 2. Xử lý Màu sắc và Gradient
-    fill_data = extract_color(node.get("fills"))
-    if fill_data:
-        if isinstance(fill_data, str):
-            simplified["color"] = fill_data
-        else:
-            simplified["gradient"] = fill_data # Cung cấp gradient thô cho AI
-
-    # 3. Chi tiết cho TEXT
-    if node.get("type") == "TEXT":
-        simplified["text"] = node.get("characters", "")
-        style = node.get("style", {})
-        simplified["typography"] = {
-            "fontSize": style.get("fontSize"),
-            "fontWeight": style.get("fontWeight"),
-            "fontFamily": style.get("fontFamily"),
-            "textAlign": style.get("textAlignHorizontal")
-        }
-
-    # 4. XỬ LÝ TAG ĐẶC BIỆT
-    # [Image]: Dừng đệ quy tại đây, không bóc con cái
-    if "[Image]" in name or "[Icon]" in name:
+    # Bỏ qua node ẩn
+    if simplified["visible"] is False:
         return simplified
 
-        # [List]: Đánh dấu để AI dùng ListView.builder
-    if "[List]" in name:
-        simplified["is_list"] = True
+    # Layout cơ bản
+    for key in [
+        "absoluteBoundingBox",
+        "constraints",
+        "layoutMode",
+        "primaryAxisAlignItems",
+        "counterAxisAlignItems",
+        "itemSpacing",
+        "paddingLeft",
+        "paddingRight",
+        "paddingTop",
+        "paddingBottom",
+    ]:
+        if key in node:
+            simplified[key] = node[key]
 
-    # 5. Đệ quy bóc tách con cái
+    # Border radius
+    if node.get("cornerRadius") is not None:
+        simplified["cornerRadius"] = node.get("cornerRadius")
+
+    if node.get("rectangleCornerRadii") is not None:
+        simplified["rectangleCornerRadii"] = node.get("rectangleCornerRadii")
+
+    # Fill / color
+    fills = node.get("fills", [])
+    fill_color = extract_color(fills)
+    if fill_color:
+        simplified["fillColor"] = fill_color
+
+    # Border / stroke
+    strokes = node.get("strokes", [])
+    visible_strokes = [
+        s for s in strokes
+        if isinstance(s, dict) and s.get("visible", True) and s.get("type") == "SOLID"
+    ]
+    if visible_strokes:
+        simplified["strokes"] = visible_strokes
+        simplified["strokeWeight"] = node.get("strokeWeight", 1)
+
+    # Effects / shadow
+    effects = node.get("effects", [])
+    visible_effects = [
+        e for e in effects
+        if isinstance(e, dict) and e.get("visible", True)
+    ]
+    if visible_effects:
+        simplified["effects"] = visible_effects
+
+    # Text
+    if node.get("type") == "TEXT":
+        chars = node.get("characters", "")
+        if chars:
+            simplified["text"] = chars
+
+        style = node.get("style", {}) or {}
+        text_style = {}
+        for key in [
+            "fontFamily",
+            "fontPostScriptName",
+            "fontWeight",
+            "fontSize",
+            "textAlignHorizontal",
+            "textAlignVertical",
+            "letterSpacing",
+            "lineHeightPx",
+        ]:
+            if key in style:
+                text_style[key] = style[key]
+
+        if text_style:
+            simplified["textStyle"] = text_style
+
+    # Image/icon hints
+    if node.get("type") == "RECTANGLE" and fills:
+        for fill in fills:
+            if isinstance(fill, dict) and fill.get("type") == "IMAGE":
+                simplified["isImage"] = True
+                break
+
+    if "icon" in name.lower():
+        simplified["isIconHint"] = True
+
+    # Children
     children = node.get("children", [])
     if children:
         simplified_children = []
         for child in children:
-            if child.get("visible", True) is False: continue
-            simplified_children.append(simplify_node(child))
+            child_simple = simplify_node(child)
+            if child_simple and child_simple.get("visible", True):
+                simplified_children.append(child_simple)
         if simplified_children:
             simplified["children"] = simplified_children
 

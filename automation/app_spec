@@ -1,31 +1,35 @@
 # YÊU CẦU CHUNG
 - Viết code UI theo đúng chuẩn 100% thiết kế Figma.
 - Sử dụng Palette, và các thư viện core đã được định nghĩa.
-- Dùng AutoRoute để điều hướng.
 - Tự suy luận luồng app
 
 # YÊU CẦU TỪNG MÀN HÌNH
 
-## 1. Màn hình Splash
--  Đợi 2 giây rồi tự động chuyển sang Language. Không cho phép người dùng back lại.
+## SplashScreen
+-  Ở đây có thể init một số package, hoặc 1 số data, hàm cần thiết cho app, thời gian tối thiểu là 2s, sau đó chuyển sang màn Language
 
-## 2. Màn hình Language
+## LanguageScreen
 - [Button]/Accept Khi mới vào nút [Button]/Accept sẽ làm mờ đi 50% và không cho phép bấm
 - Khi chọn ngôn ngữ mới được phép bấm sang màn Intro.
 - Không cho back lại
 
-## 3. Màn hình Intro
+## IntroScreen
 - Màn intro sẽ có 1 PageView gồm 4 trang,
 - Khi bấm [Button]/Next thì sẽ chuyển sang trang tiếp theo,
 - Bấm [Button]/Start thì chuyển đến màn Home
 - Không cho back lại
 
-## 4. Màn hình Home
-- Tab ScanQR: BẮT BUỘC kiểm tra và xin quyền Camera trước khi quét. Quét thành công chuyển dữ liệu (final String scannedData) sang màn ScanCompleteScreen.
+## HomeScreen
 - Màn hình này CHỈ chứa Bottom Navigation Bar với 3 tab: Create QR, Scan, History.
+- Ở cả 3 tab đều kiểm tra quyền camera, nếu không có quyền thì màn hình ở trạng thái require_permission
+- Tab ScanQR:
+    + Lần đầu vào màn hiển thị first_guide, lần sau vào không hiển thị
+    + Vuốt [Slider]/Zoom hoặc bấm [Button]/ZoomOut và [Button]/ZoomIn để thay đổi zoom của camera
+    + Bấm [Button]/Flash để bật/tắt flash
+    + Quét thành công lưu data vào Hive để sử dụng cho chức năng History và chuyển dữ liệu sang màn ScanCompleteScreen.
 - ĐỂ TỐI ƯU KIẾN TRÚC, TUYỆT ĐỐI KHÔNG CODE GIAO DIỆN CỦA 3 TAB NÀY TRONG FILE NÀY.
 - Tab Create Qr chia ra 2 tab: QR code và Barcode
-    + Bấm item ở tab QR Code mở màn CreateQRScreen để tạo qr tương ứng với item đó
+    + Bấm item ở tab QR Code mở màn CreateQRScreen để tạo qr tương ứng với item đó, ví dụ bấm button Application thì mở màn CreateQRScreen với các field của Application
     + Bấm item ở tab Barcode mở màn CreateBarcodeScreen để tạo barcode tương ứng với item đó
 - Tab ScanQR có thể quét mã QR, Barcode, hiển thị kết quả ở màn ScanCompleteScreen
 - Tab History (Lịch sử):
@@ -34,34 +38,38 @@
     + Tại mỗi phần tử (Item) trong danh sách có nút 3 chấm. Khi bấm vào sẽ mở Dropdown Menu cho ĐÚNG phần tử đó (chứa các nút: Copy, Delete...).
     + Logic Delete: Khi bấm Delete trong menu, phải xóa item đó khỏi Local Storage và cập nhật lại danh sách trên UI.
     + Bấm vào ô search sang màn SearchScreen để tìm kiếm
+    + Nếu không có data thì màn hình ở trạng thái empty
 - Bấm [Button]/Setting để mở màn Setting
 
-## 5. Màn hình CreateQR
+## CreateQRScreen
 - Hiển thị các field tuỳ vào kiểu tạo mã qr: contact, email, message ...
-- Bấm [Button]/Done sẽ sang màn QRResult hiển thị kết
+- Bấm [Button]/Done sẽ sang màn QRResult hiển thị kết quả ở màn QRResult
 
-## 6. Màn hình QRResult
-- Hiển thị kết mã đã được tạo từ các thông tin ở màn CreateQR
+## QRResultScreen
+- Hiển thị kết mã đã được tạo từ các thông tin ở màn CreateQR tại QRResult
+- Ở QRDetail hiển thị data của QR
 - Bấm nút [Button]/Sampling sang màn Sampling
 
-## 7. Màn SamplingScreen
-- Tab Background chọn màu để đổi màu background của QR
-- Tab Choose Color chọn màu để đổi màu của QR
-- Tab Logo chọn logo để thêm vào giữa của QR
+## SamplingScreen
+- Hiển thị QR/barcode được truyền từ màn trước tại QRResult
+- Tab Background chọn màu để đổi màu background của QR/barcode
+- Tab Choose Color chọn màu để đổi màu của QR/barcode
+- Tab Logo chọn logo để thêm vào giữa của QR, nếu là barcode thì không hiển thị tab này
 
-## 8. Màn CreateBarcodeScreen
+## CreateBarcodeScreen
 - Nhập thông tin ở các field xong bấm nút [Button]/Done để sang màn BarcodeResultScreen và hiển thị kết quả
 
-## 9. Màn BarcodeResultScreen
-- Hiển thị kết mã đã được tạo từ các thông tin ở màn CreateBarcode
+## BarcodeResultScreen
+- Hiển thị kết mã đã được tạo từ các thông tin ở màn CreateBarcode tại BarcodeResult
+- Data của barcode hiển thị ở dưới
 - Bấm nút [Button]/Sampling sang màn Sampling, Màn Sampling của Barcode không có tab Logo
 
-## 10. Màn ScanCompleteScreen
+## ScanCompleteScreen
 - Nhận tham số `final String scannedData` từ màn trước.
 - Hiển thị kết quả scan.
 - Tự động viết logic cho các Action Buttons: Copy (sao chép text), Share (chia sẻ text), và Open Link (dùng url_launcher nếu data là link web).
 
-## 11. Màn Setting
+## SettingScreen
 - Nhấn [Button]/Language mở màn Language
 - Nhấn [Button]/Information để mở màn InformationScreen
     + Chuyển đổi theme dark/light cho app ở Topic

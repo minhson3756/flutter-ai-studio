@@ -37,8 +37,7 @@ KỶ LUẬT CHO `palette_updates`:
 
 QUY TẮC QUAN TRỌNG:
 - Nếu không có tên -> KHÔNG thêm vào `palette_updates`
-- `allowed_hexes` phải chứa toàn bộ mã màu HEX không tên nhưng hợp lệ để UI được phép dùng trực tiếp:
-  ví dụ `Color(0xFF123456)`
+- `allowed_hexes` phải chứa toàn bộ mã màu HEX không tên nhưng hợp lệ để UI được phép dùng trực tiếp.
 - TUYỆT ĐỐI CẤM dùng `Paint`, `Map`, comment giả hoặc token tên bịa.
 """
     return call_ai_json(prompt)

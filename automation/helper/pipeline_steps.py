@@ -342,7 +342,9 @@ def build_screen_context(
 - Screen chỉ được dùng các field thực sự tồn tại trong State/Cubit contract.
 - Nếu cần field mới trong State thì phải đồng thời cập nhật file state và cubit tương ứng.
 - Không được tự bịa getter như value, dateDisplay, timeDisplay, isCopySuccess nếu chưa có trong contract.
-- Không được tự bịa route không có trong route contracts.
+- KHÔNG được tự bịa route không có trong route contracts.
+- CHỈ được navigate tới route nằm trong [DANH SÁCH ROUTE HỢP LỆ].
+- Nếu không chắc route đích tồn tại, KHÔNG được điều hướng.
 """
 
     COMPLEX_SCREEN_RULES = """
@@ -350,6 +352,18 @@ def build_screen_context(
 - Nếu raw_name hoặc state_tags chỉ ra 1 variant cụ thể (ví dụ page=barcode), thì CHỈ implement variant đó.
 - KHÔNG được code toàn bộ 9 page/variant trong cùng một response.
 - ƯU TIÊN code ngắn gọn, compile được, đúng variant hiện tại.
+"""
+
+    NAVIGATION_RULES = f"""
+[QUY TẮC ĐIỀU HƯỚNG]:
+- DANH SÁCH ROUTE HỢP LỆ DUY NHẤT:
+{route_list}
+
+- CHỈ được dùng đúng các route ở danh sách trên.
+- Nếu hành động trên UI không có route hợp lệ tương ứng, hãy:
+  + giữ callback trống an toàn, hoặc
+  + gọi pop/back nếu phù hợp,
+  + nhưng KHÔNG được tạo route mới.
 """
 
     return f"""
@@ -364,6 +378,7 @@ YÊU CẦU NGHIỆP VỤ (BẮT BUỘC TUÂN THỦ):
 {UI_FIDELITY_RULES}
 {CONTRACT_HARD_RULES}
 {COMPLEX_SCREEN_RULES}
+{NAVIGATION_RULES}
 
 {variant_instructions}
 
@@ -371,9 +386,6 @@ YÊU CẦU NGHIỆP VỤ (BẮT BUỘC TUÂN THỦ):
 {l10n_instructions}
 {special_logic_instructions}
 {palette_rules}
-
-[DANH SÁCH ROUTE HỢP LỆ]:
-{route_list}
 
 [CONTRACT PARAMS]:
 - CHỈ được gọi Widget/Route bằng các tham số có trong CONTRACT hệ thống đã cung cấp.
@@ -489,6 +501,7 @@ def validate_generated_bundle(
         new_app_path: str,
         code: dict,
         raw_name: str,
+        route_list: str = "",
 ) -> None:
     validate_generated_code(code, raw_name)
 
@@ -496,13 +509,31 @@ def validate_generated_bundle(
         code.get("screen", "") or "",
         code.get("cubit", "") or "",
         code.get("state", "") or "",
-    ])
+        ])
 
     validate_constructor_and_route_usage(
-        new_app_path,
-        generated_bundle,
-        raw_name,
+        app_path=new_app_path,
+        screen_code=generated_bundle,
+        feature_name=raw_name,
+        allowed_route_names={
+            r.strip() for r in route_list.split(",")
+            if r.strip() and r.strip() != "Không có route nào"
+        },
     )
+
+    banned_hardcoded_texts = [
+        '"Done"', "'Done'",
+        '"Cancel"', "'Cancel'",
+        '"History"', "'History'",
+        '"Search"', "'Search'",
+        '"Barcode"', "'Barcode'",
+        '"QR Code"', "'QR Code'",
+    ]
+
+    found = [t for t in banned_hardcoded_texts if t in generated_bundle]
+    if found:
+        print(f"      ⚠️ Cảnh báo hardcoded text trong {raw_name}: {found}")
+
     print("      ✅ Contract tham số và định tuyến khớp 100%.")
 
 

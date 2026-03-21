@@ -163,14 +163,34 @@ def update_arb_files(app_path, translations):
 def update_palette_file(app_path, new_colors_code):
     palette_path = os.path.join(app_path, "lib/src/config/theme/palette.dart")
     content = read_file(palette_path)
-    if not content: content = "import 'package:flutter/material.dart';\n\nclass Palette {\n}"
+
+    if not content:
+        content = "import 'package:flutter/material.dart';\n\nclass Palette {\n  Palette._();\n}\n"
+
     lines = []
-    if isinstance(new_colors_code, dict):
-        for k, v in new_colors_code.items():
-            if k not in content: lines.append(f"  static const Color {k} = Color({v});")
-    elif isinstance(new_colors_code, str):
-        for l in new_colors_code.strip().split('\n'):
-            if '=' in l and l.split('=')[0].strip() not in content: lines.append(f"  {l.strip()}")
+
+    if isinstance(new_colors_code, str):
+        for raw_line in new_colors_code.strip().split("\n"):
+            line = raw_line.strip()
+            if not line:
+                continue
+
+            if not (
+                    line.startswith("static const Color ")
+                    or line.startswith("static const LinearGradient ")
+                    or line.startswith("static const RadialGradient ")
+            ):
+                continue
+
+            if "Paint" in line or "{" in line or "/*" in line:
+                continue
+
+            left_side = line.split("=")[0].strip()
+            if left_side in content:
+                continue
+
+            lines.append(f"  {line}")
+
     if lines:
-        new_content = re.sub(r'}\s*$', "\n".join(lines) + "\n}", content)
+        new_content = re.sub(r"}\s*$", "\n" + "\n".join(lines) + "\n}\n", content)
         write_file(palette_path, new_content)

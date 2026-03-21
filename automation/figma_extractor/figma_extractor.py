@@ -9,57 +9,138 @@ from automation.figma_extractor.figma_parser import simplify_node
 
 load_dotenv()
 
+def get_figma_screens(figma_key: str) -> dict:
+    """
+    Tải dữ liệu từ Figma và chuẩn hóa về format thống nhất:
 
+    {
+      "screens": [...],
+      "styles": {...},
+      "page_meta": {...}
+    }
 
-def get_figma_screens(file_key):
-    token = os.environ.get("FIGMA_TOKEN")
+    Hỗ trợ cả cache cũ lẫn format cũ.
+    """
+    import json
+    import os
+    import requests
 
-    if not token or token.startswith("figd_..."):
-        raise ValueError("🚨 Lỗi: FIGMA_TOKEN chưa được cài đặt đúng trong file .env!")
+    if not figma_key:
+        raise ValueError("Thiếu FIGMA_KEY trong environment.")
 
-    # 1. KIỂM TRA CACHE TRƯỚC KHI GỌI MẠNG
-    cache_file = os.path.join(os.path.dirname(__file__), f".cache_figma_{file_key}.json")
+    cache_file = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)),
+        f".cache_figma_{figma_key}.json",
+    )
+
+    def _normalize_figma_result(raw_data: dict) -> dict:
+        """
+        Chuẩn hóa mọi dạng output về cùng một contract:
+        {
+          "screens": [...],
+          "styles": {...},
+          "page_meta": {...}
+        }
+        """
+        if not isinstance(raw_data, dict):
+            return {
+                "screens": [],
+                "styles": {},
+                "page_meta": {},
+            }
+
+        # Case 1: đã là format mới
+        if "screens" in raw_data:
+            return {
+                "screens": raw_data.get("screens", []) or [],
+                "styles": raw_data.get("styles", {}) or {},
+                "page_meta": raw_data.get("page_meta", {}) or {},
+            }
+
+        # Case 2: format root/page cũ với children
+        if "children" in raw_data:
+            return {
+                "screens": raw_data.get("children", []) or [],
+                "styles": raw_data.get("styles", {}) or {},
+                "page_meta": {
+                    "id": raw_data.get("id"),
+                    "name": raw_data.get("name"),
+                    "raw_name": raw_data.get("raw_name"),
+                    "state_tags": raw_data.get("state_tags", {}) or {},
+                },
+            }
+
+        # fallback
+        return {
+            "screens": [],
+            "styles": raw_data.get("styles", {}) or {},
+            "page_meta": {},
+        }
+
+    # ==========================================================
+    # 1. ƯU TIÊN ĐỌC CACHE
+    # ==========================================================
     if os.path.exists(cache_file):
-        print(f"   -> 📦 [CACHE HIT] Đang dùng dữ liệu lưu tạm ...")
-        with open(cache_file, "r", encoding="utf-8") as f:
-            return json.load(f)
+        try:
+            with open(cache_file, "r", encoding="utf-8") as f:
+                cached_data = json.load(f)
+            normalized = _normalize_figma_result(cached_data)
+            return normalized
+        except Exception:
+            # cache lỗi thì bỏ qua, tải mới
+            pass
 
-    headers = {"X-Figma-Token": token}
-    url = f"https://api.figma.com/v1/files/{file_key}?depth=10"
+    # ==========================================================
+    # 2. GỌI FIGMA API
+    # ==========================================================
+    figma_token = os.environ.get("FIGMA_TOKEN")
+    if not figma_token:
+        raise ValueError("Thiếu FIGMA_TOKEN trong environment.")
 
-    print(f"   -> 🌐 Đang kết nối với máy chủ Figma (File Key: {file_key})...")
+    print(f"   -> 🌐 Đang kết nối với máy chủ Figma (File Key: {figma_key})...")
 
-    max_retries = 3
-    for attempt in range(max_retries):
-        response = requests.get(url, headers=headers)
+    url = f"https://api.figma.com/v1/files/{figma_key}"
+    headers = {
+        "X-Figma-Token": figma_token,
+    }
 
-        if response.status_code == 200:
-            data = response.json()
-            document = data.get("document", {})
-            pages = document.get("children", [])
+    response = requests.get(url, headers=headers, timeout=60)
+    response.raise_for_status()
 
-            if not pages:
-                raise Exception("🚨 Lỗi: File Figma trống hoặc không có Page nào.")
+    data = response.json()
+    print("   -> Đã tải xong data. Đang bóc tách giao diện...")
 
-            first_page = pages[0]
-            print(f"   -> Đã tải xong data. Đang bóc tách giao diện...")
+    document = data.get("document", {})
+    pages = document.get("children", [])
 
-            # Xử lý dữ liệu
-            simplified_data = simplify_node(first_page)
+    if not pages:
+        result = {
+            "screens": [],
+            "styles": data.get("styles", {}) or {},
+            "page_meta": {},
+        }
+        with open(cache_file, "w", encoding="utf-8") as f:
+            json.dump(result, f, ensure_ascii=False, indent=2)
+        return result
 
-            # 2. LƯU LẠI CACHE CHO LẦN SAU DÙNG
-            with open(cache_file, "w", encoding="utf-8") as f:
-                json.dump(simplified_data, f, ensure_ascii=False, indent=2)
+    # Lấy page đầu tiên
+    first_page = pages[0]
 
-            return simplified_data
+    # simplify_node phải được import sẵn trong file này
+    simplified_page = simplify_node(first_page)
 
-        elif response.status_code == 429:
-            wait_time = 10 * (attempt + 1)
-            print(f"   ⚠️ Figma báo quá tải (429). Đang đợi {wait_time}s... (Lần {attempt + 1}/{max_retries})")
-            time.sleep(wait_time)
+    result = {
+        "screens": simplified_page.get("children", []) or [],
+        "styles": data.get("styles", {}) or {},
+        "page_meta": {
+            "id": simplified_page.get("id"),
+            "name": simplified_page.get("name"),
+            "raw_name": simplified_page.get("raw_name"),
+            "state_tags": simplified_page.get("state_tags", {}) or {},
+        },
+    }
 
-        else:
-            raise Exception(f"🚨 Figma API Error {response.status_code}: {response.text}")
+    with open(cache_file, "w", encoding="utf-8") as f:
+        json.dump(result, f, ensure_ascii=False, indent=2)
 
-    raise Exception("🚨 FATAL ERROR: Bị Figma chặn (429).")
-
+    return result

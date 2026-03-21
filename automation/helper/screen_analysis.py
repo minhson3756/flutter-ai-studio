@@ -110,12 +110,15 @@ def extract_all_colors(node, color_set=None):
 def group_screen_variants(screens):
     """
     Gom các frame cùng base screen thành 1 logical screen.
-    Các frame có state_tags sẽ trở thành variants của cùng 1 màn.
+    Frame hidden sẽ bị bỏ qua hoàn toàn.
     """
     grouped = {}
     normal_screens = []
 
     for s in screens:
+        if not s.get("visible", True):
+            continue
+
         base_name = (s.get("name") or "Unknown").strip()
         raw_name = (s.get("raw_name") or base_name).strip()
         state_tags = s.get("state_tags", {}) or {}
@@ -129,7 +132,7 @@ def group_screen_variants(screens):
                     "visible": s.get("visible", True),
                     "children": s.get("children", []),
                     "layout": s.get("layout"),
-                    "all_texts": sorted(get_screen_texts(s)),
+                    "all_texts": list(get_screen_texts(s)),
                     "variants": [],
                 }
 
@@ -138,17 +141,20 @@ def group_screen_variants(screens):
                 "state_tags": state_tags,
                 "children": s.get("children", []),
                 "layout": s.get("layout"),
-                "all_texts": sorted(get_screen_texts(s)),
+                "all_texts": list(get_screen_texts(s)),
+                "visible": s.get("visible", True),
             })
         else:
             if "all_texts" not in s:
-                s["all_texts"] = sorted(get_screen_texts(s))
+                s["all_texts"] = list(get_screen_texts(s))
             normal_screens.append(s)
 
     result = normal_screens[:]
     for _, item in grouped.items():
         merged_texts = set(item.get("all_texts", []))
         for variant in item.get("variants", []):
+            if not variant.get("visible", True):
+                continue
             for t in variant.get("all_texts", []):
                 merged_texts.add(t)
         item["all_texts"] = sorted(merged_texts)
