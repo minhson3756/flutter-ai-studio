@@ -1,4 +1,7 @@
 import re
+import time
+
+import anthropic
 
 from automation.ai.ai_client import _call_ai_code, client, model_name
 
@@ -90,11 +93,30 @@ def fix_flutter_code_agent(file_content, error_log):
     3. CỰC KỲ QUAN TRỌNG: CHỈ TRẢ VỀ code Dart (bọc trong ```dart ... ```). KHÔNG giải thích, KHÔNG nói chuyện, KHÔNG dùng TODO.
     """
 
-    response = client.messages.create(
-        model=model_name,
-        max_tokens=8192,
-        messages=[{"role": "user", "content": prompt}]
-    )
+    max_retries = 3
+    for attempt in range(max_retries):
+        try:
+            response = client.messages.create(
+                model=model_name,
+                max_tokens=8192,
+                temperature=0.1,
+                messages=[{"role": "user", "content": prompt}]
+            )
+            break
+        except anthropic.RateLimitError:
+            wait_time = 20 * (attempt + 1)
+            print(f"\n      ⏳ Đụng trần Token. Đang đợi {wait_time}s... (Lần {attempt + 1}/{max_retries})")
+            time.sleep(wait_time)
+        except anthropic.APIError as e:
+            if "overloaded" in str(e).lower() or getattr(e, 'status_code', 500) in [529, 502, 503, 504]:
+                wait_time = 15
+                print(f"\n      ⚠️ Máy chủ AI quá tải. Đang đợi {wait_time}s... (Lần {attempt + 1}/{max_retries})")
+                time.sleep(wait_time)
+            else:
+                raise
+    else:
+        raise Exception("🚨 Đã hết kiên nhẫn khi fix code! Hãy thử lại sau vài phút.")
+
     text = response.content[0].text
 
     # Trích xuất code mới

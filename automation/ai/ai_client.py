@@ -19,6 +19,7 @@ def call_ai_json(prompt, max_retries=6):
             response = client.messages.create(
                 model=model_name,
                 max_tokens=8000,
+                temperature=0.3,
                 messages=[{"role": "user", "content": prompt}]
             )
             break
@@ -57,11 +58,25 @@ def _call_ai_code(prompt, max_retries=3):
     last_raw_text = ""
 
     for attempt in range(max_retries):
-        response = client.messages.create(
-            model=model_name,
-            max_tokens=10000,
-            messages=[{"role": "user", "content": prompt}],
-        )
+        try:
+            response = client.messages.create(
+                model=model_name,
+                max_tokens=10000,
+                temperature=0.2,
+                messages=[{"role": "user", "content": prompt}],
+            )
+        except anthropic.RateLimitError:
+            wait_time = 20 * (attempt + 1)
+            print(f"\n      ⏳ Đụng trần Token. Đang đợi {wait_time}s... (Lần {attempt + 1}/{max_retries})")
+            time.sleep(wait_time)
+            continue
+        except anthropic.APIError as e:
+            if "overloaded" in str(e).lower() or getattr(e, 'status_code', 500) in [529, 502, 503, 504]:
+                wait_time = 15
+                print(f"\n      ⚠️ Máy chủ AI quá tải. Đang đợi {wait_time}s... (Lần {attempt + 1}/{max_retries})")
+                time.sleep(wait_time)
+                continue
+            raise
 
         raw_text = response.content[0].text.strip()
         last_raw_text = raw_text

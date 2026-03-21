@@ -64,6 +64,59 @@ def parse_frame_name_metadata(name: str):
         "state_tags": state_tags,
     }
 
+def strip_for_prompt(node):
+    """
+    Loại bỏ các field không cần thiết cho AI để giảm token count.
+    Gọi SAU KHI get_used_assets() đã chạy xong (vì id vẫn cần cho asset matching).
+
+    Những gì bị bỏ:
+    - id: chỉ dùng nội bộ cho asset matching
+    - visible: luôn True vì node ẩn đã bị lọc
+    - all_texts: flat list trùng lặp với text trong children tree
+    - layout.x, layout.y: tọa độ tuyệt đối, Flutter không cần
+    - state_tags: {} khi rỗng
+    - typography: bỏ các field None
+    """
+    if not isinstance(node, dict):
+        return node
+
+    _SKIP = {"id", "visible", "all_texts"}
+    result = {}
+
+    for key, value in node.items():
+        if key in _SKIP:
+            continue
+
+        if key == "state_tags" and not value:
+            continue
+
+        if key == "layout" and isinstance(value, dict):
+            size = {k: v for k, v in value.items() if k in ("width", "height")}
+            if size:
+                result["layout"] = size
+            continue
+
+        if key == "typography" and isinstance(value, dict):
+            typo = {k: v for k, v in value.items() if v is not None}
+            if typo:
+                result["typography"] = typo
+            continue
+
+        if key == "children" and isinstance(value, list):
+            stripped = [strip_for_prompt(c) for c in value]
+            if stripped:
+                result["children"] = stripped
+            continue
+
+        if key == "variants" and isinstance(value, list):
+            result["variants"] = [strip_for_prompt(v) for v in value]
+            continue
+
+        result[key] = value
+
+    return result
+
+
 def simplify_node(node):
     """Bóc tách dữ liệu Figma thành JSON rút gọn cho AI"""
     name = node.get("name", "Unnamed")
