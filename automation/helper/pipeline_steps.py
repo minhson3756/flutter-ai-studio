@@ -163,6 +163,12 @@ def build_asset_instructions(
 ) -> str:
     used_imgs, used_icns = get_used_assets(screen_node, img_dict, icon_dict)
 
+    # Cũng quét assets trong variant secondary frames
+    for variant in screen_node.get("variants", []):
+        v_imgs, v_icns = get_used_assets(variant, img_dict, icon_dict)
+        used_imgs.update(v_imgs)
+        used_icns.update(v_icns)
+
     asset_instructions = ""
     if used_imgs:
         img_lines = "\n".join([f"- assets/images/{img}" for img in sorted(used_imgs)])
@@ -193,29 +199,43 @@ def build_l10n_instructions(
     if not global_keys_mapping:
         return ""
 
-    screen_texts = [
-        t for t in screen_node.get("all_texts", [])
-        if t in global_keys_mapping
-    ]
-    if not screen_texts:
-        return """
-[QUY TẮC ĐA NGÔN NGỮ]:
-- Nếu màn hình không có mapping text được cung cấp thì hạn chế hardcode text.
-- ƯU TIÊN dùng localization nếu base project đã có sẵn.
-"""
+    # Lọc keys liên quan đến screen này (exact match + case-insensitive match)
+    screen_texts = screen_node.get("all_texts", []) or []
+    screen_texts_lower = {t.strip().lower() for t in screen_texts if t and t.strip()}
+
+    matched_keys = {}
+    for raw_text, key_name in global_keys_mapping.items():
+        if raw_text in screen_texts:
+            matched_keys[raw_text] = key_name
+        elif raw_text.strip().lower() in screen_texts_lower:
+            matched_keys[raw_text] = key_name
 
     l10n_instructions = """
-[QUY TẮC ĐA NGÔN NGỮ]:
-- Mọi text nhìn thấy trên UI mà đã có key trong mapping bên dưới thì BẮT BUỘC dùng localization.
-- TUYỆT ĐỐI KHÔNG hardcode text design như 'Done', 'Cancel', 'History', 'Search', 'Barcode', 'QR Code'...
-- Chỉ được hardcode nếu text đó thật sự không có trong mapping được cung cấp.
-- ƯU TIÊN dùng AppLocalizations.of(context)! hoặc S.of(context) tùy base project hiện tại.
-- Nếu app đã có file arb và localization setup sẵn, không được tạo cơ chế localization mới.
+🚨 [QUY TẮC ĐA NGÔN NGỮ - BẮT BUỘC]:
+- CẤM TUYỆT ĐỐI hardcode text trên UI. Mọi text hiển thị cho người dùng PHẢI dùng localization.
+- Sử dụng: AppLocalizations.of(context)!.keyName
+- Khai báo biến: final l10n = AppLocalizations.of(context)!; rồi dùng l10n.keyName
+- Import: import 'package:flutter_base/src/gen/l18n/app_localizations.dart';
+- Nếu text KHÔNG có trong mapping bên dưới → vẫn PHẢI tạo key hợp lý và dùng localization.
 """
 
-    l10n_instructions += "\n[LOCALIZATION KEYS ĐƯỢC PHÉP DÙNG]:\n"
-    for txt in sorted(set(screen_texts)):
-        l10n_instructions += f'- "{txt}" => {global_keys_mapping[txt]}\n'
+    if matched_keys:
+        l10n_instructions += "\n[MAPPING TEXT → KEY cho màn hình này]:\n"
+        for txt in sorted(matched_keys.keys()):
+            l10n_instructions += f'- "{txt}" => l10n.{matched_keys[txt]}\n'
+    else:
+        l10n_instructions += "\n⚠️ Không tìm thấy mapping cụ thể cho screen này, nhưng VẪN PHẢI dùng localization cho mọi text.\n"
+
+    # Cung cấp danh sách keys phổ biến (giới hạn 50 keys, tiết kiệm token)
+    common_keys = {k: v for k, v in global_keys_mapping.items()
+                   if len(k) < 50 and not k[0].isdigit()}
+    if common_keys:
+        limited = dict(sorted(common_keys.items())[:50])
+        l10n_instructions += f"\n[LOCALIZATION KEYS CÓ SẴN (top {len(limited)} keys, tham khảo)]:\n"
+        for txt in sorted(limited.keys()):
+            l10n_instructions += f'- "{txt}" => l10n.{limited[txt]}\n'
+        if len(common_keys) > 50:
+            l10n_instructions += f"... và {len(common_keys) - 50} keys khác.\n"
 
     return l10n_instructions
 
@@ -321,6 +341,7 @@ def build_screen_context(
         variant_instructions: str,
         route_list: str,
         palette_rules: str = "",
+        palette_content: str = "",
 ) -> str:
     UI_FIDELITY_RULES = """
 [QUY TẮC ĐỘ CHÍNH XÁC UI]:
@@ -377,6 +398,7 @@ YÊU CẦU NGHIỆP VỤ (BẮT BUỘC TUÂN THỦ):
 {l10n_instructions}
 {special_logic_instructions}
 {palette_rules}
+{('[NỘI DUNG THỰC TẾ CỦA palette.dart - CHỈ ĐƯỢC DÙNG CÁC THUỘC TÍNH CÓ TRONG ĐÂY]:' + chr(10) + palette_content) if palette_content else ''}
 
 [CONTRACT PARAMS]:
 - CHỈ được gọi Widget/Route bằng các tham số có trong CONTRACT hệ thống đã cung cấp.
@@ -458,10 +480,22 @@ def install_ai_packages(
         "mobile_scanner",
         "permission_handler",
         "image_picker",
+        "image_gallery_saver_plus",
         "path_provider",
         "url_launcher",
         "hive_ce",
+        "hive_ce_flutter",
         "hive_flutter",
+        "video_player",
+        "cached_network_image",
+        "shimmer",
+        "connectivity_plus",
+        "package_info_plus",
+        "device_info_plus",
+        "dio",
+        "http",
+        "photo_view",
+        "webview_flutter",
     }
 
     installed = set()
@@ -477,12 +511,17 @@ def install_ai_packages(
 
         print(f"      📦 Đang tự động cài đặt thư viện: {pkg}...")
         try:
-            subprocess.run(
+            result = subprocess.run(
                 ["flutter", "pub", "add", pkg],
                 cwd=new_app_path,
-                timeout=45,
+                timeout=120,
+                capture_output=True,
+                text=True,
             )
-            installed.add(pkg)
+            if result.returncode == 0:
+                installed.add(pkg)
+            else:
+                print(f"      ⚠️ flutter pub add {pkg} thất bại: {result.stderr.strip()[:200]}")
         except Exception as e:
             print(f"      ⚠️ Lỗi khi cài {pkg}: {e}")
 
@@ -495,6 +534,15 @@ def validate_generated_bundle(
         route_list: str = "",
 ) -> None:
     validate_generated_code(code, raw_name)
+
+    # Auto-fix deprecated withOpacity → withValues
+    for key in ("screen", "cubit", "state"):
+        if code.get(key):
+            code[key] = re.sub(
+                r'\.withOpacity\(([^)]+)\)',
+                r'.withValues(alpha: \1)',
+                code[key],
+            )
 
     generated_bundle = "\n".join([
         code.get("screen", "") or "",
@@ -512,18 +560,32 @@ def validate_generated_bundle(
         },
     )
 
-    banned_hardcoded_texts = [
-        '"Done"', "'Done'",
-        '"Cancel"', "'Cancel'",
-        '"History"', "'History'",
-        '"Search"', "'Search'",
-        '"Barcode"', "'Barcode'",
-        '"QR Code"', "'QR Code'",
+    # Smart hardcoded text detection: tìm quoted strings > 1 char giống UI text
+    _exclude_re = re.compile(
+        r"assets/|fonts/|package:|\.dart|\.png|\.svg|\.json|\.ttf|\.otf|"
+        r"Route\b|Screen\b|Cubit\b|State\b|http|/|_|\\|"
+        r"^\d|^[A-Z_]+$|^0x|^#|cubit|state|context|widget"
+    )
+    _all_quoted = re.findall(r"'([^']{2,30}?)'", generated_bundle)
+    _suspicious = [
+        t for t in _all_quoted
+        if not _exclude_re.search(t) and any(c.isalpha() for c in t)
     ]
+    if _suspicious:
+        # Deduplicate
+        _suspicious = sorted(set(_suspicious))[:10]
+        print(f"      ⚠️ Cảnh báo hardcoded text trong {raw_name}: {_suspicious}")
 
-    found = [t for t in banned_hardcoded_texts if t in generated_bundle]
-    if found:
-        print(f"      ⚠️ Cảnh báo hardcoded text trong {raw_name}: {found}")
+    # Validate import paths — cảnh báo nếu import tới file không tồn tại
+    _import_re = re.compile(r"import\s+'package:(\w+)/(.+?)';")
+    _bad_imports = []
+    for _m in _import_re.finditer(generated_bundle):
+        _pkg, _path = _m.group(1), _m.group(2)
+        _full = os.path.join(new_app_path, "lib", _path)
+        if not os.path.exists(_full) and "shared/widgets/" in _path:
+            _bad_imports.append(_path)
+    if _bad_imports:
+        print(f"      ⚠️ Import tới file KHÔNG TỒN TẠI: {_bad_imports}")
 
     print("      ✅ Contract tham số và định tuyến khớp 100%.")
 
@@ -569,13 +631,26 @@ def analyze_and_fix_screen(
 
 def finalize_project(new_app_path: str) -> None:
     print("\n🛠️ Đang chạy build_runner hoàn thiện project...")
-    subprocess.run(
+    br_result = subprocess.run(
         ["flutter", "pub", "run", "build_runner", "build", "--delete-conflicting-outputs"],
         cwd=new_app_path,
+        capture_output=True,
+        text=True,
     )
+    if br_result.returncode != 0:
+        print(f"  ⚠️ build_runner có lỗi:\n{br_result.stderr[:500]}")
+    else:
+        print("  ✅ build_runner hoàn tất.")
 
     print("🌐 Đang biên dịch các file ngôn ngữ (gen-l10n)...")
-    subprocess.run(["flutter", "gen-l10n"], cwd=new_app_path)
+    l10n_result = subprocess.run(
+        ["flutter", "gen-l10n"],
+        cwd=new_app_path,
+        capture_output=True,
+        text=True,
+    )
+    if l10n_result.returncode != 0:
+        print(f"  ⚠️ gen-l10n có lỗi:\n{l10n_result.stderr[:500]}")
 
     print("\n🩺 Đang khám sức khỏe tổng quát toàn bộ dự án...")
     final_analyze = subprocess.run(

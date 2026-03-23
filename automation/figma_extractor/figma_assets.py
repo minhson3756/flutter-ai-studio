@@ -6,17 +6,21 @@ import requests
 
 
 def find_image_nodes(node, found_list=None):
-    """Tìm node [Image] - Xử lý cả dấu / và dấu :"""
+    """Tìm node [Image] - Xử lý cả dấu / và dấu :
+    Hỗ trợ cả raw Figma data (name chứa [Image]) và simplified data (raw_name chứa [Image])
+    """
     if found_list is None: found_list = []
 
-    name = node.get("name", "")
+    # Kiểm tra cả name và raw_name (simplify_node lưu tên gốc vào raw_name)
+    name = node.get("raw_name") or node.get("name", "")
     node_id = node.get("id")
 
     if "[Image]" in name and node_id:
         # Lấy phần tên sau dấu / hoặc :
         clean_name = name.split('/')[-1].split(':')[-1].replace("[Image]", "").strip()
-        # Chuyển sang snake_case (VD: SplashBackgroud -> splash_backgroud)
-        file_name = re.sub(r'(?<!^)(?=[A-Z])', '_', clean_name).lower()
+        # Chuyển sang snake_case, xử lý acronym (QRCode -> qr_code, không phải q_r_code)
+        file_name = re.sub(r'([A-Z]+)([A-Z][a-z])', r'\1_\2', clean_name)
+        file_name = re.sub(r'([a-z0-9])([A-Z])', r'\1_\2', file_name).lower()
         found_list.append((str(node_id), file_name))
 
     for child in node.get("children", []):
@@ -90,10 +94,13 @@ def download_figma_images(file_key, image_nodes, target_dir):
         return final_files
 
 def find_icon_nodes(node, found_list=None):
-    """Tìm node [Icon] và xử lý đường dẫn thư mục con"""
+    """Tìm node [Icon] và xử lý đường dẫn thư mục con
+    Hỗ trợ cả raw Figma data và simplified data (raw_name)
+    """
     if found_list is None: found_list = []
 
-    name = node.get("name", "")
+    # Kiểm tra cả name và raw_name
+    name = node.get("raw_name") or node.get("name", "")
     node_id = node.get("id")
 
     if "[Icon]" in name and node_id:

@@ -43,14 +43,56 @@ QUY TẮC QUAN TRỌNG:
     return call_ai_json(prompt)
 
 def generate_language_enum(languages_list):
-    # 🌟 SỬA LỖI ENUM: Ép dùng XML thay vì JSON để tránh gãy code
     prompt = f"""
-    Bạn là chuyên gia Flutter/Dart. Hãy tạo file enum Language dựa trên danh sách: {languages_list}
-    
-    YÊU CẦU BẮT BUỘC: 
-    TUYỆT ĐỐI KHÔNG TRẢ VỀ JSON. Trả về mã nguồn Dart thuần túy bọc trong thẻ XML <screen> ... </screen>.
-    Giữ nguyên cấu trúc enum chuẩn của Dart, hỗ trợ extension lấy `Locale`.
-    """
+Bạn là chuyên gia Flutter/Dart. Hãy tạo file `language.dart` dựa trên danh sách ngôn ngữ: {languages_list}
+
+TUYỆT ĐỐI KHÔNG TRẢ VỀ JSON. Trả về mã nguồn Dart thuần túy bọc trong thẻ XML <screen> ... </screen>.
+
+CẤU TRÚC BẮT BUỘC:
+```dart
+import 'dart:ui';
+
+enum Language {{
+  english(languageName: 'English', languageCode: 'en'),
+  // ... các ngôn ngữ khác
+  ;
+
+  const Language({{
+    required this.languageName,
+    required this.languageCode,
+    this.scriptCode,
+    this.countryCode,
+  }});
+
+  final String languageName;
+  final String languageCode;
+  final String? scriptCode;
+  final String? countryCode;
+
+  @override
+  String toString() => languageName;
+
+  Locale get locale => Locale.fromSubtags(
+        languageCode: languageCode,
+        scriptCode: scriptCode,
+        countryCode: countryCode,
+      );
+}}
+```
+
+QUY TẮC ÁNH XẠ LOCALE BẮT BUỘC:
+- Code dạng "xx" (2 ký tự): languageCode='xx', không cần scriptCode/countryCode
+- Code dạng "xx_YY" (với YY là mã quốc gia 2 HOA): countryCode='YY', VD: pt_BR → countryCode: 'BR'
+- Code dạng "xx_Yyyy" (với Yyyy là script 4 ký tự): scriptCode='Yyyy', VD: zh_Hans → scriptCode: 'Hans'
+- TRƯỜNG HỢP ĐẶC BIỆT BẮT BUỘC:
+  + zh hoặc zh_Hans → languageCode: 'zh', scriptCode: 'Hans' (Giản thể)
+  + zh_TW hoặc zh_Hant → languageCode: 'zh', scriptCode: 'Hant' (Phồn thể)
+  + pt hoặc pt_PT → languageCode: 'pt', countryCode: 'PT'
+  + pt_BR → languageCode: 'pt', countryCode: 'BR'
+  + ar → languageCode: 'ar' (không cần thêm gì)
+
+KHÔNG được tạo getter `locale` dùng switch/case cũ, BẮT BUỘC dùng `Locale.fromSubtags`.
+"""
     return _call_ai_code(prompt)
 
 def generate_screen_translations(texts_list, lang_codes):

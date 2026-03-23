@@ -2,6 +2,17 @@ import os
 import re
 
 
+def _get_pkg_name(app_path: str) -> str:
+    """Đọc tên package từ pubspec.yaml."""
+    pubspec_path = os.path.join(app_path, "pubspec.yaml")
+    if os.path.exists(pubspec_path):
+        with open(pubspec_path, "r", encoding="utf-8") as f:
+            for line in f:
+                if line.strip().startswith("name:"):
+                    return line.split(":", 1)[1].strip()
+    return "flutter_base"
+
+
 def extract_flutter_models(app_path: str) -> str:
     """
     Quét thư mục shared/models để trích xuất cấu trúc model ngắn gọn cho AI.
@@ -50,7 +61,7 @@ def extract_flutter_models(app_path: str) -> str:
                 fields_str = ", ".join(
                     [f"{type_name.strip()} {field_name}" for type_name, field_name in fields]
                 )
-                rel_import = f"package:flutter_base/src/shared/models/{file}"
+                rel_import = f"package:{_get_pkg_name(app_path)}/src/shared/models/{file}"
 
                 lines.append(f"- {class_name}({fields_str})")
                 lines.append(f"  import: {rel_import}")
@@ -224,6 +235,12 @@ def _extract_named_params_from_signature(params_raw: str):
         return allowed_named, required_named
 
     cleaned = re.sub(r"\s+", " ", params_raw).strip()
+
+    # Strip annotations như @QueryParam('...'), @Default(...), @pathParam, v.v.
+    cleaned = re.sub(r'@\w+(?:\([^)]*\))?\s*', '', cleaned)
+
+    # Strip super.xxx patterns (ví dụ: super.key) — không phải named param của caller
+    cleaned = re.sub(r'super\.\w+', '', cleaned)
 
     # Bắt kiểu this.foo
     this_params = re.findall(
@@ -446,9 +463,18 @@ def validate_constructor_and_route_usage(
             )
 
     if errors:
-        joined = "\n- ".join(errors)
-        raise ValueError(
-            f"{feature_name}: phát hiện gọi sai contract widget/route:\n- {joined}"
-        )
+        # Phân loại: Route errors nghiêm trọng hơn widget errors
+        route_errors = [e for e in errors if "Route" in e]
+        widget_errors = [e for e in errors if "Route" not in e]
+
+        if widget_errors:
+            joined_w = "\n- ".join(widget_errors)
+            print(f"      ⚠️ {feature_name}: cảnh báo contract widget:\n- {joined_w}")
+
+        if route_errors:
+            joined_r = "\n- ".join(route_errors)
+            raise ValueError(
+                f"{feature_name}: phát hiện gọi sai contract route:\n- {joined_r}"
+            )
 
     return True

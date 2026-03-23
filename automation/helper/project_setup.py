@@ -112,24 +112,107 @@ def update_pubspec_fonts(app_path, font_families=None):
         print("   ℹ️ Không có font mới cần khai báo.")
 
 
+def _patch_app_dart(app_path: str) -> None:
+    """
+    Đảm bảo app.dart dùng getIt<LanguageCubit>() thay vì tạo instance mới.
+    Fix bug: BlocProvider(create: (context) => LanguageCubit()) sẽ tạo instance
+    khác với singleton trong GetIt → screen dùng getIt sẽ không update được locale.
+    """
+    app_dart_path = os.path.join(app_path, "lib/src/presentation/app.dart")
+    if not os.path.exists(app_dart_path):
+        return
+
+    content = read_file(app_dart_path)
+    if not content:
+        return
+
+    # Nếu đã dùng BlocProvider.value → bỏ qua
+    if "BlocProvider.value" in content and "getIt<LanguageCubit>()" in content:
+        return
+
+    # Patch: thay BlocProvider(create: ... LanguageCubit()) bằng BlocProvider.value
+    patched = re.sub(
+        r'BlocProvider\s*\(\s*create:\s*\([^)]*\)\s*=>\s*LanguageCubit\(\)\s*,?\s*\)',
+        'BlocProvider.value(\n          value: getIt<LanguageCubit>(),\n        )',
+        content,
+    )
+
+    if patched != content:
+        write_file(app_dart_path, patched)
+        print("      ✅ Đã patch app.dart: LanguageCubit dùng getIt singleton.")
+
+
+def _patch_app_localizations(app_path: str, languages: list) -> None:
+    """
+    Patch app_localizations.dart để chấp nhận tất cả locale thay vì chỉ 'en'.
+    Tránh crash khi locale đổi trước khi flutter gen-l10n chạy xong.
+    """
+    l10n_path = os.path.join(app_path, "lib/src/gen/l18n/app_localizations.dart")
+    if not os.path.exists(l10n_path):
+        return
+
+    content = read_file(l10n_path)
+    if not content:
+        return
+
+    # Patch isSupported: chấp nhận mọi locale
+    if "bool isSupported(Locale locale) => true;" not in content:
+        content = re.sub(
+            r'bool isSupported\(Locale locale\)[^;]+;',
+            'bool isSupported(Locale locale) => true;',
+            content,
+        )
+
+    # Patch lookupAppLocalizations: fallback về English thay vì throw
+    if "// Fallback to English" not in content:
+        content = re.sub(
+            r'AppLocalizations lookupAppLocalizations\(Locale locale\)\s*\{.*?\}',
+            (
+                'AppLocalizations lookupAppLocalizations(Locale locale) {\n'
+                '  // Fallback to English for all unsupported locales.\n'
+                '  // Add locale-specific implementations here when translations are available.\n'
+                '  switch (locale.languageCode) {\n'
+                "    case 'en':\n"
+                '      return AppLocalizationsEn();\n'
+                '    default:\n'
+                '      return AppLocalizationsEn();\n'
+                '  }\n'
+                '}'
+            ),
+            content,
+            flags=re.DOTALL,
+        )
+
+    write_file(l10n_path, content)
+    print("      ✅ Đã patch app_localizations.dart: fallback locale an toàn.")
+
+
 def update_localization(app_path, languages):
-    """Tạo file arb và cập nhật enum"""
+    """Tạo file arb, cập nhật enum, và patch các file liên quan đến locale."""
     l10n_dir = os.path.join(app_path, "assets/l10n")
     os.makedirs(l10n_dir, exist_ok=True)
 
     for lang in languages:
         code = lang['code']
-        file_path = os.path.join(l10n_dir, f"app_{code}.arb")
+        # ARB file dùng dấu gạch dưới: app_zh_Hans.arb
+        arb_code = code.replace('-', '_')
+        file_path = os.path.join(l10n_dir, f"app_{arb_code}.arb")
         if not os.path.exists(file_path):
             # Tạo file arb trống với cấu trúc chuẩn
-            write_file(file_path, '{\n  "@@locale": "' + code + '"\n}')
-            print(f"      🌐 Đã tạo file ngôn ngữ: app_{code}.arb")
+            write_file(file_path, '{\n  "@@locale": "' + arb_code + '"\n}')
+            print(f"      🌐 Đã tạo file ngôn ngữ: app_{arb_code}.arb")
 
     # Cập nhật enum Language
     enum_path = os.path.join(app_path, "lib/src/shared/enum/language.dart")
     new_enum_code = generate_language_enum(languages)
     write_file(enum_path, new_enum_code.get("screen", ""))
     print("      ✅ Đã cập nhật enum Language.")
+
+    # Patch app.dart để dùng getIt singleton
+    _patch_app_dart(app_path)
+
+    # Patch app_localizations.dart để không crash khi locale thay đổi
+    _patch_app_localizations(app_path, languages)
 
 
 

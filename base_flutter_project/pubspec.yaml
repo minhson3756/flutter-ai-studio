@@ -53,7 +53,7 @@ dependencies:
   google_fonts: ^8.0.2
 
   # HHH
-  hydrated_bloc: ^10.1.1
+  hydrated_bloc: ^11.0.0
 
   # III
   injectable: ^2.3.2

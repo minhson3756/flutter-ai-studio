@@ -1,3 +1,4 @@
+import html
 import re
 import time
 
@@ -93,7 +94,7 @@ def generate_global_models(spec_content, screens_info):
 
     result = []
     for file_name, file_code in file_matches:
-        clean_code = file_code.strip().replace("```dart", "").replace("```", "").strip()
+        clean_code = html.unescape(file_code.strip()).replace("```dart", "").replace("```", "").strip()
         if clean_code:
             result.append({
                 "name": file_name.strip(),

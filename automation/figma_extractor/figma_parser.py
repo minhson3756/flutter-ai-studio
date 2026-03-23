@@ -207,15 +207,18 @@ def simplify_node(node):
         if text_style:
             simplified["textStyle"] = text_style
 
-    # Image/icon hints
-    if node.get("type") == "RECTANGLE" and fills:
+    # Image/icon hints — detect cả RECTANGLE, FRAME, ELLIPSE có IMAGE fill
+    if fills:
         for fill in fills:
             if isinstance(fill, dict) and fill.get("type") == "IMAGE":
                 simplified["isImage"] = True
                 break
 
-    if "icon" in name.lower():
+    if "icon" in name.lower() or "[Icon]" in name:
         simplified["isIconHint"] = True
+
+    if "[Image]" in name:
+        simplified["isImage"] = True
 
     # Children
     children = node.get("children", [])

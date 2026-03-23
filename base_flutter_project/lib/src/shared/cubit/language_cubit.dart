@@ -19,7 +19,7 @@ class LanguageCubit extends Cubit<Language> with HydratedMixin {
       final locale = element.locale;
       if (locale.languageCode == json['languageCode'] &&
           locale.countryCode == json['countryCode'] &&
-          locale.scriptCode == json['stripCode']) {
+          locale.scriptCode == json['scriptCode']) {
         return element;
       }
     }
@@ -28,10 +28,9 @@ class LanguageCubit extends Cubit<Language> with HydratedMixin {
 
   @override
   Map<String, dynamic> toJson(Language? state) {
-    final locale = state?.locale;
     return {
       'languageCode': state?.locale.languageCode,
-      'stripCode': state?.locale.scriptCode,
+      'scriptCode': state?.locale.scriptCode,
       'countryCode': state?.locale.countryCode,
     };
   }

@@ -27,8 +27,8 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(
-          create: (context) => LanguageCubit(),
+        BlocProvider.value(
+          value: getIt<LanguageCubit>(),
         ),
         BlocProvider(
           create: (context) => AdVisibilityCubit(),

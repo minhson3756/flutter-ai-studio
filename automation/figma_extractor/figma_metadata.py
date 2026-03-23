@@ -21,13 +21,21 @@ def extract_languages_from_figma(figma_data):
     """
     Tự động nhận diện và phân loại ngôn ngữ chính/phụ bằng AI.
     """
-    target_node = figma_data
-    for child in figma_data.get("children", []):
-        if "language" in child.get("name", "").lower():
-            target_node = child
+    # figma_data có dạng {"screens": [...], ...}, không có "children" trực tiếp
+    target_node = None
+    for screen in figma_data.get("screens", []):
+        if "language" in screen.get("name", "").lower():
+            target_node = screen
             break
 
-    raw_texts = list(get_all_texts(target_node))
+    # Nếu tìm thấy screen language → quét text từ đó, ngược lại quét tất cả screens
+    raw_texts = set()
+    if target_node:
+        get_all_texts(target_node, raw_texts)
+    else:
+        for screen in figma_data.get("screens", []):
+            get_all_texts(screen, raw_texts)
+    raw_texts = list(raw_texts)
     if not raw_texts:
         return [{"name": "English", "code": "en"}]
 
@@ -39,10 +47,17 @@ def extract_languages_from_figma(figma_data):
 
     NHIỆM VỤ:
     1. Lọc ra các tên ngôn ngữ thực sự.
-    2. Xác định mã ISO 639-1 (2 chữ cái) tương ứng.
-    3. QUY TẮC CHÍNH/PHỤ: Nếu có nhiều biến thể của cùng một ngôn ngữ (VD: Português cho Bồ Đào Nha và Brasil, hoặc Tiếng Trung Phồn thể và Giản thể):
-       - Ngôn ngữ CHÍNH/Gốc: CHỈ dùng mã 2 chữ cái (VD: "pt", "zh").
-       - Ngôn ngữ PHỤ/Biến thể: Nối thêm mã quốc gia bằng dấu gạch dưới (VD: "pt_BR", "zh_TW").
+    2. Xác định mã locale chuẩn IETF BCP 47 cho từng ngôn ngữ.
+
+    QUY TẮC MÃ LOCALE BẮT BUỘC:
+    - Ngôn ngữ không có biến thể: chỉ dùng mã 2 ký tự (VD: "en", "fr", "ar", "hi", "de")
+    - Biến thể theo Script (chữ viết): dùng mã script 4 ký tự PascalCase (VD: "zh_Hans", "zh_Hant")
+      + Tiếng Trung Giản thể: "zh_Hans"
+      + Tiếng Trung Phồn thể: "zh_Hant"
+    - Biến thể theo Quốc gia: dùng mã quốc gia 2 ký tự VIẾT HOA (VD: "pt_BR", "pt_PT")
+      + Português Brasil: "pt_BR"
+      + Português Portugal: "pt_PT"
+    - KHÔNG ĐƯỢC dùng mã quốc gia cho tiếng Trung. BẮT BUỘC dùng script code (Hans/Hant).
 
     YÊU CẦU ĐỊNH DẠNG (BẮT BUỘC):
     Trả về một JSON Object duy nhất có key "languages".
@@ -50,10 +65,11 @@ def extract_languages_from_figma(figma_data):
     {{
         "languages": [
             {{"name": "English", "code": "en"}},
-            {{"name": "中文 (简体)", "code": "zh"}},
-            {{"name": "中文 (繁體)", "code": "zh_TW"}},
-            {{"name": "Português (Portugal)", "code": "pt"}},
-            {{"name": "Português (Brasil)", "code": "pt_BR"}}
+            {{"name": "中文（简体）", "code": "zh_Hans"}},
+            {{"name": "中文（繁體）", "code": "zh_Hant"}},
+            {{"name": "Português (Portugal)", "code": "pt_PT"}},
+            {{"name": "Português (Brasil)", "code": "pt_BR"}},
+            {{"name": "عربي", "code": "ar"}}
         ]
     }}
     """

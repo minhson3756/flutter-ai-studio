@@ -1,79 +1,214 @@
 # YÊU CẦU CHUNG
 - Viết code UI theo đúng chuẩn 100% thiết kế Figma.
 - Sử dụng Palette, và các thư viện core đã được định nghĩa.
-- Tự suy luận luồng app
+- Dùng AutoRoute để điều hướng.
+- Tự suy luận luồng app theo đặc tả bên dưới.
+- Lưu tất cả lịch sử (scanned + generated) vào Local Storage bằng hive_ce.
+- App hỗ trợ đa ngôn ngữ (18 ngôn ngữ), sử dụng AppLocalizations.
+
+# LUỒNG LƯU LỊCH SỬ (HISTORY SAVE FLOW)
+
+## Tạo QR/Barcode (Generated)
+- Khi người dùng bấm [Button]/Done trên CreateQRScreen hoặc CreateBarcodeScreen và tạo thành công:
+  → Tự động lưu bản ghi vào hive_ce với type = `generated` NGAY KHI chuyển sang QRResultScreen / BarcodeResultScreen.
+  → Bản ghi lưu: loại QR/Barcode, dữ liệu nhập, thời gian tạo, ngày tạo.
+- [Button]/Save trên màn Result chỉ lưu ảnh QR/Barcode ra gallery (KHÔNG lưu thêm vào hive_ce vì đã tự động lưu).
+
+## Quét QR/Barcode (Scanned)
+- Khi quét thành công (camera hoặc từ gallery) và chuyển sang ScanCompleteScreen:
+  → Tự động lưu bản ghi vào hive_ce với type = `scanned` NGAY KHI ScanCompleteScreen được khởi tạo.
+  → Bản ghi lưu: loại QR/Barcode, dữ liệu quét, thời gian quét, ngày quét.
+- Nếu setting "Keep duplicates" = false: kiểm tra trùng lặp trước khi lưu (so sánh nội dung + loại), bỏ qua nếu đã tồn tại.
+
+## Tab History cập nhật
+- Sau khi lưu thành công, tab History tự động làm mới danh sách khi người dùng quay lại.
+
+# CÁC NGÔN NGỮ HỖ TRỢ
+English, 中文（简体）, 中文（繁體）, हिंदी भाषा, Español, Português (Brasil), Português (Portugal), Français, عربي, বাংলা, Русский, Deutsch, 日本語, Turkish, 한국인, Indonesian
 
 # YÊU CẦU TỪNG MÀN HÌNH
 
-## SplashScreen
--  Ở đây có thể init một số package, hoặc 1 số data, hàm cần thiết cho app, thời gian tối thiểu là 2s, sau đó chuyển sang màn Language
+## 1. SplashScreen
+- Hiển thị logo "QR CODE", background gradient và thanh ProgressBar.
+- Text "This action can contain ads" ở phía dưới.
+- Đợi 2 giây rồi tự động chuyển sang LanguageScreen.
+- KHÔNG cho phép người dùng back lại.
 
-## LanguageScreen
-- [Button]/Accept Khi mới vào nút [Button]/Accept sẽ làm mờ đi 50% và không cho phép bấm
-- Khi chọn ngôn ngữ mới được phép bấm sang màn Intro.
-- Không cho back lại
+## 2. LanguageScreen
+- CONSTRUCTOR: `LanguageScreen({super.key, @QueryParam('isFromSetting') this.isFromSetting = false})`
+- Dùng tham số `isFromSetting` (bool, default false) để phân biệt 2 variant:
+  + `isFromSetting = false` (lần đầu, từ SplashScreen): Hiển thị "Languages" và "Please select language to continue". Có [Button]/Accept ở dưới. Khi mới vào, nút Accept bị mờ 50% và KHÔNG cho bấm. Khi chọn 1 ngôn ngữ, nút Accept sáng lên và cho phép bấm để chuyển sang IntroScreen. KHÔNG cho back lại.
+  + `isFromSetting = true` (từ SettingScreen): Hiển thị [Button]/Back ở trên để quay lại. Khi chọn ngôn ngữ, đổi ngôn ngữ toàn app ngay lập tức (dùng LanguageCubit có sẵn).
+- Khi gọi từ SettingScreen: `context.pushRoute(LanguageRoute(isFromSetting: true))`
+- Danh sách 18 ngôn ngữ hiển thị dạng ListView với icon cờ nước tương ứng.
+- Ngôn ngữ đang chọn được highlight (radio/check).
 
-## IntroScreen
-- Màn intro sẽ có 1 PageView gồm 4 trang,
-- Khi bấm [Button]/Next thì sẽ chuyển sang trang tiếp theo,
-- Bấm [Button]/Start thì chuyển đến màn Home
-- Không cho back lại
+## 3. IntroScreen
+- PageView gồm 4 trang, mỗi trang có hình minh họa + tiêu đề + mô tả:
+  + intro1: "Generate QR Codes and Barcodes" - "Just enter text information, in seconds, QR codes, barcodes will be generated with unique designs."
+  + intro2: "QR Code Scanning" - "You can easily scan QR codes anytime, anywhere"
+  + intro3: "Scan Multiple QR Codes" - "Save time and effort by scanning multiple codes at once."
+  + intro4: "Record and Manage Scans" - "Capture, save, and effectively organize your scan history with ease." Có hiển thị 3 sample cards (Text/Wifi/Email) với ngày giờ mẫu.
+- Trang 1-3: [Button]/Next chuyển sang trang tiếp theo.
+- Trang 4: [Button]/Start chuyển đến HomeScreen.
+- Có dot indicator hiển thị trang hiện tại.
+- KHÔNG cho back lại.
 
-## HomeScreen
-- Màn hình này CHỈ chứa Bottom Navigation Bar với 3 tab: Create QR, Scan, History.
-- Ở cả 3 tab đều kiểm tra quyền camera, nếu không có quyền thì màn hình ở trạng thái require_permission
-- Tab ScanQR:
-    + Lần đầu vào màn hiển thị first_guide, lần sau vào không hiển thị
-    + Vuốt [Slider]/Zoom hoặc bấm [Button]/ZoomOut và [Button]/ZoomIn để thay đổi zoom của camera
-    + Bấm [Button]/Flash để bật/tắt flash
-    + Quét thành công lưu data vào Hive để sử dụng cho chức năng History và chuyển dữ liệu sang màn ScanCompleteScreen.
-- ĐỂ TỐI ƯU KIẾN TRÚC, TUYỆT ĐỐI KHÔNG CODE GIAO DIỆN CỦA 3 TAB NÀY TRONG FILE NÀY.
-- Tab Create Qr chia ra 2 tab: QR code và Barcode
-    + Bấm item ở tab QR Code mở màn CreateQRScreen để tạo qr tương ứng với item đó, ví dụ bấm button Application thì mở màn CreateQRScreen với các field của Application
-    + Bấm item ở tab Barcode mở màn CreateBarcodeScreen để tạo barcode tương ứng với item đó
-- Tab ScanQR có thể quét mã QR, Barcode, hiển thị kết quả ở màn ScanCompleteScreen
-- Tab History (Lịch sử):
-    + Có 2 Sub-tab để lọc dữ liệu: "Scanned" (Mã đã quét) và "Generated" (Mã đã tạo). BẮT BUỘC dùng State để switch giữa 2 danh sách này.
-    + Dữ liệu phải được lấy từ Local Storage (sử dụng hive_ce). Nếu danh sách trống, hiển thị Empty State.
-    + Tại mỗi phần tử (Item) trong danh sách có nút 3 chấm. Khi bấm vào sẽ mở Dropdown Menu cho ĐÚNG phần tử đó (chứa các nút: Copy, Delete...).
-    + Logic Delete: Khi bấm Delete trong menu, phải xóa item đó khỏi Local Storage và cập nhật lại danh sách trên UI.
-    + Bấm vào ô search sang màn SearchScreen để tìm kiếm
-    + Nếu không có data thì màn hình ở trạng thái empty
-- Bấm [Button]/Setting để mở màn Setting
+## 4. HomeScreen (Shell Screen)
+- Đây là màn hình cha CHỈ chứa Bottom Navigation Bar với 3 tab:
+  + Tab 1: "Create QR" (icon [Icon]/QRCode4)
+  + Tab 2: Scan (icon [Icon]/ScanQR2) - Tab này ở GIỮA và có nút nổi bật
+  + Tab 3: "History" (icon [Icon]/History)
+- ĐỂ TỐI ƯU KIẾN TRÚC: TUYỆT ĐỐI KHÔNG CODE GIAO DIỆN CỦA 3 TAB NÀY TRONG FILE NÀY. Mỗi tab là 1 widget con riêng biệt.
+- [Button]/Setting ở góc trên phải, bấm để mở SettingScreen.
+- Tiêu đề "QR CODE" ở giữa AppBar.
 
-## CreateQRScreen
-- Hiển thị các field tuỳ vào kiểu tạo mã qr: contact, email, message ...
-- Bấm [Button]/Done sẽ sang màn QRResult hiển thị kết quả ở màn QRResult
+### 4a. Tab Create QR (HomeCreateQrTab - widget con)
+- Có 2 sub-tab ở trên: "QR Code" và "Barcode". BẮT BUỘC dùng State (enum) để switch.
+- Sub-tab QR Code: Hiển thị lưới (Grid) các loại QR:
+  + [Button]/Application, [Button]/Email, [Button]/SMS, [Button]/Event, [Button]/Location, [Button]/Wifi, [Button]/Text, [Button]/Contact, [Button]/Web
+  + Mỗi nút có icon tương ứng và tên bên dưới.
+  + Bấm item -> mở CreateQRScreen với tham số `qrType` tương ứng.
+  + Phần "Social" hiển thị lưới icon mạng xã hội: Facebook, Youtube, Instagram, Tiktok, Line, X, Whatsapp, Viber. Bấm item -> mở CreateQRScreen với page tương ứng.
+- Sub-tab Barcode: Hiển thị danh sách các kiểu barcode (Data Matrix, PDF 147, và các loại khác).
+  + Bấm item -> mở CreateBarcodeScreen.
 
-## QRResultScreen
-- Hiển thị kết mã đã được tạo từ các thông tin ở màn CreateQR tại QRResult
-- Ở QRDetail hiển thị data của QR
-- Bấm nút [Button]/Sampling sang màn Sampling
+### 4b. Tab Scan (HomeScanTab - widget con)
+- CÓ NHIỀU STATE:
+  + `require_permission`: Hiển thị "Why do we need permissions?" + "Camera permission is required to scan QR codes/barcodes." + [Button]/Allow. Bấm Allow -> xin quyền camera.
+  + `first_guide`: Overlay hướng dẫn "Point your camera at the code to auto scan" với hình mẫu QR/Barcode + [Button]/OK. Hiển thị 1 lần đầu tiên.
+  + `scan` (mặc định): Camera viewfinder với khung quét. Có các nút:
+    - [Button]/ZoomOut và [Button]/ZoomIn để zoom camera.
+    - [Button]/Gallery: Chọn ảnh từ thư viện để quét.
+    - [Button]/Flash: Bật/tắt đèn flash.
+    - [Button]/Group: Chuyển chế độ quét nhóm (batch scan).
+    - Text "Scan the QR code in the box" ở trên.
+- Quét thành công: Chuyển dữ liệu (final String scannedData) sang ScanCompleteScreen.
 
-## SamplingScreen
-- Hiển thị QR/barcode được truyền từ màn trước tại QRResult
-- Tab Background chọn màu để đổi màu background của QR/barcode
-- Tab Choose Color chọn màu để đổi màu của QR/barcode
-- Tab Logo chọn logo để thêm vào giữa của QR, nếu là barcode thì không hiển thị tab này
+### 4c. Tab History (HomeHistoryTab - widget con)
+- CÓ NHIỀU STATE:
+  + `require_permission`: Tương tự tab Scan, xin quyền camera.
+  + `empty`: Hiển thị [Image]/HistoryEmpty và text "File not found".
+  + `normal` (mặc định): Hiển thị danh sách lịch sử.
+  + `select`: Chế độ chọn nhiều item. Hiển thị [Button]/Cancel và [Button]/Delete ở dưới. [Button]/Share ở trên.
+  + `dropdown_open`: Khi bấm [Icon]/VerticalMenu trên 1 item, hiển thị popup menu với: Save, Share, Delete.
+- Có 2 sub-tab: "Scanned" và "Generated". BẮT BUỘC dùng State để switch giữa 2 danh sách.
+- [Button]/SelectAll ở góc trên trái để bật chế độ chọn nhiều.
+- [Icon]/Search ở dưới sub-tab, bấm để mở SearchScreen.
+- Dữ liệu lấy từ hive_ce Local Storage.
+- Danh sách nhóm theo ngày ("Today", "Yesterday").
+- Mỗi item hiển thị: icon loại (Email/Wifi/Text/Contact), tên loại, "QR Code", thời gian, ngày tháng, và [Icon]/VerticalMenu.
+- Logic Delete: Xóa item khỏi hive_ce và cập nhật lại UI.
+- Logic Save: Lưu QR/Barcode image vào gallery.
+- Logic Share: Chia sẻ nội dung qua share_plus.
+- Bấm vào item -> mở ScanCompleteScreen (với scanned) hoặc QRResultScreen (với generated).
 
-## CreateBarcodeScreen
-- Nhập thông tin ở các field xong bấm nút [Button]/Done để sang màn BarcodeResultScreen và hiển thị kết quả
+## 5. SearchScreen
+- CÓ 2 STATE:
+  + `search_empty`: Hiển thị [Image]/SearchEmpty và text "No results found".
+  + `normal`: Hiển thị "Search Results" và danh sách kết quả.
+- [Button]/Back ở trên trái để quay lại.
+- Ô search phía trên có [Icon]/Search và [Icon]/Remove (xóa text).
+- Tìm kiếm trong dữ liệu Local Storage (hive_ce).
+- Kết quả hiển thị giống tab History: icon loại, tên, thời gian, [Icon]/VerticalMenu.
 
-## BarcodeResultScreen
-- Hiển thị kết mã đã được tạo từ các thông tin ở màn CreateBarcode tại BarcodeResult
-- Data của barcode hiển thị ở dưới
-- Bấm nút [Button]/Sampling sang màn Sampling, Màn Sampling của Barcode không có tab Logo
+## 6. CreateQRScreen
+- Nhận tham số `qrType` (String) từ màn trước để biết hiển thị form nào.
+- [Button]/Back ở trên trái, tiêu đề trang = tên loại QR.
+- [Button]/Done ở dưới, bấm để tạo QR và chuyển sang QRResultScreen với dữ liệu đã nhập.
+- CÁC FORM THEO LOẠI (mỗi loại có các field riêng):
+  + `contact`: Company, Telephone, Email, Address, Website
+  + `event`: Event* (bắt buộc), Location, Start date (dd/mm/yyyy), End date (dd/mm/yyyy), Start time (hh:mm), End time (hh:mm), Description
+  + `email`: Email, Subject, Body mail
+  + `location`: Location name, Latitude, Longitude
+  + `wifi`: SSID/Network name, Password, Network Type (Dropdown: WPA/WPA2, WEB, No Password)
+  + `application`: Application (Dropdown select)
+  + `text`: Text (textarea)
+  + `web`: Website
+  + `message`: Message, Telephone
+  + Các loại social (Facebook, Youtube, Instagram, Tiktok, Line, X, Whatsapp, Viber): form nhập URL/username tương ứng.
 
-## ScanCompleteScreen
+## 7. QRResultScreen
+- Hiển thị QR Code đã tạo từ CreateQRScreen.
+- Thông tin chi tiết: loại QR (Contact/Email/...), dữ liệu đã nhập, thời gian tạo, ngày tạo.
+- [Button]/Back ở trên trái. [Button]/History ở trên phải để mở tab History.
+- 4 nút hành động phía dưới:
+  + [Button]/Share (icon [Icon]/ShareOutlined): Chia sẻ QR image qua share_plus.
+  + [Button]/Copy (icon [Icon]/CopyOutlined): Copy nội dung text vào clipboard.
+  + [Button]/Save (icon [Icon]/SaveOutline): Lưu QR image vào gallery (KHÔNG lưu thêm vào hive_ce vì đã tự động lưu khi tạo).
+  + [Button]/Sampling (icon [Icon]/SamplingOutline): Mở SamplingScreen để tùy chỉnh QR.
+
+## 8. CreateBarcodeScreen
+- Tiêu đề hiển thị tên loại barcode (VD: "Data Matrix").
+- [Button]/Back ở trên trái.
+- Form nhập: Text field "Text without special characters".
+- [Button]/Done ở dưới, bấm để tạo barcode và chuyển sang BarcodeResultScreen.
+
+## 9. BarcodeResultScreen
+- Hiển thị barcode đã tạo từ CreateBarcodeScreen.
+- Thông tin: mã barcode, giá trị text, thời gian, ngày tháng.
+- [Button]/Back ở trên trái.
+- Các nút hành động:
+  + [Button]/Share: Chia sẻ barcode image qua share_plus.
+  + [Button]/Copy: Copy nội dung text vào clipboard.
+  + [Button]/Save: Lưu barcode image vào gallery (KHÔNG lưu thêm vào hive_ce vì đã tự động lưu khi tạo).
+  + [Button]/Sampling: Mở SamplingScreen để tùy chỉnh barcode.
+- [Button]/Sampling mở SamplingScreen NHƯNG KHÔNG CÓ TAB LOGO (chỉ có Background và Choose Color).
+
+## 10. ScanCompleteScreen
 - Nhận tham số `final String scannedData` từ màn trước.
-- Hiển thị kết quả scan.
-- Tự động viết logic cho các Action Buttons: Copy (sao chép text), Share (chia sẻ text), và Open Link (dùng url_launcher nếu data là link web).
+- Tiêu đề "Scan Complete".
+- [Button]/Back ở trên trái. [Button]/Home ở trên phải để về HomeScreen.
+- Hiển thị thông tin: loại QR/Barcode, thời gian, ngày tháng, và dữ liệu đã quét.
+- Tự động lưu vào hive_ce (scanned history).
+- CÁC ACTION BUTTON THEO LOẠI (mỗi loại có action khác nhau):
+  + `barcode`: [Button]/Share, [Button]/Copy, [Button]/SearchOnAmazon (icon Amazon), [Button]/SearchOnEbay (icon Ebay), [Button]/SearchOnShopee (icon Shopee), [Button]/SearchOnLazada (icon Lazada). Các nút Search mở URL tìm kiếm sàn thương mại điện tử tương ứng bằng url_launcher.
+  + `contact`: [Button]/Call (gọi điện), [Button]/Share, [Button]/AddContact (thêm vào danh bạ), [Button]/Export. Hiển thị: tên, SĐT, email, địa chỉ, website.
+  + `sms`: [Button]/Messenger (mở app nhắn tin), [Button]/Share, [Button]/Copy. Hiển thị: tên, SĐT.
+  + `email`: [Button]/AddContact, [Button]/SendEmail (mở app email), [Button]/Copy. Hiển thị: tên, email, địa chỉ, website.
+  + `location`: [Button]/Map (mở Google Maps), [Button]/Share, [Button]/Copy. Hiển thị: tên, SĐT, email, địa chỉ, website.
+  + `event`: [Button]/AddCalendar (thêm vào lịch), [Button]/Share, [Button]/Copy. Hiển thị: tên, SĐT, email, địa chỉ, website.
+  + `website`: [Button]/OpenLink (mở URL bằng url_launcher), [Button]/Share, [Button]/Copy. Hiển thị: URL.
+  + `text`: [Button]/Share, [Button]/Copy. Hiển thị: nội dung text.
+  + `wifi`: [Button]/ConnectWifi (kết nối wifi), [Button]/Share, [Button]/Copy. Hiển thị: Wifi name, Password.
 
-## SettingScreen
-- Nhấn [Button]/Language mở màn Language
-- Nhấn [Button]/Information để mở màn InformationScreen
-    + Chuyển đổi theme dark/light cho app ở Topic
-    + Chuyển đổi camera mặc định của thiết bị sử dụng để quét mã QR (Trước/Sau)
-- Nhấn [Button]/RateUs mở rate app trên store
-- Nhấn [Button]/ShareApp để chia sẻ link
-- Nhấn [Button]/PrivacyPolicy để mở link policy
+## 11. SettingScreen
+- Tiêu đề "Settings". [Button]/Back ở trên trái.
+- Danh sách các tùy chọn, mỗi dòng có icon + tên + [Icon]/Next:
+  + [Button]/Language (icon [Icon]/Language): `context.pushRoute(LanguageRoute(isFromSetting: true))` để mở LanguageScreen ở chế độ setting.
+  + "Information" (icon [Icon]/Info): Mở InformationScreen.
+  + [Button]/RateUs (icon [Icon]/Star): Mở rate app trên store.
+  + [Button]/ShareApp (icon [Icon]/ShareOutlined): Chia sẻ link app qua share_plus.
+  + [Button]/PrivacyPolicy (icon [Icon]/SheildCheck): Mở link privacy policy bằng url_launcher.
+
+## 12. InformationScreen
+- Tiêu đề "Settings". [Button]/Back ở trên trái.
+- Phần "Topic" (Theme):
+  + 3 lựa chọn: Default, Bright, Dark.
+  + Chuyển đổi theme cho toàn app.
+- Phần "Camera":
+  + 2 lựa chọn: "Camera 1 (Recommendations)" và "Camera 2".
+  + Chuyển đổi camera mặc định (trước/sau) để quét mã.
+- Phần "Other" (các toggle switch):
+  + Sound: Bật/tắt âm thanh khi quét.
+  + Open the website automatically: Tự động mở link khi quét được URL.
+  + Batch scan: Cho phép quét nhiều mã liên tục.
+  + Keep duplicates: Giữ lại các mã trùng lặp trong lịch sử.
+- Phần "Scanning tips": Hướng dẫn quét mã với hình ảnh minh họa:
+  + "Should": Orientation 90 độ, Orientation 0 độ, Led when dark.
+  + "Shouldn't": Low contrast, Too close/blurred, Other orientation, Light or darkness.
+  + 4 ghi chú hướng dẫn chi tiết.
+- Lưu các tùy chọn vào SharedPreferences hoặc hive_ce.
+
+## 13. SamplingScreen
+- Tiêu đề "Sampling". [Button]/Back ở trên trái. [Button]/Done ở trên phải.
+- Có 3 tab ở dưới: [Button]/Background, [Button]/ChooseColor, [Button]/Logo.
+- Tab Background: Lưới màu sắc. Chọn màu để đổi background của QR code.
+- Tab Choose Color: Lưới màu sắc. Chọn màu để đổi màu của pattern QR code.
+- Tab Logo:
+  + [Icon]/None: Không có logo.
+  + [Button]/Upload: Chọn ảnh từ thư viện.
+  + Lưới các logo có sẵn: Instagram, Whatsapp, Telegram, Youtube, Figma, Fox, Paint, Photos, Tiktok, X, Twich, Indeed, Message.
+  + Chọn logo để đặt vào giữa QR code.
+- LƯU Ý: Khi vào từ BarcodeResultScreen, KHÔNG hiển thị tab Logo (chỉ có Background và Choose Color).
+- [Button]/Done: Áp dụng thay đổi và quay lại màn ResultScreen.

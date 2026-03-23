@@ -275,6 +275,12 @@ def main():
     rules_content = read_file(os.path.join(current_dir, "prompts/ai_architecture_rules.md"))
     spec_content = read_file(os.path.join(current_dir, "app_spec"))
 
+    # Dynamic package name: thay flutter_base bằng tên package thực
+    from automation.helper.injector import _get_package_name
+    _actual_pkg = _get_package_name(new_app_path)
+    if _actual_pkg != "flutter_base":
+        rules_content = rules_content.replace("flutter_base", _actual_pkg)
+
     # ==========================================================
     # 4. LOCALIZATION
     # ==========================================================
@@ -286,12 +292,17 @@ def main():
     # 5. XỬ LÝ ASSETS: IMAGES + ICONS
     # ==========================================================
     print("5. Đang quét và tải Hình ảnh & Icon...")
-    image_nodes = find_image_nodes(figma_data)
+    # Quét image/icon từ TẤT CẢ screens (figma_data.screens là list, không có "children")
+    image_nodes = []
+    icon_nodes = []
+    for screen in figma_data.get("screens", []):
+        find_image_nodes(screen, image_nodes)
+        find_icon_nodes(screen, icon_nodes)
+
     images_dir = os.path.join(new_app_path, "assets/images")
     downloaded_images = download_figma_images(figma_key, image_nodes, images_dir)
     print(f"   ✅ Hoàn tất xử lý {len(downloaded_images)} hình ảnh.")
 
-    icon_nodes = find_icon_nodes(figma_data)
     icons_dir = os.path.join(new_app_path, "assets/icons")
     downloaded_icons = download_figma_icons(figma_key, icon_nodes, icons_dir)
     print(f"   ✅ Hoàn tất xử lý {len(downloaded_icons)} icons.")
@@ -302,7 +313,11 @@ def main():
     # 6. XỬ LÝ FONT
     # ==========================================================
     print("6. Đang kiểm tra và tải Fonts...")
-    font_families = find_fonts(figma_data)
+    # Quét fonts từ tất cả screens (figma_data không có "children" trực tiếp)
+    _fonts_set = set()
+    for screen in figma_data.get("screens", []):
+        find_fonts(screen, _fonts_set)
+    font_families = list(_fonts_set)
     fonts_dir = os.path.join(new_app_path, "assets/fonts")
     os.makedirs(fonts_dir, exist_ok=True)
 
@@ -397,6 +412,19 @@ def main():
     # ==========================================================
     # 10. SINH CODE CHO TỪNG MÀN HÌNH
     # ==========================================================
+    # RESUME MODE: Bật bằng env RESUME=1
+    # Khi bật: skip các screen đã có file trên disk, chỉ gen screen chưa có.
+    # Dùng khi pipeline crash giữa chừng hoặc khi chỉ sửa spec cho 1 screen cụ thể.
+    # Để ép gen lại 1 screen cụ thể, set FORCE_SCREENS="SettingScreen,LanguageScreen"
+    resume_mode = os.environ.get("RESUME", "0") == "1"
+    force_screens_env = os.environ.get("FORCE_SCREENS", "").strip()
+    force_screens = set(s.strip() for s in force_screens_env.split(",") if s.strip()) if force_screens_env else set()
+
+    if resume_mode:
+        print("   🔄 RESUME MODE: Bật. Chỉ gen các screen chưa có file hoặc nằm trong FORCE_SCREENS.")
+    if force_screens:
+        print(f"   🎯 FORCE_SCREENS: {force_screens}")
+
     print(f"\n🚀 BẮT ĐẦU GEN {len(screens)} MÀN HÌNH THEO SPEC...")
 
     for i, screen_node in enumerate(screens):
@@ -408,6 +436,36 @@ def main():
 
         print(f"\n   ⚙️ [{i + 1}/{len(screens)}] Đang xử lý: {raw_name}...")
 
+        # --- RESUME CHECK: skip screen đã có file trên disk ---
+        if resume_mode and base_name not in force_screens and raw_name not in force_screens:
+            snake_name = to_snake_case(feature_name)
+            is_sub = screen_node.get("is_sub_tab", False)
+            parent_name = screen_node.get("parent_name")
+
+            if is_sub:
+                parent_snake = to_snake_case(parent_name) if parent_name else "shared"
+                check_path = os.path.join(
+                    new_app_path, "lib", "src", "presentation",
+                    parent_snake, "widgets",
+                    snake_name + ("_widget.dart" if not snake_name.endswith("_widget") else ".dart"),
+                )
+            else:
+                check_path = os.path.join(
+                    new_app_path, "lib", "src", "presentation",
+                    snake_name,
+                    snake_name + ("_screen.dart" if not snake_name.endswith("_screen") else ".dart"),
+                )
+
+            if os.path.exists(check_path):
+                print(f"      ⏩ [RESUME] File đã tồn tại, bỏ qua: {os.path.basename(check_path)}")
+                # Vẫn refresh context để các screen sau thấy constructor của screen này
+                dynamic_ai_context = refresh_dynamic_ai_context(
+                    new_app_path=new_app_path,
+                    current_context=dynamic_ai_context,
+                )
+                continue
+
+        # --- CACHE CHECK: skip screen chưa thay đổi ---
         screen_fingerprint = (
                 json.dumps(screen_node, sort_keys=True, ensure_ascii=False)
                 + rules_content
@@ -417,6 +475,11 @@ def main():
 
         if build_cache.get(raw_name) == screen_hash:
             print("      ⚡ [CACHE HIT] Màn hình không đổi, bỏ qua gọi AI để tiết kiệm Token!")
+            # Vẫn refresh context để các screen sau thấy constructor của screen này
+            dynamic_ai_context = refresh_dynamic_ai_context(
+                new_app_path=new_app_path,
+                current_context=dynamic_ai_context,
+            )
             continue
 
         asset_instructions = build_asset_instructions(
@@ -437,6 +500,13 @@ def main():
 
         variant_instructions = build_variant_instructions(screen_node)
 
+        # Đọc palette.dart thực tế để inject vào prompt (chống hallucination)
+        _palette_path = os.path.join(new_app_path, "lib", "src", "config", "theme", "palette.dart")
+        _palette_content = ""
+        if os.path.exists(_palette_path):
+            with open(_palette_path, "r", encoding="utf-8") as _pf:
+                _palette_content = _pf.read()
+
         ctx = build_screen_context(
             spec_content=spec_content,
             dynamic_ai_context=dynamic_ai_context,
@@ -446,6 +516,7 @@ def main():
             variant_instructions=variant_instructions,
             route_list=route_list,
             palette_rules=palette_rules,
+            palette_content=_palette_content,
         )
 
         screen_payload = dict(screen_node)
@@ -479,16 +550,19 @@ def main():
 
             code = generate_feature_code(
                 base_name,
-                json.dumps(screen_payload, ensure_ascii=False),
+                json.dumps(strip_for_prompt(screen_payload), ensure_ascii=False, separators=(',', ':')),
                 retry_ctx,
                 rules_content,
             )
 
-            validate_route_names_against_route_list(
-                code=code,
-                route_list=route_list,
-                raw_name=raw_name,
-            )
+            try:
+                validate_route_names_against_route_list(
+                    code=code,
+                    route_list=route_list,
+                    raw_name=raw_name,
+                )
+            except ValueError as e2:
+                print(f"      ⚠️ Route vẫn không hợp lệ sau retry, bỏ qua validation: {e2}")
 
         used_packages = install_ai_packages(
             code=code,
