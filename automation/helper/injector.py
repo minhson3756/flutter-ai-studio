@@ -19,6 +19,70 @@ def to_snake_case(name):
     s2 = re.sub(r'([a-z0-9])([A-Z])', r'\1_\2', s1)
     return s2.lower()
 
+def _ensure_router_base_imports(content: str, app_path: str) -> str:
+    """Đảm bảo app_router.dart luôn có import flutter/material.dart (cho Key class trong .gr.dart)."""
+    if "package:flutter/material.dart" not in content and "package:flutter/foundation.dart" not in content:
+        # Chèn import flutter/material.dart sau import auto_route
+        auto_route_idx = content.find("import 'package:auto_route/auto_route.dart';")
+        if auto_route_idx != -1:
+            end_line = content.find("\n", auto_route_idx)
+            if end_line != -1:
+                content = content[:end_line + 1] + "import 'package:flutter/material.dart';\n" + content[end_line + 1:]
+        else:
+            content = "import 'package:flutter/material.dart';\n" + content
+    return content
+
+
+def _ensure_router_model_imports(content: str, screen_code: str, app_path: str) -> str:
+    """
+    Scan screen constructor để tìm types từ shared models.
+    Nếu screen dùng types như QRCodeType, HistoryItemModel, etc. trong constructor,
+    auto_route sẽ cần import chúng trong app_router.dart.
+    """
+    pkg = _get_package_name(app_path)
+    models_dir = os.path.join(app_path, "lib", "src", "shared", "models")
+
+    if not os.path.isdir(models_dir):
+        return content
+
+    # Lấy danh sách tất cả model files và các class/enum chúng export
+    model_types = {}  # type_name -> import_path
+    for fname in os.listdir(models_dir):
+        if not fname.endswith(".dart") or fname.endswith(".g.dart") or fname.endswith(".freezed.dart"):
+            continue
+        model_path = os.path.join(models_dir, fname)
+        try:
+            with open(model_path, "r", encoding="utf-8") as f:
+                model_content = f.read()
+            # Tìm tất cả class và enum declarations
+            for match in re.finditer(r'(?:class|enum)\s+(\w+)', model_content):
+                type_name = match.group(1)
+                model_types[type_name] = f"package:{pkg}/src/shared/models/{fname}"
+        except Exception:
+            continue
+
+    # Scan screen code để tìm types được dùng
+    needed_imports = set()
+    for type_name, import_path in model_types.items():
+        # Check nếu type xuất hiện trong screen constructor (required TypeName param)
+        if re.search(rf'\b{re.escape(type_name)}\b', screen_code):
+            if import_path not in content:
+                needed_imports.add(import_path)
+
+    # Thêm missing imports
+    for imp in sorted(needed_imports):
+        import_stmt = f"import '{imp}';\n"
+        if imp not in content:
+            last_import_idx = content.rfind("import ")
+            if last_import_idx != -1:
+                end_of_last_import = content.find(";\n", last_import_idx)
+                if end_of_last_import != -1:
+                    insert_pos = end_of_last_import + 2
+                    content = content[:insert_pos] + import_stmt + content[insert_pos:]
+
+    return content
+
+
 def update_app_router(app_path, feature_name, snake_name):
     router_path = os.path.join(app_path, "lib", "src", "config", "navigation", "app_router.dart")
 
@@ -28,6 +92,9 @@ def update_app_router(app_path, feature_name, snake_name):
 
     with open(router_path, "r", encoding="utf-8") as f:
         content = f.read()
+
+    # 🌟 ĐẢM BẢO BASE IMPORTS (flutter/material.dart cho Key class)
+    content = _ensure_router_base_imports(content, app_path)
 
     # TỰ ĐỘNG THÊM IMPORT VÀO ĐẦU FILE
     pkg = _get_package_name(app_path)
@@ -43,6 +110,15 @@ def update_app_router(app_path, feature_name, snake_name):
         else:
             # Nếu chưa có bất kỳ import nào, chèn lên đầu tiên
             content = import_stmt + content
+
+    # 🌟 THÊM IMPORT SHARED MODELS NẾU SCREEN DÙNG TYPES TỪ MODELS
+    screen_path = os.path.join(
+        app_path, "lib", "src", "presentation", snake_name, f"{snake_name}_screen.dart"
+    )
+    if os.path.exists(screen_path):
+        with open(screen_path, "r", encoding="utf-8") as f:
+            screen_code = f.read()
+        content = _ensure_router_model_imports(content, screen_code, app_path)
 
     # 🌟 FIX REGEX: TỰ ĐỘNG THÊM ROUTE VÀO DANH SÁCH (Hỗ trợ cả <AutoRoute>[ và [ )
     route_stmt = f"\n    AutoRoute(page: {feature_name}Route.page),"
@@ -95,20 +171,68 @@ def validate_generated_code(code_dict, feature_name):
     if "class " not in screen and "@RoutePage()" not in screen:
         raise ValueError(f"{feature_name}: screen file does not look like Dart screen")
 
-    # Check: import nằm giữa file thay vì đầu file
+    # Check + Auto-fix: import nằm giữa file thay vì đầu file
     import re as _re
-    _lines = all_parts.split("\n")
-    _found_non_import = False
-    for _line in _lines:
-        _stripped = _line.strip()
-        if not _stripped or _stripped.startswith("//") or _stripped.startswith("part "):
+
+    def _auto_fix_misplaced_imports(code: str) -> str:
+        """Di chuyển tất cả import và part statements lên đầu file."""
+        lines = code.split("\n")
+        imports = []
+        parts = []
+        other_lines = []
+        for line in lines:
+            stripped = line.strip()
+            if stripped.startswith("import "):
+                imports.append(line)
+            elif stripped.startswith("part "):
+                parts.append(line)
+            else:
+                other_lines.append(line)
+        if not imports:
+            return code
+        # Rebuild: imports → parts → rest
+        result_lines = imports + [""] + parts + [""] + other_lines if parts else imports + [""] + other_lines
+        return "\n".join(result_lines)
+
+    # Check + Auto-fix cho từng phần code riêng
+    for _label, _code_key in [("screen", "screen"), ("cubit", "cubit"), ("state", "state")]:
+        _code = code_dict.get(_code_key, "") or ""
+        if not _code:
             continue
-        if _stripped.startswith("import "):
-            if _found_non_import:
-                print(f"      ⚠️ {feature_name}: import statement nằm sau declaration — có thể gây lỗi 'Directives must appear before any declarations'")
-                break
-        elif _stripped.startswith("class ") or _stripped.startswith("@") or _stripped.startswith("enum ") or _stripped.startswith("mixin "):
-            _found_non_import = True
+        _lines_check = _code.split("\n")
+        _found_non_import = False
+        _has_misplaced = False
+        for _line in _lines_check:
+            _stripped = _line.strip()
+            if not _stripped or _stripped.startswith("//"):
+                continue
+            if _stripped.startswith("import ") or _stripped.startswith("part "):
+                if _found_non_import:
+                    _has_misplaced = True
+                    break
+            elif _stripped.startswith("class ") or _stripped.startswith("@") or _stripped.startswith("enum ") or _stripped.startswith("mixin "):
+                _found_non_import = True
+        if _has_misplaced:
+            print(f"      🔧 {feature_name}/{_label}: import nằm sai vị trí — auto-fixing...")
+            code_dict[_code_key] = _auto_fix_misplaced_imports(_code)
+
+    # Check + Auto-fix: file bị truncate (không có closing brace cuối cùng)
+    for _label, _code_key in [("screen", "screen"), ("cubit", "cubit"), ("state", "state")]:
+        _code = (code_dict.get(_code_key) or "").strip()
+        if not _code:
+            continue
+        _open_braces = _code.count("{")
+        _close_braces = _code.count("}")
+        if _open_braces > _close_braces:
+            _missing = _open_braces - _close_braces
+            print(f"      🔧 {feature_name}/{_label}: file bị truncate (thiếu {_missing} '}}') — auto-fixing...")
+            code_dict[_code_key] = _code + "\n" + ("}\n" * _missing)
+
+    # Reload sau auto-fix
+    screen = (code_dict.get("screen") or "").strip()
+    cubit = (code_dict.get("cubit") or "").strip()
+    state = (code_dict.get("state") or "").strip()
+    all_parts = "\n".join([screen, cubit, state])
 
     # Check: phantom import (import widget không tồn tại)
     _phantom_imports = [

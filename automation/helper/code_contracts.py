@@ -16,7 +16,7 @@ def _get_pkg_name(app_path: str) -> str:
 def extract_flutter_models(app_path: str) -> str:
     """
     Quét thư mục shared/models để trích xuất cấu trúc model ngắn gọn cho AI.
-    Chỉ đưa vào prompt những gì cần thiết: tên class, field, import path.
+    Bao gồm: tên class, field, import path, VÀ enum values.
     """
     models_dir = os.path.join(app_path, "lib", "src", "shared", "models")
     if not os.path.exists(models_dir):
@@ -24,7 +24,8 @@ def extract_flutter_models(app_path: str) -> str:
 
     lines = [
         "🚨 [DATA MODELS ĐANG CÓ TRONG HỆ THỐNG]:",
-        "CHỈ được dùng các model dưới đây. Không tự bịa model hoặc field mới.",
+        "CHỈ được dùng các model và enum dưới đây. KHÔNG tự bịa model, field, hoặc enum value mới.",
+        "🚨 NGHIÊM CẤM bịa enum value như .other, .unknown, .none — chỉ dùng giá trị liệt kê bên dưới.",
         "",
     ]
 
@@ -34,6 +35,9 @@ def extract_flutter_models(app_path: str) -> str:
         for file in files:
             if not file.endswith(".dart"):
                 continue
+            # Skip generated files
+            if file.endswith(".g.dart") or file.endswith(".freezed.dart"):
+                continue
 
             file_path = os.path.join(root, file)
             try:
@@ -42,6 +46,38 @@ def extract_flutter_models(app_path: str) -> str:
             except Exception:
                 continue
 
+            rel_import = f"package:{_get_pkg_name(app_path)}/src/shared/models/{file}"
+
+            # 1) Extract ENUMS với tất cả giá trị
+            enum_matches = re.finditer(
+                r'enum\s+([A-Za-z_][A-Za-z0-9_]*)\s*\{([^}]*)\}',
+                content,
+                re.DOTALL,
+            )
+            for enum_match in enum_matches:
+                enum_name = enum_match.group(1)
+                enum_body = enum_match.group(2)
+                # Parse enum values (bỏ qua annotations @HiveField, whitespace, comments)
+                values = []
+                for line in enum_body.split(","):
+                    line = line.strip()
+                    if not line:
+                        continue
+                    # Bỏ annotations
+                    line = re.sub(r'@\w+\([^)]*\)\s*', '', line).strip()
+                    # Bỏ trailing semicolons
+                    line = line.rstrip(';').strip()
+                    if line and re.match(r'^[a-zA-Z_]\w*$', line):
+                        values.append(line)
+
+                if values:
+                    values_str = ", ".join(values)
+                    lines.append(f"- enum {enum_name} {{ {values_str} }}")
+                    lines.append(f"  ⚠️ CHỈ ĐƯỢC dùng: {', '.join([f'{enum_name}.{v}' for v in values])}")
+                    lines.append(f"  import: {rel_import}")
+                    found_models = True
+
+            # 2) Extract CLASSES với fields
             class_matches = re.finditer(
                 r'class\s+([A-Za-z_][A-Za-z0-9_]*)\s*(?:extends|implements|\{)',
                 content,
@@ -61,7 +97,6 @@ def extract_flutter_models(app_path: str) -> str:
                 fields_str = ", ".join(
                     [f"{type_name.strip()} {field_name}" for type_name, field_name in fields]
                 )
-                rel_import = f"package:{_get_pkg_name(app_path)}/src/shared/models/{file}"
 
                 lines.append(f"- {class_name}({fields_str})")
                 lines.append(f"  import: {rel_import}")

@@ -1,6 +1,7 @@
 import json
 import os
 import re
+import shutil
 import subprocess
 from typing import Dict, List, Tuple, Any
 
@@ -412,6 +413,21 @@ YÊU CẦU NGHIỆP VỤ (BẮT BUỘC TUÂN THỦ):
 - PHẢI suy luận state nội bộ từ variants/state_tags đã cung cấp.
 """
 
+def _flutter_cmd() -> List[str]:
+    """
+    Trả về lệnh flutter phù hợp với môi trường:
+    - Nếu có `fvm` trong PATH → dùng ["fvm", "flutter"]
+    - Ngược lại → dùng ["flutter"]
+    Có thể override bằng env FLUTTER_CMD="fvm flutter" hoặc "flutter".
+    """
+    env_override = os.environ.get("FLUTTER_CMD", "").strip()
+    if env_override:
+        return env_override.split()
+    if shutil.which("fvm"):
+        return ["fvm", "flutter"]
+    return ["flutter"]
+
+
 def install_ai_packages(
         code: dict,
         new_app_path: str,
@@ -512,7 +528,7 @@ def install_ai_packages(
         print(f"      📦 Đang tự động cài đặt thư viện: {pkg}...")
         try:
             result = subprocess.run(
-                ["flutter", "pub", "add", pkg],
+                _flutter_cmd() + ["pub", "add", pkg],
                 cwd=new_app_path,
                 timeout=120,
                 capture_output=True,
@@ -598,7 +614,7 @@ def analyze_and_fix_screen(
         return
 
     analyze_result = subprocess.run(
-        ["flutter", "analyze", target_file],
+        _flutter_cmd() + ["analyze", target_file],
         cwd=new_app_path,
         capture_output=True,
         text=True,
@@ -616,7 +632,7 @@ def analyze_and_fix_screen(
             print("      ✅ Đã tự sửa file screen.")
 
     recheck_result = subprocess.run(
-        ["flutter", "analyze", target_file],
+        _flutter_cmd() + ["analyze", target_file],
         cwd=new_app_path,
         capture_output=True,
         text=True,
@@ -629,10 +645,184 @@ def analyze_and_fix_screen(
         )
 
 
+def _parse_analyze_errors_by_file(analyze_output: str, app_path: str) -> Dict[str, List[str]]:
+    """
+    Parse output của `flutter analyze` và nhóm lỗi/warning theo file path tuyệt đối.
+    Chỉ lấy error (bỏ qua warning và hint).
+    Format dòng lỗi: "   error • message • lib/src/.../file.dart:line:col • code"
+    """
+    errors_by_file: Dict[str, List[str]] = {}
+    # Chỉ xử lý dòng có "error •"
+    for line in analyze_output.splitlines():
+        stripped = line.strip()
+        if not stripped.startswith("error •"):
+            continue
+        # Tách phần file path: "lib/src/.../file.dart:36:10"
+        parts = stripped.split(" • ")
+        if len(parts) < 3:
+            continue
+        file_ref = parts[2].strip()  # VD: "lib/src/presentation/foo/foo_screen.dart:36:10"
+        file_path_rel = file_ref.split(":")[0]
+        abs_path = os.path.join(app_path, file_path_rel)
+        if not os.path.exists(abs_path):
+            continue
+        if abs_path not in errors_by_file:
+            errors_by_file[abs_path] = []
+        errors_by_file[abs_path].append(stripped)
+    return errors_by_file
+
+
+def _run_prepare_commands(new_app_path: str) -> None:
+    """
+    Chạy 3 lệnh chuẩn bị bắt buộc trước khi fix lỗi:
+    1. pub get       – đồng bộ dependencies
+    2. gen-l10n      – sinh file localization
+    3. build_runner  – sinh code freezed/injectable/auto_route
+    """
+    flutter = _flutter_cmd()
+    steps = [
+        (flutter + ["pub", "get"],
+         "pub get"),
+        (flutter + ["gen-l10n"],
+         "gen-l10n"),
+        (flutter + ["pub", "run", "build_runner", "build", "--delete-conflicting-outputs"],
+         "build_runner"),
+    ]
+    for cmd, label in steps:
+        print(f"   ▶️  Đang chạy: {' '.join(cmd)}...")
+        result = subprocess.run(cmd, cwd=new_app_path, capture_output=True, text=True)
+        if result.returncode == 0:
+            print(f"   ✅ {label} hoàn tất.")
+        else:
+            print(f"   ⚠️  {label} có lỗi:\n{(result.stdout + result.stderr)[:400]}")
+
+
+def _is_generated_file(file_path: str) -> bool:
+    """Kiểm tra file có phải auto-generated (không nên sửa trực tiếp)."""
+    base = os.path.basename(file_path)
+    return (
+        base.endswith(".gr.dart")
+        or base.endswith(".g.dart")
+        or base.endswith(".freezed.dart")
+        or base.endswith(".config.dart")
+    )
+
+
+def fix_all_analyze_errors(new_app_path: str, max_rounds: int = 3) -> bool:
+    """
+    Sau khi gen xong toàn bộ, chạy pub get + gen-l10n + build_runner trước,
+    rồi flutter analyze toàn project, parse lỗi theo từng file, gọi AI sửa,
+    lặp tối đa max_rounds vòng.
+    Trả về True nếu không còn lỗi, False nếu vẫn còn sau max_rounds.
+    """
+    print(f"\n🔬 BẮT ĐẦU POST-GEN AUTO-FIX (tối đa {max_rounds} vòng)...")
+
+    # Bước chuẩn bị: pub get → gen-l10n → build_runner
+    print("\n   📦 Bước chuẩn bị trước khi fix...")
+    _run_prepare_commands(new_app_path)
+
+    flutter = _flutter_cmd()
+
+    for round_num in range(1, max_rounds + 1):
+        print(f"\n   🔄 Vòng {round_num}/{max_rounds}: Đang chạy flutter analyze...")
+        result = subprocess.run(
+            flutter + ["analyze"],
+            cwd=new_app_path,
+            capture_output=True,
+            text=True,
+        )
+
+        if result.returncode == 0:
+            print(f"   ✅ Không còn lỗi sau vòng {round_num - 1}. Project sạch!")
+            return True
+
+        errors_by_file = _parse_analyze_errors_by_file(
+            result.stdout + "\n" + result.stderr,
+            new_app_path,
+        )
+
+        if not errors_by_file:
+            # Chỉ còn warning/hint, không có error → coi như OK
+            print("   ✅ Không còn error (chỉ còn warning/hint). Project OK!")
+            return True
+
+        # Tách generated files ra khỏi danh sách cần fix
+        generated_errors = {p: e for p, e in errors_by_file.items() if _is_generated_file(p)}
+        source_errors = {p: e for p, e in errors_by_file.items() if not _is_generated_file(p)}
+
+        if generated_errors:
+            gen_names = [os.path.basename(p) for p in generated_errors]
+            print(f"   ⏭️ Bỏ qua {len(generated_errors)} generated file (sẽ regenerate): {', '.join(gen_names)}")
+
+        if not source_errors:
+            if generated_errors:
+                # Chỉ còn lỗi ở generated files → re-run build_runner rồi check lại
+                print("   🔄 Chỉ còn lỗi ở generated files. Chạy lại build_runner...")
+                _run_prepare_commands(new_app_path)
+                continue
+            print("   ✅ Không còn error source files. Project OK!")
+            return True
+
+        print(f"   ⚠️ Phát hiện lỗi trong {len(source_errors)} source file. Đang yêu cầu AI sửa...")
+
+        fixed_count = 0
+        for abs_path, file_errors in source_errors.items():
+            file_name = os.path.relpath(abs_path, new_app_path)
+            error_summary = "\n".join(file_errors)
+            print(f"      🛠️ Đang sửa: {file_name} ({len(file_errors)} lỗi)...")
+
+            file_content = read_file(abs_path)
+            if not file_content:
+                continue
+
+            try:
+                fixed_code = fix_flutter_code_agent(file_content, error_summary)
+                if fixed_code and fixed_code.strip() != file_content.strip():
+                    write_file(abs_path, fixed_code)
+                    print(f"         ✅ Đã sửa: {os.path.basename(abs_path)}")
+                    fixed_count += 1
+                else:
+                    print(f"         ⚠️ AI không thay đổi code: {os.path.basename(abs_path)}")
+            except Exception as e:
+                print(f"         ❌ Lỗi khi fix {os.path.basename(abs_path)}: {e}")
+
+        if fixed_count == 0:
+            print("   ⚠️ Không có file nào được sửa trong vòng này. Dừng sớm.")
+            break
+
+        # Sau khi fix source files, re-run build_runner để regenerate .gr.dart/.g.dart/.freezed.dart
+        if generated_errors:
+            print("   🔄 Re-run build_runner sau khi fix source files...")
+            _run_prepare_commands(new_app_path)
+
+        print(f"   ✅ Vòng {round_num}: Đã sửa {fixed_count} file. Chạy lại analyze...")
+
+    # Kiểm tra lần cuối
+    final = subprocess.run(
+        flutter + ["analyze"],
+        cwd=new_app_path,
+        capture_output=True,
+        text=True,
+    )
+    if final.returncode == 0:
+        print("   🎉 Project không còn error!")
+        return True
+
+    remaining = _parse_analyze_errors_by_file(
+        final.stdout + "\n" + final.stderr, new_app_path
+    )
+    if remaining:
+        print(f"   ⚠️ Vẫn còn {sum(len(v) for v in remaining.values())} lỗi trong {len(remaining)} file sau {max_rounds} vòng fix.")
+    return False
+
+
 def finalize_project(new_app_path: str) -> None:
+    flutter = _flutter_cmd()
+    print(f"\n🛠️ Sử dụng lệnh Flutter: {' '.join(flutter)}")
+
     print("\n🛠️ Đang chạy build_runner hoàn thiện project...")
     br_result = subprocess.run(
-        ["flutter", "pub", "run", "build_runner", "build", "--delete-conflicting-outputs"],
+        flutter + ["pub", "run", "build_runner", "build", "--delete-conflicting-outputs"],
         cwd=new_app_path,
         capture_output=True,
         text=True,
@@ -644,25 +834,21 @@ def finalize_project(new_app_path: str) -> None:
 
     print("🌐 Đang biên dịch các file ngôn ngữ (gen-l10n)...")
     l10n_result = subprocess.run(
-        ["flutter", "gen-l10n"],
+        flutter + ["gen-l10n"],
         cwd=new_app_path,
         capture_output=True,
         text=True,
     )
     if l10n_result.returncode != 0:
         print(f"  ⚠️ gen-l10n có lỗi:\n{l10n_result.stderr[:500]}")
+    else:
+        print("  ✅ gen-l10n hoàn tất.")
 
-    print("\n🩺 Đang khám sức khỏe tổng quát toàn bộ dự án...")
-    final_analyze = subprocess.run(
-        ["flutter", "analyze"],
-        cwd=new_app_path,
-        capture_output=True,
-        text=True,
-    )
+    # Auto-fix toàn bộ lỗi analyze sau khi codegen xong
+    success = fix_all_analyze_errors(new_app_path, max_rounds=3)
 
-    if final_analyze.returncode == 0:
+    if success:
         print(f"\n🎉 THÀNH CÔNG! App của bạn đã sẵn sàng tại: {new_app_path}")
     else:
-        print("\n⚠️ Project vẫn còn lỗi sau lần analyze tổng thể:")
-        print(final_analyze.stdout)
-        print(final_analyze.stderr)
+        print(f"\n⚠️ App đã gen xong nhưng vẫn còn một số lỗi. Kiểm tra Dart Analysis để xem chi tiết.")
+        print(f"   Path: {new_app_path}")

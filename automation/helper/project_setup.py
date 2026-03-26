@@ -187,6 +187,14 @@ def _patch_app_localizations(app_path: str, languages: list) -> None:
     print("      ✅ Đã patch app_localizations.dart: fallback locale an toàn.")
 
 
+def _ensure_arb(l10n_dir: str, arb_code: str) -> None:
+    """Tạo file arb nếu chưa tồn tại."""
+    file_path = os.path.join(l10n_dir, f"app_{arb_code}.arb")
+    if not os.path.exists(file_path):
+        write_file(file_path, '{\n  "@@locale": "' + arb_code + '"\n}')
+        print(f"      🌐 Đã tạo file ngôn ngữ: app_{arb_code}.arb")
+
+
 def update_localization(app_path, languages):
     """Tạo file arb, cập nhật enum, và patch các file liên quan đến locale."""
     l10n_dir = os.path.join(app_path, "assets/l10n")
@@ -194,13 +202,15 @@ def update_localization(app_path, languages):
 
     for lang in languages:
         code = lang['code']
-        # ARB file dùng dấu gạch dưới: app_zh_Hans.arb
+        # ARB file dùng dấu gạch dưới: app_zh_Hans.arb, app_pt_BR.arb
         arb_code = code.replace('-', '_')
-        file_path = os.path.join(l10n_dir, f"app_{arb_code}.arb")
-        if not os.path.exists(file_path):
-            # Tạo file arb trống với cấu trúc chuẩn
-            write_file(file_path, '{\n  "@@locale": "' + arb_code + '"\n}')
-            print(f"      🌐 Đã tạo file ngôn ngữ: app_{arb_code}.arb")
+        _ensure_arb(l10n_dir, arb_code)
+
+        # flutter gen-l10n yêu cầu: nếu có variant (xx_YY hoặc xx_Yyyy),
+        # PHẢI có file base (xx) làm fallback, nếu không sẽ báo lỗi.
+        base_code = arb_code.split('_')[0]
+        if base_code != arb_code:
+            _ensure_arb(l10n_dir, base_code)
 
     # Cập nhật enum Language
     enum_path = os.path.join(app_path, "lib/src/shared/enum/language.dart")

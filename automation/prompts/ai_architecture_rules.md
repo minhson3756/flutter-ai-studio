@@ -239,6 +239,56 @@ import 'cubit/tên_feature_của_bạn_state.dart';
 - Quy trình: Viết State TRƯỚC với đầy đủ fields → Viết Cubit dựa trên State → Viết Screen dùng cả hai.
 - Mọi field trong State PHẢI có default value (hoặc nullable) để tránh lỗi compile.
 
+28c. QUY TẮC THỐNG NHẤT TÊN ENUM GIỮA STATE - CUBIT - SCREEN (CRITICAL - KHÔNG ĐƯỢC VI PHẠM)
+- Tên enum value PHẢI GIỐNG NHAU 100% trong cả 3 file state, cubit, screen.
+- QUY TRÌNH BẮT BUỘC: Định nghĩa enum trong <state> TRƯỚC → copy tên đó sang <cubit> và <screen>. KHÔNG được tự sáng tạo tên khác ở cubit/screen.
+- VD SAI (gây lỗi compile):
+  + State định nghĩa: `enum ScanTabState { permissionDenied, scanning }`
+  + Screen dùng: `ScanTabState.permissionRequired` ← KHÔNG TỒN TẠI → LỖI
+- VD ĐÚNG:
+  + State định nghĩa: `enum ScanTabState { permissionRequired, guide, scanning }`
+  + Screen dùng: `ScanTabState.permissionRequired` ← khớp 100%
+
+- QUY TẮC ĐẶT TÊN ENUM CHO CÁC PATTERN PHỔ BIẾN (BẮT BUỘC DÙNG ĐÚNG TÊN NÀY):
+  + Trạng thái chưa có quyền: `permissionRequired` (KHÔNG phải `permissionDenied`, `noPermission`)
+  + Trạng thái hướng dẫn lần đầu: `guide` (KHÔNG phải `firstGuide`, `tutorial`)
+  + Trạng thái đang quét: `scanning` (KHÔNG phải `scan`, `active`)
+  + Trạng thái chọn nhiều: `select` (KHÔNG phải `selectMode`, `multiSelect`)
+  + Sub-tab QR Code: `qrCode` (KHÔNG phải `url`, `qr`, `qrcode`)
+  + Sub-tab Barcode: `barcode` (KHÔNG phải `bar`, `barcodeTab`)
+  + Tab lịch sử đã quét: `scanned`
+  + Tab lịch sử đã tạo: `generated`
+
+28d. QUY TẮC DÙNG ENUM TỪ SHARED MODEL (CRITICAL)
+- Khi dùng enum từ file model dùng chung (VD: `QRBarcodeCategory`, `QRCodeType`, `HistoryItemType`):
+  + TUYỆT ĐỐI KHÔNG tự bịa giá trị enum không tồn tại như `.other`, `.unknown`, `.none`.
+  + Chỉ được dùng các giá trị đã được khai báo trong file model.
+  + Nếu không có giá trị phù hợp → dùng giá trị gần nhất hoặc để nullable.
+- VD SAI: `category: QRBarcodeCategory.other` ← `.other` không tồn tại → LỖI COMPILE
+- VD ĐÚNG: `category: QRBarcodeCategory.qrCode` ← dùng giá trị thực có trong enum
+
+28e. QUY TẮC IMPORT CHO AUTO_ROUTE (CRITICAL)
+- Khi Screen có constructor nhận tham số kiểu là Shared Model (VD: `required HistoryItemModel historyItem`):
+  + BẮT BUỘC import file model đó trong screen file.
+  + Lý do: auto_route đọc import của screen để gen `app_router.gr.dart`. Thiếu import → `Undefined class` trong file generated.
+- VD: Screen có `HistoryItemModel` trong constructor → PHẢI có:
+  `import 'package:flutter_base/src/shared/models/history_item_model.dart';`
+
+36. QUY TẮC GIỚI HẠN ĐỘ DÀI FILE (CHỐNG TRUNCATION)
+- File screen KHÔNG ĐƯỢC vượt quá 500 dòng.
+- File cubit KHÔNG ĐƯỢC vượt quá 200 dòng.
+- File state KHÔNG ĐƯỢC vượt quá 100 dòng.
+- Nếu screen có nhiều tab/section phức tạp → BẮT BUỘC tách mỗi tab thành 1 private class riêng trong cùng file.
+- Nếu vẫn vượt 500 dòng → đơn giản hóa logic, bỏ bớt detail thứ cấp, ưu tiên compile được.
+- NGHIÊM CẤM để file bị cắt giữa chừng (truncated). Nếu sắp hết token, kết thúc bằng `}` hợp lệ.
+- DẤU HIỆU FILE BỊ TRUNCATE: import nằm sau class declaration, `}` thiếu, code bỏ lửng. Tuyệt đối không để xảy ra.
+
+37. QUY TẮC CUBIT METHOD SIGNATURE NHẤT QUÁN
+- Nếu Screen gọi `cubit.deleteSelected(context)` → Cubit PHẢI khai báo `void deleteSelected(BuildContext context)`.
+- Nếu Screen gọi `cubit.saveItem()` → Cubit PHẢI khai báo `void saveItem()` (không param).
+- KHÔNG được để signature không khớp giữa caller (screen) và callee (cubit).
+- Quy trình: Xác định cách Screen gọi method TRƯỚC → Viết signature Cubit cho khớp.
+
 29. NGHIÊM CẤM SỬ DỤNG KIỂU `dynamic`
 - TUYỆT ĐỐI KHÔNG sử dụng kiểu `dynamic` trong bất kỳ khai báo nào: biến, parameter, return type, generic, Map, List.
 - PHẢI khai báo kiểu cụ thể cho mọi thứ: `String`, `int`, `double`, `bool`, `Map<String, Object>`, `List<String>`, v.v.
@@ -246,6 +296,19 @@ import 'cubit/tên_feature_của_bạn_state.dart';
 - VD ĐÚNG: `Map<String, Object> toMap()`, `List<HistoryItem> items`, `String result`
 - Nếu cần chứa dữ liệu hỗn hợp, dùng `Object` thay vì `dynamic`.
 - NGOẠI LỆ DUY NHẤT: JSON deserialization từ API/file bắt buộc phải dùng `Map<String, dynamic>` thì được phép, nhưng PHẢI parse ngay thành typed model.
+- NGHIÊM CẤM dùng `as dynamic` để cast object:
+  + VD SAI: `final homeState = state as dynamic; homeState.historyState`
+  + VD ĐÚNG: `state.historyState` — truy cập trực tiếp vì state đã có kiểu đúng.
+
+29b. QUY TẮC FREEZED STATE — COPYWIDTH NULLABLE FIELD (CRITICAL)
+- Khi dùng Freezed, KHÔNG TỒN TẠI pattern `clearXxx` trong copyWith.
+- Freezed sinh copyWith cho nullable fields tự động handle null.
+- Để clear (xóa/reset) một nullable field, SET NÓ = null trực tiếp:
+  + VD SAI: `state.copyWith(clearOpenMenuItemId: true)` ← `clearOpenMenuItemId` KHÔNG TỒN TẠI → LỖI COMPILE
+  + VD SAI: `state.copyWith(openMenuItemId: null, clearOpenMenuItemId: true)` ← vẫn lỗi
+  + VD ĐÚNG: `state.copyWith(openMenuItemId: null)` ← Freezed hỗ trợ set null cho nullable field
+- Tương tự cho tất cả nullable fields trong State (VD: `selectedItem`, `errorMessage`, `activeId`, v.v.)
+- Quy tắc đơn giản: Chỉ dùng tên field thật trong copyWith. KHÔNG bịa thêm parameter.
 
 30. QUY TẮC THƯ VIỆN VÀ KHỞI TẠO (PACKAGE INITIALIZATION)
 - Khi sử dụng package cần khởi tạo (init), code PHẢI bao gồm logic init đầy đủ.

@@ -124,47 +124,40 @@ def generate_feature_code(feature_name, screen_json, dynamic_context, rules):
 def fix_flutter_code_agent(file_content, error_log):
     """
     Đặc vụ Fixer: Tự động đọc lỗi từ terminal và sửa lại code Dart.
+    Tự động điều chỉnh max_tokens dựa trên độ dài file.
     """
     prompt = f"""
     Bạn là một Senior Flutter Developer chuyên đi fix bug (Debugger).
     Dưới đây là một file code đang bị báo lỗi khi chạy `flutter analyze`:
-    
+
     ```dart
     {file_content}
     ```
-    
+
     Và đây là log lỗi từ Terminal:
     {error_log}
-    
+
     NHIỆM VỤ CỦA BẠN:
     1. Đọc log lỗi, tìm ra dòng code sai (Thường là gọi sai tên biến, thiếu tham số, import sai...).
     2. Viết lại TOÀN BỘ file code này sau khi đã sửa hết các lỗi trên.
     3. CỰC KỲ QUAN TRỌNG: CHỈ TRẢ VỀ code Dart (bọc trong ```dart ... ```). KHÔNG giải thích, KHÔNG nói chuyện, KHÔNG dùng TODO.
+
+    🚨 QUY TẮC FIX:
+    - KHÔNG được dùng `as dynamic` để cast — sử dụng đúng kiểu dữ liệu.
+    - Với Freezed state: KHÔNG dùng `clearXxx: true` pattern — để clear nullable field, set nó = null trực tiếp.
+      VD SAI: `state.copyWith(clearOpenMenuItemId: true)`
+      VD ĐÚNG: `state.copyWith(openMenuItemId: null)`
+    - Import PHẢI nằm ở ĐẦU file, TRƯỚC mọi class/enum declaration.
+    - KHÔNG thêm enum value mới (.other, .unknown) nếu enum đã được định nghĩa ở file khác.
+    - PHẢI giữ nguyên toàn bộ code khi không liên quan đến lỗi. CHỈ sửa phần bị lỗi.
     """
 
-    max_retries = 3
-    for attempt in range(max_retries):
-        try:
-            response = client.messages.create(
-                model=model_name,
-                max_tokens=8192,
-                temperature=0.1,
-                messages=[{"role": "user", "content": prompt}]
-            )
-            break
-        except anthropic.RateLimitError:
-            wait_time = 20 * (attempt + 1)
-            print(f"\n      ⏳ Đụng trần Token. Đang đợi {wait_time}s... (Lần {attempt + 1}/{max_retries})")
-            time.sleep(wait_time)
-        except anthropic.APIError as e:
-            if "overloaded" in str(e).lower() or getattr(e, 'status_code', 500) in [529, 502, 503, 504]:
-                wait_time = 15
-                print(f"\n      ⚠️ Máy chủ AI quá tải. Đang đợi {wait_time}s... (Lần {attempt + 1}/{max_retries})")
-                time.sleep(wait_time)
-            else:
-                raise
-    else:
-        raise Exception("🚨 Đã hết kiên nhẫn khi fix code! Hãy thử lại sau vài phút.")
+    # Tính max_tokens dựa trên độ dài file (1 token ~ 4 chars, nhân 1.5 để dư)
+    estimated_tokens = max(8192, int(len(file_content) / 4 * 1.5))
+    max_tokens = min(estimated_tokens, 32000)  # Cap ở 32k
+
+    from automation.ai.ai_client import _call_ai_with_network_retry
+    response = _call_ai_with_network_retry(prompt, max_tokens)
 
     text = response.content[0].text
 
